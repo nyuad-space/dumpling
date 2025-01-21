@@ -28,3 +28,5 @@ fp-info-cache
 *.xml
 *.csv
 01_main-board/\#auto_saved_files\#
+.DS_Store
+01_main-board/~main-board.kicad_sch.lck
