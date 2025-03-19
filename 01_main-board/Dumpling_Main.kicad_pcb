@@ -34522,7 +34522,7 @@
 	(footprint "TestPoint:TestPoint_Pad_D1.5mm"
 		(layer "F.Cu")
 		(uuid "64b68543-ecd0-46e3-8919-9ed98c1f9678")
-		(at 82.4 52.05)
+		(at 80.5 52)
 		(descr "SMD pad as test Point, diameter 1.5mm")
 		(tags "test point SMD pad")
 		(property "Reference" "VBAT1"
