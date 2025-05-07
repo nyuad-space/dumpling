@@ -312,8 +312,8 @@
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "J8"
-				(at 0 33.02 0)
+			(property "Reference" "J17"
+				(at 4.318 23.114 0)
 				(effects
 					(font
 						(size 1.27 1.27)
@@ -321,14 +321,14 @@
 				)
 			)
 			(property "Value" "USB_C_Receptacle_USB2.0_16P"
-				(at 0 30.48 0)
+				(at 4.318 20.574 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
 				)
 			)
-			(property "Footprint" ""
+			(property "Footprint" "Connector_USB:USB_C_Receptacle_G-Switch_GT-USB-7051x"
 				(at 3.81 -1.27 0)
 				(effects
 					(font
@@ -964,25 +964,7 @@
 					)
 				)
 				(pin bidirectional line
-					(at 15.24 -5.08 180)
-					(length 5.08)
-					(name "SBU1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "A8"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin bidirectional line
-					(at 15.24 -5.08 180)
+					(at 15.24 -3.81 180)
 					(length 5.08)
 					(name "SBU2"
 						(effects
@@ -992,6 +974,24 @@
 						)
 					)
 					(number "B8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 15.24 -6.35 180)
+					(length 5.08)
+					(name "SBU1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "A8"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -4095,6 +4095,171 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "SMTSOM2_525STR:SMTSOM2_525STR"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0 1.27 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "SMTSOM2_525STR"
+				(at 0 -2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "footprint:SMD_BD5.6-D4.1"
+				(at 0 -10.16 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+						(italic yes)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://img.jlc.com/pdf/applyPasteComponent/2021-08-17/383886A/1117d75d549448acb3d5abecca3dc57c/SMD%E8%A1%A8%E8%B4%B4%E8%9E%BA%E6%AF%8D%E6%9F%B1-%E7%AE%80.pdf"
+				(at -2.286 0.127 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "LCSC" "C22368605"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "C22368605"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "SMTSOM2_525STR_0_1"
+				(rectangle
+					(start -2.54 6.35)
+					(end 2.54 -6.35)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(circle
+					(center -1.27 5.08)
+					(radius 0.381)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin unspecified line
+					(at -5.08 3.81 0)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -5.08 1.27 0)
+					(length 2.54)
+					(name "2"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -5.08 -1.27 0)
+					(length 2.54)
+					(name "3"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -5.08 -3.81 0)
+					(length 2.54)
+					(name "4"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "SparkFun-MicroMod:MICROMOD-2222-C"
 			(pin_names
 				(offset 1.016)
@@ -5779,243 +5944,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "WA-SMSI_9774XXX151:WA-SMSI_9774XXX151"
-			(pin_names
-				(offset 1.016)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "MP"
-				(at 0 3.556 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-				)
-			)
-			(property "Value" "M2.5 x 2.5mm"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "Footprint" "WA-SMSI_9774XXX151:WA-SMSI_9774025151"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Check_prices" "https://www.snapeda.com/parts/9774025151R/W%25C3%25BCrth+Elektronik+Midcom/view-part/?ref=eda"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "MF" "Würth Elektronik"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "THREAD" "M2.5"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "INNER-DIAMETER" "3.5mm"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "Package" "None"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "Price" "None"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "PIN-LENGTH" "2.5mm"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "INNER-THREAD-LENGTH" "-"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "Availability" "In Stock"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "SnapEDA_Link" "https://www.snapeda.com/parts/9774025151R/W%25C3%25BCrth+Elektronik+Midcom/view-part/?ref=snap"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "DATASHEET-URL" "https://www.we-online.com/catalog/datasheet/9774025151R.pdf"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "MP" "9774025151R"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "PART-NUMBER" "9774025151R"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "OUTER-DIAMETER" "5.1mm"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "Description_1" "Round Standoff Threaded M2.5x0.45 Steel 0.098 (2.50mm) -"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(symbol "WA-SMSI_9774XXX151_0_0"
-				(circle
-					(center 0 0)
-					(radius 2.54)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(pin passive line
-					(at -5.08 0 0)
-					(length 2.54)
-					(name "~"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "power:+3V3"
 			(power)
 			(pin_numbers
@@ -6242,6 +6170,18 @@
 			)
 			(embedded_fonts no)
 		)
+	)
+	(rectangle
+		(start 144.78 163.83)
+		(end 173.99 195.58)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 02863538-406f-43e5-aab4-e4fd46ab3a29)
 	)
 	(rectangle
 		(start 143.51 50.8)
@@ -6612,6 +6552,18 @@
 		)
 		(uuid "826edea6-a5c9-4ade-9dbd-c3105073b078")
 	)
+	(text "Standoff\n(Patch round nut)"
+		(exclude_from_sim no)
+		(at 159.766 170.434 0)
+		(effects
+			(font
+				(size 1.778 1.778)
+				(thickness 0.3556)
+				(bold yes)
+			)
+		)
+		(uuid "8455662e-f099-4c80-a4a6-c4ee49a8099d")
+	)
 	(text "SWD"
 		(exclude_from_sim no)
 		(at 17.78 63.5 0)
@@ -6848,6 +6800,12 @@
 		(uuid "62db5c53-e3f9-461e-879f-c45f79345a08")
 	)
 	(junction
+		(at 154.94 180.34)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "6645f751-727c-4aa5-bcd2-9b16684c9e53")
+	)
+	(junction
 		(at 44.45 151.13)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6882,6 +6840,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "9ba23d80-f190-411f-b076-13017696ceba")
+	)
+	(junction
+		(at 154.94 185.42)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a1848266-d19f-462c-85d3-1670bd14b840")
 	)
 	(junction
 		(at 101.6 43.18)
@@ -6920,6 +6884,12 @@
 		(uuid "cf6336bc-3f13-40de-8202-65a9d4fb205e")
 	)
 	(junction
+		(at 154.94 182.88)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "ddb4e32f-a763-4b88-a794-dc3c68300be3")
+	)
+	(junction
 		(at 111.76 35.56)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6956,15 +6926,195 @@
 		(uuid "ffe5feae-501a-4665-8974-b29700872a0a")
 	)
 	(no_connect
+		(at 266.7 74.93)
+		(uuid "000c8624-1b98-44d1-9dbe-d2a519bb543d")
+	)
+	(no_connect
+		(at 266.7 88.9)
+		(uuid "0294f643-b2c7-48f3-b732-9cff27730840")
+	)
+	(no_connect
+		(at 220.98 102.87)
+		(uuid "0c4cbb91-afae-4118-9814-44e7719b0d41")
+	)
+	(no_connect
+		(at 266.7 120.65)
+		(uuid "11a8739a-26ea-4b00-a56b-151b3e010afd")
+	)
+	(no_connect
+		(at 266.7 146.05)
+		(uuid "140589d6-ea35-4e79-93b8-522fac33ad0e")
+	)
+	(no_connect
+		(at 266.7 158.75)
+		(uuid "1f46162f-ef33-4f97-bbc7-20c44f9c8f74")
+	)
+	(no_connect
+		(at 220.98 123.19)
+		(uuid "2175dfa1-3228-4816-9770-a8ceb570acc7")
+	)
+	(no_connect
+		(at 266.7 77.47)
+		(uuid "22e39840-d964-45b5-b14f-9158924649e6")
+	)
+	(no_connect
+		(at 266.7 151.13)
+		(uuid "286aa0d2-3063-4e3f-9c9d-f8c7eab5f8aa")
+	)
+	(no_connect
+		(at 220.98 106.68)
+		(uuid "2a567e2e-27e5-46d3-b842-ef098e196f0e")
+	)
+	(no_connect
+		(at 220.98 138.43)
+		(uuid "38256ad8-0179-4a79-a03d-dfcecae4faf1")
+	)
+	(no_connect
+		(at 220.98 130.81)
+		(uuid "3a2fa63d-46d8-4a61-852d-26358f3309fd")
+	)
+	(no_connect
+		(at 220.98 72.39)
+		(uuid "4013a178-f0f2-483a-9e8d-fff4ac4d781a")
+	)
+	(no_connect
+		(at 220.98 111.76)
+		(uuid "48018ea9-4e2d-4878-91c9-1b3debb0dc44")
+	)
+	(no_connect
+		(at 220.98 128.27)
+		(uuid "4a29c4cc-99e6-4cc4-8eca-bbd95a8f9348")
+	)
+	(no_connect
+		(at 266.7 123.19)
+		(uuid "4e85ae6f-d758-4a9a-90a0-c89f3c249514")
+	)
+	(no_connect
+		(at 266.7 130.81)
+		(uuid "6551a50b-583f-4104-a281-a8c94cf19822")
+	)
+	(no_connect
+		(at 220.98 67.31)
+		(uuid "68b5d7d3-1629-4758-b3c6-e8dfc9abecfd")
+	)
+	(no_connect
+		(at 220.98 116.84)
+		(uuid "6ca1370d-28a2-410f-825b-4c6c9c04f98f")
+	)
+	(no_connect
+		(at 266.7 118.11)
+		(uuid "6de65524-0f32-49e7-bac7-7407c510dea7")
+	)
+	(no_connect
+		(at 220.98 100.33)
+		(uuid "72b1d20b-5f81-47c3-b8aa-58548fb2d3cc")
+	)
+	(no_connect
+		(at 220.98 140.97)
+		(uuid "77da8518-71f8-4350-b6c0-53abb59892c9")
+	)
+	(no_connect
+		(at 220.98 78.74)
+		(uuid "78ae8185-086a-456c-a0c9-d399a373c118")
+	)
+	(no_connect
+		(at 266.7 91.44)
+		(uuid "7cc19561-c0eb-4307-8557-f4c0650b0d80")
+	)
+	(no_connect
+		(at 220.98 87.63)
+		(uuid "7d4235d0-3187-4e3d-9e22-3f81e964a560")
+	)
+	(no_connect
+		(at 220.98 95.25)
+		(uuid "7f12bca1-1208-4550-aaad-26222122239b")
+	)
+	(no_connect
+		(at 220.98 133.35)
+		(uuid "8096aeb5-a114-4f88-be28-d60ab0996100")
+	)
+	(no_connect
+		(at 148.59 151.13)
+		(uuid "80c9fabc-fcd9-49a4-95a6-dbd708a81d05")
+	)
+	(no_connect
+		(at 220.98 114.3)
+		(uuid "8d8e91ef-a5b4-4aa6-bdaa-973d324dc0d1")
+	)
+	(no_connect
+		(at 220.98 76.2)
+		(uuid "91332a6d-623c-40fb-aed3-3f26f2969e4d")
+	)
+	(no_connect
+		(at 220.98 92.71)
+		(uuid "9f4db941-d84d-4efc-95b7-8dfef32e8af1")
+	)
+	(no_connect
 		(at 190.5 139.7)
 		(uuid "ace17a10-22ae-4ae0-b35e-951af3d5d128")
+	)
+	(no_connect
+		(at 220.98 125.73)
+		(uuid "af334dc6-5a76-46a4-9f44-9c92c14293fe")
+	)
+	(no_connect
+		(at 266.7 93.98)
+		(uuid "b1b18231-7c0e-421d-8ba0-f4e7b7ade445")
 	)
 	(no_connect
 		(at 176.53 105.41)
 		(uuid "bc1a1652-03ce-428d-b812-59d5e22e809c")
 	)
 	(no_connect
-		(at 148.59 152.4)
+		(at 220.98 109.22)
+		(uuid "c83d49eb-2fbc-4792-b065-0f30193e58cf")
+	)
+	(no_connect
+		(at 220.98 85.09)
+		(uuid "cb3b68c6-cae6-44bd-a1b8-96263e464c88")
+	)
+	(no_connect
+		(at 220.98 69.85)
+		(uuid "d9da561d-8915-4491-aebd-8887afa380f0")
+	)
+	(no_connect
+		(at 69.85 90.17)
+		(uuid "da393c02-a95f-4bf4-a9b7-6596268b16d3")
+	)
+	(no_connect
+		(at 266.7 156.21)
+		(uuid "e0a60e7d-775b-45cb-abda-25d5d54b4f9f")
+	)
+	(no_connect
+		(at 266.7 153.67)
+		(uuid "e2e2860d-330f-4a1c-8a48-5ff9b120bb11")
+	)
+	(no_connect
+		(at 220.98 82.55)
+		(uuid "e8fe90a3-54d4-4915-98c6-b90bbe86fbb0")
+	)
+	(no_connect
+		(at 220.98 64.77)
+		(uuid "ed24de81-33e5-4946-a21d-4f3acc04d851")
+	)
+	(no_connect
+		(at 266.7 148.59)
+		(uuid "f0d2fd98-056c-472f-8328-dd374906e60a")
+	)
+	(no_connect
+		(at 266.7 125.73)
+		(uuid "f1665c2f-43e3-41b6-bfbb-7acc5d690c9a")
+	)
+	(no_connect
+		(at 220.98 119.38)
+		(uuid "f2cc746c-5012-472e-8507-a7b1ff19749b")
+	)
+	(no_connect
+		(at 220.98 146.05)
+		(uuid "f47f0be9-821d-43d1-bbf9-42ab936bd51d")
+	)
+	(no_connect
+		(at 148.59 153.67)
 		(uuid "f7af6426-9a3c-4c7b-9579-7b70df8b197d")
 	)
 	(wire
@@ -7369,6 +7519,16 @@
 	)
 	(wire
 		(pts
+			(xy 154.94 182.88) (xy 154.94 185.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6cbfc589-b329-496a-be23-fd7e5031f6e2")
+	)
+	(wire
+		(pts
 			(xy 54.61 29.21) (xy 52.07 29.21)
 		)
 		(stroke
@@ -7406,6 +7566,16 @@
 			(type default)
 		)
 		(uuid "72cef52d-f890-47dd-94b2-c587a5d2f874")
+	)
+	(wire
+		(pts
+			(xy 154.94 180.34) (xy 154.94 182.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "747001f2-ac1f-453d-a8ed-20026b4a363f")
 	)
 	(wire
 		(pts
@@ -7546,6 +7716,16 @@
 			(type default)
 		)
 		(uuid "ba2ce06e-23bf-46f4-925d-64d1949043e0")
+	)
+	(wire
+		(pts
+			(xy 154.94 177.8) (xy 154.94 180.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bb263a78-f1d0-49f4-9113-47399a538262")
 	)
 	(wire
 		(pts
@@ -9987,71 +10167,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 152.4 186.69 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "13a2f56d-b2f8-41ce-9d89-6d017e84ebd9")
-		(property "Reference" "#PWR0221"
-			(at 152.4 193.04 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 148.082 188.976 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 152.4 186.69 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 152.4 186.69 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 152.4 186.69 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "cac5f745-b52a-444f-941c-2acf0df1f73d")
-		)
-		(instances
-			(project "Dumpling_Main"
-				(path "/f5781173-3155-474e-950c-81192e73c9b5/d06b16e6-1fd8-468a-8dec-91917bc25f67"
-					(reference "#PWR0221")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:+3V3")
 		(at 168.91 99.06 0)
 		(mirror y)
@@ -10848,233 +10963,6 @@
 			(project "Dumpling_Main"
 				(path "/f5781173-3155-474e-950c-81192e73c9b5/d06b16e6-1fd8-468a-8dec-91917bc25f67"
 					(reference "C88")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "WA-SMSI_9774XXX151:WA-SMSI_9774XXX151")
-		(at 152.4 181.61 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "3b979328-3db2-4d02-932d-0413f6a5c946")
-		(property "Reference" "MP5"
-			(at 150.368 177.546 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "~"
-			(at 156.21 182.88 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "WA-SMSI_9774XXX151:WA-SMSI_9774025151"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Check_prices" "https://www.snapeda.com/parts/9774025151R/W%25C3%25BCrth+Elektronik+Midcom/view-part/?ref=eda"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "MF" "Würth Elektronik"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "THREAD" "M2.5"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "INNER-DIAMETER" "3.5mm"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "Package" "None"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "Price" "None"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "PIN-LENGTH" "2.5mm"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "INNER-THREAD-LENGTH" "-"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "VALUE" "M2.5 x 2.5mm"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "Availability" "In Stock"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "SnapEDA_Link" "https://www.snapeda.com/parts/9774025151R/W%25C3%25BCrth+Elektronik+Midcom/view-part/?ref=snap"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "DATASHEET-URL" "https://www.we-online.com/catalog/datasheet/9774025151R.pdf"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "MP" "9774025151R"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "PART-NUMBER" "9774025151R"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "OUTER-DIAMETER" "5.1mm"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(property "Description_1" "Round Standoff Threaded M2.5x0.45 Steel 0.098 (2.50mm) -"
-			(at 152.4 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "54cedf5b-fe7d-41d5-85fa-0b60aa162be8")
-		)
-		(instances
-			(project "Dumpling_Main"
-				(path "/f5781173-3155-474e-950c-81192e73c9b5/d06b16e6-1fd8-468a-8dec-91917bc25f67"
-					(reference "MP5")
 					(unit 1)
 				)
 			)
@@ -12018,6 +11906,92 @@
 			(project "Dumpling_Main"
 				(path "/f5781173-3155-474e-950c-81192e73c9b5/d06b16e6-1fd8-468a-8dec-91917bc25f67"
 					(reference "U20")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "SMTSOM2_525STR:SMTSOM2_525STR")
+		(at 160.02 181.61 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5837f85d-8957-45fa-aa83-d17bd77d1c86")
+		(property "Reference" "U30"
+			(at 157.734 189.484 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SMTSOM2_525STR"
+			(at 151.892 192.024 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "SMTSOM2.525STR:SMD_BD5.6-D4.1"
+			(at 160.02 191.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://img.jlc.com/pdf/applyPasteComponent/2021-08-17/383886A/1117d75d549448acb3d5abecca3dc57c/SMD%E8%A1%A8%E8%B4%B4%E8%9E%BA%E6%AF%8D%E6%9F%B1-%E7%AE%80.pdf"
+			(at 157.734 181.483 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 160.02 181.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C22368605"
+			(at 160.02 181.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "4"
+			(uuid "12c25fac-796f-40bc-8f60-f16fd2b99234")
+		)
+		(pin "3"
+			(uuid "1752664b-15d9-4574-84c0-76184891c4ed")
+		)
+		(pin "2"
+			(uuid "25df3606-7633-42a4-81d8-2b6ab52896f8")
+		)
+		(pin "1"
+			(uuid "f1a555f6-655b-481a-a2cf-098a4bec5e6c")
+		)
+		(instances
+			(project "Dumpling_Main"
+				(path "/f5781173-3155-474e-950c-81192e73c9b5/d06b16e6-1fd8-468a-8dec-91917bc25f67"
+					(reference "U30")
 					(unit 1)
 				)
 			)
@@ -13453,7 +13427,7 @@
 				)
 			)
 		)
-		(property "Footprint" "CJS-1200TA:SW_CJS-1200TA"
+		(property "Footprint" "JS102011JCQN:SW_JS102011JCQN"
 			(at 128.27 93.98 0)
 			(effects
 				(font
@@ -14261,7 +14235,7 @@
 				)
 			)
 		)
-		(property "Value" "SW_DPST"
+		(property "Value" "SW_SPST"
 			(at 125.73 59.69 0)
 			(effects
 				(font
@@ -15214,6 +15188,71 @@
 			(project "Dumpling_Main"
 				(path "/f5781173-3155-474e-950c-81192e73c9b5/d06b16e6-1fd8-468a-8dec-91917bc25f67"
 					(reference "#PWR0159")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 154.94 185.42 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "fa8838fc-e235-4236-91b1-f441079a011e")
+		(property "Reference" "#PWR0242"
+			(at 154.94 191.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 150.622 187.706 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 154.94 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 154.94 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 154.94 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "869944cd-d933-4179-b444-32f8947bf873")
+		)
+		(instances
+			(project "Dumpling_Main"
+				(path "/f5781173-3155-474e-950c-81192e73c9b5/d06b16e6-1fd8-468a-8dec-91917bc25f67"
+					(reference "#PWR0242")
 					(unit 1)
 				)
 			)

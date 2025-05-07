@@ -7878,6 +7878,10 @@
 		(uuid "05429c13-70e3-4695-80cf-43fabbc85ced")
 	)
 	(no_connect
+		(at 31.75 100.33)
+		(uuid "086ff156-b99a-4772-aeab-7b93f8d21c3b")
+	)
+	(no_connect
 		(at 165.1 38.1)
 		(uuid "162ccc02-3c57-44b1-8ae6-5804b84218f4")
 	)
@@ -7888,6 +7892,10 @@
 	(no_connect
 		(at 256.54 54.61)
 		(uuid "a7fc2f77-2c9b-4cce-88b8-68badb400073")
+	)
+	(no_connect
+		(at 31.75 93.98)
+		(uuid "f75eea51-6e55-482d-ba49-4fa2c1319df6")
 	)
 	(wire
 		(pts
@@ -17330,7 +17338,7 @@
 				)
 			)
 		)
-		(property "Value" "SW_DPST"
+		(property "Value" "SW_SPST"
 			(at 176.53 123.444 0)
 			(effects
 				(font
@@ -18264,7 +18272,7 @@
 				)
 			)
 		)
-		(property "Value" "SW_DPST"
+		(property "Value" "SW_SPDT"
 			(at 128.27 107.442 0)
 			(effects
 				(font
@@ -18272,7 +18280,7 @@
 				)
 			)
 		)
-		(property "Footprint" "CJS-1200TA:SW_CJS-1200TA"
+		(property "Footprint" "JS102011JCQN:SW_JS102011JCQN"
 			(at 128.27 113.03 0)
 			(effects
 				(font
@@ -18545,7 +18553,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "CSS-0575B-SMT:CUI_CSS-0575B-SMT"
+		(property "Footprint" "FST-5030:BUZ-SMD_FST-5030"
 			(at 95.885 135.89 90)
 			(effects
 				(font
