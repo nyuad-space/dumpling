@@ -479,7 +479,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "02_01_sensor_IMU.kicad_pro",
+    "filename": "02_01_sensor_IMU_LSM6DSO32.kicad_pro",
     "version": 3
   },
   "net_settings": {
