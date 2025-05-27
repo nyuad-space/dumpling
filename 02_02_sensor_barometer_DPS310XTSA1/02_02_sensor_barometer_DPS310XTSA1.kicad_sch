@@ -2167,50 +2167,47 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Regulator_Linear:AP2112K-3.3"
-			(pin_names
-				(offset 0.254)
-			)
+		(symbol "TPSPX3819M5-L-3-3_1"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
 			(property "Reference" "U"
-				(at -5.08 5.715 0)
+				(at 2.54 1.27 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "TPSPX3819M5-L-3-3"
+				(at 2.54 -2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "footprint:SOT-23-5_L3.0-W1.6-P0.95-LS2.8-BR"
+				(at 0 -10.16 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+						(italic yes)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://atta.szlcsc.com/upload/public/pdf/source/20210423/C2682596_80E51577C889FCE8639E82E3A6FE92E9.pdf"
+				(at -2.286 0.127 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
 					(justify left)
-				)
-			)
-			(property "Value" "AP2112K-3.3"
-				(at 0 5.715 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Footprint" "Package_TO_SOT_SMD:SOT-23-5"
-				(at 0 8.255 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
 					(hide yes)
 				)
 			)
-			(property "Datasheet" "https://www.diodes.com/assets/Datasheets/AP2112.pdf"
-				(at 0 2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "600mA low dropout linear regulator, with enable pin, 3.8V-6V input voltage range, 3.3V fixed positive output, SOT-23-5"
+			(property "Description" ""
 				(at 0 0 0)
 				(effects
 					(font
@@ -2219,7 +2216,16 @@
 					(hide yes)
 				)
 			)
-			(property "ki_keywords" "linear regulator ldo fixed positive"
+			(property "LCSC" "C5370980"
+				(at 2.54 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "C5370980"
 				(at 0 0 0)
 				(effects
 					(font
@@ -2228,116 +2234,115 @@
 					(hide yes)
 				)
 			)
-			(property "ki_fp_filters" "SOT?23?5*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "AP2112K-3.3_0_1"
+			(symbol "TPSPX3819M5-L-3-3_1_0_1"
 				(rectangle
-					(start -5.08 4.445)
+					(start -5.08 5.08)
 					(end 5.08 -5.08)
 					(stroke
-						(width 0.254)
+						(width 0)
 						(type default)
 					)
 					(fill
 						(type background)
 					)
 				)
-			)
-			(symbol "AP2112K-3.3_1_1"
-				(pin power_in line
+				(circle
+					(center -3.81 3.81)
+					(radius 0.381)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin unspecified line
 					(at -7.62 2.54 0)
 					(length 2.54)
 					(name "VIN"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1 1)
 							)
 						)
 					)
 					(number "1"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1 1)
 							)
 						)
 					)
 				)
-				(pin input line
+				(pin unspecified line
 					(at -7.62 0 0)
 					(length 2.54)
 					(name "EN"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1 1)
 							)
 						)
 					)
 					(number "3"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1 1)
 							)
 						)
 					)
 				)
-				(pin power_in line
+				(pin unspecified line
 					(at 0 -7.62 90)
 					(length 2.54)
 					(name "GND"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1 1)
 							)
 						)
 					)
 					(number "2"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1 1)
 							)
 						)
 					)
 				)
-				(pin no_connect line
-					(at 5.08 0 180)
-					(length 2.54)
-					(hide yes)
-					(name "NC"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_out line
+				(pin unspecified line
 					(at 7.62 2.54 180)
 					(length 2.54)
 					(name "VOUT"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1 1)
 							)
 						)
 					)
 					(number "5"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1 1)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at 7.62 -2.54 180)
+					(length 2.54)
+					(name "NC"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1 1)
 							)
 						)
 					)
@@ -2585,18 +2590,6 @@
 		(uuid 36743ee0-6d8d-4094-b1e4-1506313f28e2)
 	)
 	(rectangle
-		(start 40.64 88.9)
-		(end 132.08 134.62)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid 873daa19-a498-422b-90e7-cdf2f310ee06)
-	)
-	(rectangle
 		(start 40.64 36.83)
 		(end 132.08 85.09)
 		(stroke
@@ -2607,6 +2600,18 @@
 			(type none)
 		)
 		(uuid 8aa60615-4890-4d44-b024-7c30c93eae68)
+	)
+	(rectangle
+		(start 40.64 88.9)
+		(end 132.08 134.62)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid de323a2b-c35b-4e95-9cb1-bbca84184583)
 	)
 	(rectangle
 		(start 137.16 36.83)
@@ -2656,6 +2661,19 @@
 		)
 		(uuid "9c9b2013-01e2-47f2-9616-f3520ead57de")
 	)
+	(text "LDO (VIN -> 3V3)"
+		(exclude_from_sim no)
+		(at 67.056 95.758 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+				(thickness 0.508)
+				(bold yes)
+			)
+			(justify left bottom)
+		)
+		(uuid "bc80ff30-219d-4739-83f9-e446b2007ff9")
+	)
 	(text "Testpoints"
 		(exclude_from_sim no)
 		(at 262.382 43.688 0)
@@ -2669,42 +2687,23 @@
 		)
 		(uuid "cfd2acd7-8dcb-443f-9d05-3fb308d85a0c")
 	)
-	(text "LDO (VIN -> 3V3)"
-		(exclude_from_sim no)
-		(at 67.056 95.758 0)
-		(effects
-			(font
-				(size 2.54 2.54)
-				(thickness 0.508)
-				(bold yes)
-			)
-			(justify left bottom)
-		)
-		(uuid "ead37ca8-6557-4e2b-b429-cf64786ee202")
-	)
 	(junction
 		(at 106.68 106.68)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "035a4e29-c4c8-4536-92d1-0d6261935b96")
+		(uuid "0bbaa1d8-b7aa-4c1b-aa89-83855b5b5d79")
 	)
 	(junction
-		(at 106.68 121.92)
+		(at 74.93 106.68)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "1fbed021-211d-4dc6-9d01-de8009abd899")
-	)
-	(junction
-		(at 68.58 106.68)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "35a02b6d-c207-47cd-a1fc-497fffaa4f7f")
+		(uuid "34e40549-241c-4f41-ba81-4abb1ac6487d")
 	)
 	(junction
 		(at 97.79 123.19)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "4110d2cf-1f79-4550-a1df-7b61b4e28dd7")
+		(uuid "3dd8188b-1a8d-4dcf-8bbe-f74eaceb4e77")
 	)
 	(junction
 		(at 113.03 62.23)
@@ -2719,12 +2718,6 @@
 		(uuid "5ef1e379-f242-4ef0-85cc-f02438fa09b1")
 	)
 	(junction
-		(at 97.79 106.68)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "66385a57-2103-4980-af24-d128b6037766")
-	)
-	(junction
 		(at 96.52 67.31)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2737,10 +2730,16 @@
 		(uuid "82904da2-a795-4db6-9be8-8992b287dd51")
 	)
 	(junction
-		(at 85.09 116.84)
+		(at 85.09 123.19)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "8c1bcb65-d700-4862-9c8e-40bb19d75df2")
+		(uuid "87ed02f0-749f-471a-85b7-65efa615a7eb")
+	)
+	(junction
+		(at 68.58 106.68)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "8fecf794-9572-4b8a-b1c3-095e1dd95cd9")
 	)
 	(junction
 		(at 102.87 71.12)
@@ -2749,16 +2748,22 @@
 		(uuid "99c96fed-514b-4b6e-89e9-323ae254eff4")
 	)
 	(junction
-		(at 74.93 106.68)
+		(at 106.68 121.92)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "9fc1db56-1145-478e-bce4-bcc64c7c8096")
+		(uuid "b679d204-ceda-470f-880b-930f476bdc54")
 	)
 	(junction
-		(at 85.09 123.19)
+		(at 97.79 106.68)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "dec149e3-8013-4131-9544-023f7532f475")
+		(uuid "ba5f8b13-b237-436d-baf5-f3893dd48f4c")
+	)
+	(junction
+		(at 85.09 116.84)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e7c101d7-28af-4aab-b183-8f2e704aa7da")
 	)
 	(junction
 		(at 96.52 71.12)
@@ -2927,6 +2932,10 @@
 		(uuid "e6a1ccc3-a378-4f2b-a7e2-b4e700d126d0")
 	)
 	(no_connect
+		(at 92.71 111.76)
+		(uuid "e74270b6-e722-4cf9-9492-3bb617e611fd")
+	)
+	(no_connect
 		(at 208.28 92.71)
 		(uuid "e82d10ff-a88d-42af-bff9-994d4adf3835")
 	)
@@ -2986,6 +2995,26 @@
 	)
 	(wire
 		(pts
+			(xy 106.68 120.65) (xy 106.68 121.92)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0909207a-f540-4046-ba2b-7546ad4d4a57")
+	)
+	(wire
+		(pts
+			(xy 106.68 121.92) (xy 106.68 123.19)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "158a9e95-28cf-4b55-9b63-02d7cd0c1c36")
+	)
+	(wire
+		(pts
 			(xy 102.87 62.23) (xy 113.03 62.23)
 		)
 		(stroke
@@ -2993,6 +3022,16 @@
 			(type default)
 		)
 		(uuid "1ac65330-c626-4e62-a372-f65ef63c602c")
+	)
+	(wire
+		(pts
+			(xy 77.47 109.22) (xy 74.93 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "23f72fe0-3dc5-434b-bf07-ecca9d6107a3")
 	)
 	(wire
 		(pts
@@ -3016,16 +3055,6 @@
 	)
 	(wire
 		(pts
-			(xy 68.58 123.19) (xy 85.09 123.19)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2f6e8018-c99d-4cee-a083-2b15fa7ee2c4")
-	)
-	(wire
-		(pts
 			(xy 96.52 71.12) (xy 96.52 67.31)
 		)
 		(stroke
@@ -3036,13 +3065,13 @@
 	)
 	(wire
 		(pts
-			(xy 106.68 121.92) (xy 106.68 123.19)
+			(xy 64.77 106.68) (xy 68.58 106.68)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "32680cfe-4b0d-4f77-acc0-fb1423604032")
+		(uuid "4285695c-d2b1-4b49-bfce-8cc7bb488355")
 	)
 	(wire
 		(pts
@@ -3056,33 +3085,13 @@
 	)
 	(wire
 		(pts
-			(xy 85.09 116.84) (xy 85.09 123.19)
+			(xy 106.68 123.19) (xy 97.79 123.19)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "551223ad-d01e-44e6-8129-f69de2ec0cf3")
-	)
-	(wire
-		(pts
-			(xy 74.93 109.22) (xy 74.93 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5813ae9f-9df3-4b69-abdc-a1f697b73844")
-	)
-	(wire
-		(pts
-			(xy 106.68 106.68) (xy 111.76 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5848f604-53b5-4d6d-a9b2-ef9dad465b5e")
+		(uuid "4ca95c2f-f69f-475a-ba7c-8f3953aac95c")
 	)
 	(wire
 		(pts
@@ -3096,23 +3105,13 @@
 	)
 	(wire
 		(pts
-			(xy 106.68 106.68) (xy 97.79 106.68)
+			(xy 106.68 107.95) (xy 106.68 106.68)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "648a28cb-3f67-4ac6-8f44-e98dc80a82ba")
-	)
-	(wire
-		(pts
-			(xy 97.79 118.11) (xy 97.79 123.19)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "679fe50a-27bd-411e-a8ee-77d4b87296f3")
+		(uuid "65835fa8-4b41-4b6a-9e7d-2a3b6df2d741")
 	)
 	(wire
 		(pts
@@ -3126,6 +3125,16 @@
 	)
 	(wire
 		(pts
+			(xy 74.93 109.22) (xy 74.93 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6e001dc6-73d1-480a-9b06-6348dcbb51b4")
+	)
+	(wire
+		(pts
 			(xy 95.25 62.23) (xy 102.87 62.23)
 		)
 		(stroke
@@ -3136,13 +3145,13 @@
 	)
 	(wire
 		(pts
-			(xy 68.58 110.49) (xy 68.58 106.68)
+			(xy 106.68 106.68) (xy 111.76 106.68)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "7a01eb39-fafa-4e4f-9d58-bbcf53454651")
+		(uuid "717faae8-6fbf-4325-9284-fe1804e72c69")
 	)
 	(wire
 		(pts
@@ -3156,43 +3165,43 @@
 	)
 	(wire
 		(pts
+			(xy 68.58 123.19) (xy 85.09 123.19)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "80f36147-e349-40ed-8109-f9bcac86a664")
+	)
+	(wire
+		(pts
+			(xy 97.79 118.11) (xy 97.79 123.19)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "88773c85-23d5-4b09-88c2-b9d6744be980")
+	)
+	(wire
+		(pts
 			(xy 97.79 106.68) (xy 92.71 106.68)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "7dbbf813-b9a2-405a-b50d-320a483399ce")
+		(uuid "8d8e2cb6-ae9b-4b2e-8340-6519e812ceb6")
 	)
 	(wire
 		(pts
-			(xy 106.68 107.95) (xy 106.68 106.68)
+			(xy 74.93 106.68) (xy 77.47 106.68)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "80b6c311-8873-46d5-b8cb-8676e77e9c3b")
-	)
-	(wire
-		(pts
-			(xy 97.79 110.49) (xy 97.79 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "89209d6e-15d1-475d-97cb-03f1570b44ea")
-	)
-	(wire
-		(pts
-			(xy 106.68 123.19) (xy 97.79 123.19)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9d3ac51b-3a07-47f9-8c73-77035e3068d0")
+		(uuid "a035f58f-e47c-4d96-9128-80238d21d5cc")
 	)
 	(wire
 		(pts
@@ -3206,23 +3215,33 @@
 	)
 	(wire
 		(pts
-			(xy 97.79 123.19) (xy 85.09 123.19)
+			(xy 85.09 124.46) (xy 85.09 123.19)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "a32e68f3-4f22-4aa3-88ed-7fbc0e6f083a")
+		(uuid "a2149ed2-5445-4718-8120-4cc70c17db31")
 	)
 	(wire
 		(pts
-			(xy 106.68 114.3) (xy 106.68 115.57)
+			(xy 106.68 106.68) (xy 97.79 106.68)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "b5f7dae5-4b1c-424f-8e9e-5e17d3af5efb")
+		(uuid "aa656226-1ac4-483a-94cd-5889818b77d9")
+	)
+	(wire
+		(pts
+			(xy 85.09 115.57) (xy 85.09 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ad0669d2-7fc3-4551-ab08-5c3cb206ee56")
 	)
 	(wire
 		(pts
@@ -3246,43 +3265,23 @@
 	)
 	(wire
 		(pts
-			(xy 64.77 106.68) (xy 68.58 106.68)
+			(xy 97.79 123.19) (xy 85.09 123.19)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "bcb5d2e0-5079-4433-b3ff-1812cca4e5f9")
+		(uuid "c4408802-5c59-4bee-95cc-468cbbaf37b9")
 	)
 	(wire
 		(pts
-			(xy 85.09 124.46) (xy 85.09 123.19)
+			(xy 68.58 118.11) (xy 68.58 123.19)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "c6570c8c-fd21-4fe2-8770-2aee3d9d39dd")
-	)
-	(wire
-		(pts
-			(xy 74.93 106.68) (xy 77.47 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c6af8242-1f41-4a54-ba25-885d477a181f")
-	)
-	(wire
-		(pts
-			(xy 68.58 106.68) (xy 74.93 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c728938e-082a-47d3-b033-df72b9924481")
+		(uuid "c980b757-497b-436f-8d7a-afe7004b40e2")
 	)
 	(wire
 		(pts
@@ -3296,13 +3295,13 @@
 	)
 	(wire
 		(pts
-			(xy 85.09 115.57) (xy 85.09 116.84)
+			(xy 85.09 116.84) (xy 85.09 123.19)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "d31e8410-b628-4125-98c9-eba1b1295c7f")
+		(uuid "d344ee70-a466-47d2-a166-2fd6179ed89a")
 	)
 	(wire
 		(pts
@@ -3326,33 +3325,43 @@
 	)
 	(wire
 		(pts
-			(xy 68.58 118.11) (xy 68.58 123.19)
+			(xy 68.58 110.49) (xy 68.58 106.68)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "e4c1a75b-7df2-44f7-9a3b-c13b594441b6")
+		(uuid "dc0e51f9-0487-4122-aa11-3730c4c10416")
 	)
 	(wire
 		(pts
-			(xy 106.68 120.65) (xy 106.68 121.92)
+			(xy 97.79 110.49) (xy 97.79 106.68)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "e4ea585b-75cd-42ba-ad46-e6dd0d06fda8")
+		(uuid "ea4bd753-6405-40ad-9757-6573d0361558")
 	)
 	(wire
 		(pts
-			(xy 77.47 109.22) (xy 74.93 109.22)
+			(xy 106.68 114.3) (xy 106.68 115.57)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "e9e01c7d-6939-4b1c-aa3b-b60d1335ae52")
+		(uuid "edd04d18-8faa-4321-84d9-4647968dd610")
+	)
+	(wire
+		(pts
+			(xy 68.58 106.68) (xy 74.93 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f7a86a54-137f-401e-b352-b9d0bf4dfe37")
 	)
 	(wire
 		(pts
@@ -3866,28 +3875,6 @@
 			)
 		)
 	)
-	(global_label "VIN"
-		(shape input)
-		(at 64.77 106.68 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "16b93b21-1a44-4133-b4e0-65d845fcb7b6")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 59.4151 106.68 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "DPS310XTSA1_SCK"
 		(shape input)
 		(at 208.28 59.69 0)
@@ -4055,6 +4042,28 @@
 		(uuid "643c99dd-bf1c-49e3-a846-ea1cfab4c57b")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 152.1251 59.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VIN"
+		(shape input)
+		(at 64.77 106.68 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "786dc552-fbc3-40b9-8d4c-ad82fe59ba84")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 59.4151 106.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4660,7 +4669,7 @@
 			(uuid "8696b5f8-3d19-4fce-9836-fa53c10f5fb9")
 		)
 		(instances
-			(project "02_02_sensor_barometer (DPS310XTSA1)"
+			(project "02_02_sensor_barometer_DPS310XTSA1"
 				(path "/92e6eb8a-1518-48b3-b0c4-21c227fa4b6d"
 					(reference "C4")
 					(unit 1)
@@ -4727,7 +4736,7 @@
 			(uuid "44c3e144-ae29-43c1-9669-0033f405a7da")
 		)
 		(instances
-			(project "02_02_sensor_barometer (DPS310XTSA1)"
+			(project "02_02_sensor_barometer_DPS310XTSA1"
 				(path "/92e6eb8a-1518-48b3-b0c4-21c227fa4b6d"
 					(reference "R1")
 					(unit 1)
@@ -4793,7 +4802,7 @@
 			(uuid "8bf2a40f-f745-4492-9ae2-23f14b68a95d")
 		)
 		(instances
-			(project "02_02_sensor_barometer (DPS310XTSA1)"
+			(project "02_02_sensor_barometer_DPS310XTSA1"
 				(path "/92e6eb8a-1518-48b3-b0c4-21c227fa4b6d"
 					(reference "#PWR047")
 					(unit 1)
@@ -5060,7 +5069,7 @@
 			(uuid "ac611d71-3164-4df0-9d55-5dcdeff5d3e4")
 		)
 		(instances
-			(project "02_02_sensor_barometer (DPS310XTSA1)"
+			(project "02_02_sensor_barometer_DPS310XTSA1"
 				(path "/92e6eb8a-1518-48b3-b0c4-21c227fa4b6d"
 					(reference "#PWR04")
 					(unit 1)
@@ -5267,83 +5276,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Regulator_Linear:AP2112K-3.3")
-		(at 85.09 109.22 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "90d13325-8db9-4415-8fe8-c30f47ab0def")
-		(property "Reference" "U2"
-			(at 85.09 100.33 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "AP2112K-3.3"
-			(at 85.09 102.87 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-5"
-			(at 85.09 100.965 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.diodes.com/assets/Datasheets/AP2112.pdf"
-			(at 85.09 106.68 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "600mA low dropout linear regulator, with enable pin, 3.8V-6V input voltage range, 3.3V fixed positive output, SOT-23-5"
-			(at 85.09 109.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "6e6d90b1-d723-4011-b475-4fd1edcfb379")
-		)
-		(pin "3"
-			(uuid "34c6d0f1-625f-4cc5-9a97-0080fea23b37")
-		)
-		(pin "2"
-			(uuid "64960bca-07db-4d83-b1de-7dc497f84bfd")
-		)
-		(pin "4"
-			(uuid "c853a092-af69-4f38-8305-cf3e4cb3f34a")
-		)
-		(pin "5"
-			(uuid "23ea73c6-3b1d-4001-bc7d-e675b42f0419")
-		)
-		(instances
-			(project "02_02_sensor_barometer (DPS310XTSA1)"
-				(path "/92e6eb8a-1518-48b3-b0c4-21c227fa4b6d"
-					(reference "U2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "DPS310XTSA1_C3232509:DPS310XTSA1_C3232509")
 		(at 83.82 63.5 0)
 		(unit 1)
@@ -5441,6 +5373,95 @@
 		)
 	)
 	(symbol
+		(lib_name "TPSPX3819M5-L-3-3_1")
+		(lib_id "TPSPX3819M5-L-3-3:TPSPX3819M5-L-3-3")
+		(at 85.09 109.22 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a9993f51-3342-4c54-a50d-d4f37cfe4a75")
+		(property "Reference" "U2"
+			(at 85.09 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "TPSPX3819M5-L-3-3"
+			(at 85.09 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "TPSPX3819M5-L-3-3:SOT-23-5_L3.0-W1.6-P0.95-LS2.8-BR"
+			(at 85.09 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://atta.szlcsc.com/upload/public/pdf/source/20210423/C2682596_80E51577C889FCE8639E82E3A6FE92E9.pdf"
+			(at 82.804 109.093 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 85.09 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C5370980"
+			(at 87.63 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f7ae9f83-12b0-402a-adda-d9c6967017fb")
+		)
+		(pin "3"
+			(uuid "5df691ec-0142-4147-bfd3-4eaed1ed463c")
+		)
+		(pin "2"
+			(uuid "913dfdb7-e8de-46ae-b2f9-f3afca73a17a")
+		)
+		(pin "5"
+			(uuid "e9edc465-8a3c-4855-904b-807a8da77ce6")
+		)
+		(pin "4"
+			(uuid "b2954b21-6e51-46f1-9a91-0c6eef8d53e9")
+		)
+		(instances
+			(project "02_02_sensor_barometer_DPS310XTSA1"
+				(path "/92e6eb8a-1518-48b3-b0c4-21c227fa4b6d"
+					(reference "U2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:LED")
 		(at 106.68 118.11 90)
 		(unit 1)
@@ -5508,7 +5529,7 @@
 			(uuid "e69fcf35-aac2-4e99-81d6-2288d0f58ce1")
 		)
 		(instances
-			(project "02_02_sensor_barometer (DPS310XTSA1)"
+			(project "02_02_sensor_barometer_DPS310XTSA1"
 				(path "/92e6eb8a-1518-48b3-b0c4-21c227fa4b6d"
 					(reference "D1")
 					(unit 1)
@@ -5712,7 +5733,7 @@
 			(uuid "e88ed171-e7dd-4fd1-bcd4-ef9a61d45b1f")
 		)
 		(instances
-			(project "02_02_sensor_barometer (DPS310XTSA1)"
+			(project "02_02_sensor_barometer_DPS310XTSA1"
 				(path "/92e6eb8a-1518-48b3-b0c4-21c227fa4b6d"
 					(reference "C3")
 					(unit 1)
