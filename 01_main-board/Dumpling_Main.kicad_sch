@@ -19383,7 +19383,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "corprocessor_4.kicad_sch"
+		(property "Sheetfile" "coprocessor_4.kicad_sch"
 			(at 314.96 94.5646 0)
 			(effects
 				(font
