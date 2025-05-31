@@ -1,76 +1,36 @@
 #include "main.h"
-#include <Adafruit_DPS310.h>
+#include "flash_format.h"
+#include "sensor_detect.h"
 
-#include "SdFat_Adafruit_Fork.h"
-#include <SPI.h>
-#include <Adafruit_SPIFlash.h>
-
-#include "flash_config.h"
-
-/** DPS310XTSA1- Barometric pressure and temperature sensor  */
-// Read temperature/pressure
-
-Adafruit_DPS310 dps;
+// Flash object
 Adafruit_SPIFlash flash(&flashTransport);
+FatVolume fatfs;
 
-#define DPS310_CS PA15
-#define DPS310_SCK PB3
-#define DPS310_MISO PB4
-#define DPS310_MOSI PB5
-
+// === Setup ===
 void setup()
 {
     Serial.begin(115200);
-    while (!Serial)
-        delay(10);
+    delay(500); // Give time for power stabilization
 
-    // DPS310 config
-    Serial.println("DPS310");
-    if (!dps.begin_SPI(DPS310_CS, DPS310_SCK, DPS310_MISO, DPS310_MOSI))
-    {
-        Serial.println("Failed to find DPS");
-        while (1)
-            yield();
-    }
-    Serial.println("DPS OK!");
+    detectSensor();            // Detect sensors among sensor_detect.cpp
+    formatFlash(flash, fatfs); // Initialize and format local flash using flash_format.cpp
 
-    dps.configurePressure(DPS310_64HZ, DPS310_64SAMPLES); // check in higher sampling rate
-    dps.configureTemperature(DPS310_64HZ, DPS310_64SAMPLES);
-
-    // Flash detection
-    Serial.println("Adafruit Serial Flash Info example");
-    flash.begin();
-    Serial.println("bruh");
-
-    uint32_t jedec_id = flash.getJEDECID();
-    Serial.print("JEDEC ID: 0x");
-    Serial.println(jedec_id, HEX);
-    Serial.print("Flash size (usable): ");
-    Serial.print(flash.size() / 1024);
-    Serial.println(" KB");
+    // Store sensor ID
+    // Respond to I2C from F405 with sensor ID
 }
 
+// === Loop ===
 void loop()
 {
+    // If I2C START trigger from F405,
+    // read sensor data and write to local flash
+    // print to serial monitor for debug
 
-    // DPS310 read data
-    sensors_event_t temp_event, pressure_event;
+    // If I2C STOP trigger from F405,
+    // notify over I2C that trigger received
+    // If SPI request from F405,
+    // Send flash data to main flash over SPI
+    // When transfer is done, ..
 
-    while (!dps.temperatureAvailable() || !dps.pressureAvailable())
-    {
-        return; // wait until there's something to read
-    }
-
-    dps.getEvents(&temp_event, &pressure_event);
-    Serial.print(F("Temperature = "));
-    Serial.print(temp_event.temperature);
-    Serial.println(" *C");
-
-    Serial.print(F("Pressure = "));
-    Serial.print(pressure_event.pressure);
-    Serial.println(" hPa");
-
-    Serial.println();
-
-    delay(500);
+    // c.f. Sensor logging rates: define standard sample interval for all sensors or configurable via compile-time flags.
 }
