@@ -1,60 +1,74 @@
 #include "main.h"
-#include "sensor_detect.h"
-#include <SPI.h>
-#include <Wire.h>
-#include "Adafruit_LSM6DSOX.h"
-#include "Adafruit_DPS310.h"
-#include "bmi088.h"
-#include "Adafruit_BMP3XX.h"
-#include "Adafruit_LIS2MDL.h"
-#include "Adafruit_HDC302x.h"
-#include "Adafruit_MPU6050.h"
 
-// Declare the sensor objects extern in main.cpp and here extern too, or better yet,
-// move all these globals into a separate globals file or keep them in main.cpp and extern here
+// Declare the sensor objects
 Adafruit_LSM6DSOX lsm6ds;
 Adafruit_DPS310 dps310;
-bfs::Bmi088Accel accel;
-bfs::Bmi088Gyro gyro;
+Bmi088Accel bmiAccel(SPI, accel_CS);
+Bmi088Gyro bmiGyro(SPI, gyro_CS);
 Adafruit_BMP3XX bmp3xx;
 Adafruit_LIS2MDL lis2mdl;
 Adafruit_HDC302x hdc;
-Adafruit_MPU6050 mpu;
 
-String detectedSensor = "None";
+SensorType detectedSensor = SENSOR_UNKNOWN;
 
 void detectSensor()
 {
     SPI.begin();
     Wire.begin();
 
-    if (lsm6ds.begin_SPI(PA15))
+    if (lsm6ds.begin_SPI(LSM6DS_CS, LSM6DS_SCK, LSM6DS_MISO, LSM6DS_MOSI, 0, 1000000)) // CS, SCK, MISO, MOSI, sensorID, freq
     {
-        detectedSensor = "LSM6DSOX";
+        detectedSensor = SENSOR_LSM6DSO32;
+        while (1)
+        {
+            delay(10);
+        }
     }
-    else if (dps310.begin_SPI(PA15))
+
+    else if (dps310.begin_SPI(DPS310_CS, &SPI))
     {
-        detectedSensor = "DPS310";
+        detectedSensor = SENSOR_DPS310;
+        while (1)
+        {
+            delay(10);
+        }
     }
-    else if (bmi.begin(BMI088_ADDRESS_ACCEL, BMI088_ADDRESS_GYRO, &SPI, PA15, PA2))
+    else if (bmiAccel.begin() == 1 && bmiGyro.begin() == 1)
     {
-        detectedSensor = "BMI088";
+        detectedSensor = SENSOR_Bmi088Accel; // SENSOR_Bmi088Gyro
+        while (1)
+        {
+            delay(10);
+        }
     }
-    else if (bmp3xx.begin_I2C())
+    else if (bmp3xx.begin_I2C(0x76, &Wire)) // using I2C
     {
-        detectedSensor = "BMP3XX";
+        detectedSensor = SENSOR_BMP3xx;
+        while (1)
+        {
+            delay(10);
+        }
     }
-    else if (lis2mdl.begin_I2C())
+    else if (lis2mdl.begin(0x1E, &Wire)) // using I2C
     {
-        detectedSensor = "LIS2MDL";
+        detectedSensor = SENSOR_LIS2MDL;
+        while (1)
+        {
+            delay(10);
+        }
     }
-    else if (hdc.begin())
+    else if (hdc.begin(0x44, &Wire)) // using I2C
     {
-        detectedSensor = "HDC302x";
+        detectedSensor = SENSOR_HDC302x;
+        while (1)
+        {
+            delay(10);
+        }
     }
-    else if (mpu.begin())
+    else
     {
-        detectedSensor = "MPU6050";
+        Serial.print("Unknown sensor");
+        return;
     }
 
     Serial.print("Detected sensor: ");
