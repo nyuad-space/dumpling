@@ -12,19 +12,30 @@ void setup()
     Serial.begin(115200);
     delay(500); // Give time for power stabilization
 
-    // Open file system on the flash (ref: SdFat_ReadWrite.ino)
+    // Detect and initialize sensor
+    Serial.println("Detecting sensor...");
+    detectSensor(); // Prints detected sensor
+
+    // Configure sensor
+    Serial.println("Configuring sensor...");
+    configSensor(detectedSensor);
+    Serial.println("Sensor configured.");
+
+    // Initialize Flash
+    Serial.println("Initializing flash memory...");
+    if (!flash.begin())
+    {
+        Serial.println("Flash init failed!");
+        while (1)
+            yield();
+    }
+    // Mount filesystem
     if (!fatfs.begin(&flash))
     {
-        Serial.println("Error: file system not existing. Run SdFat_format to create.");
+        Serial.println("Filesystem not found. Please run formatter first.");
         while (1)
-        {
             yield();
-            delay(1);
-        }
     }
-
-    detectSensor();               // Detect and initialize plugged in sensor
-    configSensor(detectedSensor); // Configure corresponding sensor
 
     // Store sensor ID
     // Respond to I2C from F405 with sensor ID
