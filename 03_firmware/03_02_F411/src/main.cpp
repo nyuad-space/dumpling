@@ -1,9 +1,12 @@
 #include "main.h"
 
 // Flash object (ref: sensor2flash.ino)
-Adafruit_SPIFlash flash(&flashTransport);
-FatVolume fatfs;
-File32 sensorFile;
+// Adafruit_SPIFlash flash(&flashTransport);
+// FatVolume fatfs;
+// File32 sensorFile;
+
+Adafruit_SPIDevice spi_lsm6ds = Adafruit_SPIDevice(LSM6DS_CS, 10000, SPI_BITORDER_MSBFIRST, SPI_MODE0, &SENSOR_SPI);
+Adafruit_BusIO_Register regID_lsm6ds = Adafruit_BusIO_Register(&spi_lsm6ds, LSM6DS_WHOAMI_ADDR, ADDRBIT8_HIGH_TOREAD);
 
 // === Setup ===
 // Assuming that flash has been initialied with SdFat_format.ino
@@ -11,31 +14,32 @@ void setup()
 {
     Serial.begin(115200);
     delay(500); // Give time for power stabilization
+    SENSOR_SPI.begin();
 
-    // Detect and initialize sensor
-    Serial.println("Detecting sensor...");
-    detectSensor(); // Prints detected sensor
+    /*
+// Configure sensor
+Serial.println("Configuring sensor...");
+configSensor(detectedSensor);
+Serial.println("Sensor configured.");
 
-    // Configure sensor
-    Serial.println("Configuring sensor...");
-    configSensor(detectedSensor);
-    Serial.println("Sensor configured.");
 
-    // Initialize Flash
-    Serial.println("Initializing flash memory...");
-    if (!flash.begin())
-    {
-        Serial.println("Flash init failed!");
-        while (1)
-            yield();
-    }
-    // Mount filesystem
-    if (!fatfs.begin(&flash))
-    {
-        Serial.println("Filesystem not found. Please run formatter first.");
-        while (1)
-            yield();
-    }
+// Initialize Flash
+Serial.println("Initializing flash memory...");
+if (!flash.begin())
+{
+   Serial.println("Flash init failed!");
+   while (1)
+       yield();
+}
+// Mount filesystem
+if (!fatfs.begin(&flash))
+{
+   Serial.println("Filesystem not found. Please run formatter first.");
+   while (1)
+       yield();
+}
+Serial.println("Filesystem mounted.");
+*/
 
     // Store sensor ID
     // Respond to I2C from F405 with sensor ID
@@ -44,10 +48,13 @@ void setup()
 // === Loop ===
 void loop()
 {
-    switch (sensorType)
-    {
-        case 
-    }
+
+    // Detect and initialize sensor
+    // Serial.println("Detecting sensor...");
+    // detectSensor();
+    // delay(1000);
+    Serial.println(regID_lsm6ds.read());
+
     // If I2C START trigger from F405,
     // read sensor data and write to local flash // create .csv of name of sensor, date, time, proper header
     // print to serial monitor for debug

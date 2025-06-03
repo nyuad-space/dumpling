@@ -1,76 +1,58 @@
-#include "main.h"
+// #include "sensor_detect.h"
 
-// Declare the sensor objects
-Adafruit_LSM6DSOX lsm6ds;
-Adafruit_DPS310 dps310;
-Bmi088Accel bmiAccel(SPI, accel_CS);
-Bmi088Gyro bmiGyro(SPI, gyro_CS);
-Adafruit_BMP3XX bmp3xx;
-Adafruit_LIS2MDL lis2mdl;
-Adafruit_HDC302x hdc;
+// Adafruit_SPIDevice spi_lsm6ds = Adafruit_SPIDevice(LSM6DS_CS, 10000, SPI_BITORDER_MSBFIRST, SPI_MODE0, &SENSOR_SPI);
+// Adafruit_BusIO_Register regID_lsm6ds = Adafruit_BusIO_Register(&spi_lsm6ds, LSM6DS_WHOAMI_ADDR, ADDRBIT8_HIGH_TOREAD);
 
-SensorType detectedSensor = SENSOR_UNKNOWN;
+// Adafruit_SPIDevice spi_dps310 = Adafruit_SPIDevice(DPS310_CS, 10000, SPI_BITORDER_MSBFIRST, SPI_MODE0, &SENSOR_SPI);
+// Adafruit_BusIO_Register regID_dps310 = Adafruit_BusIO_Register(&spi_dps310, DPS310_WHOAMI_ADDR, ADDRBIT8_HIGH_TOREAD);
 
-void detectSensor()
-{
-    SPI.begin();
-    Wire.begin();
+// Adafruit_SPIDevice spi_bmi = Adafruit_SPIDevice(bmiAccel_CS, 10000, SPI_BITORDER_MSBFIRST, SPI_MODE0, &SENSOR_SPI);
+// Adafruit_BusIO_Register regID_bmi = Adafruit_BusIO_Register(&spi_bmi, BMI_WHOAMI_ADDR, ADDRBIT8_HIGH_TOREAD);
 
-    if (lsm6ds.begin_SPI(LSM6DS_CS, LSM6DS_SCK, LSM6DS_MISO, LSM6DS_MOSI, 0, 1000000)) // CS, SCK, MISO, MOSI, sensorID, freq
-    {
-        detectedSensor = SENSOR_LSM6DSO32;
-        while (1)
-        {
-            delay(10);
-        }
-    }
+// void detectSensor()
+// {
+//     SENSOR_SPI.begin();
+//     SENSOR_I2C.begin();
 
-    else if (dps310.begin_SPI(DPS310_CS, &SPI))
-    {
-        detectedSensor = SENSOR_DPS310;
-        while (1)
-        {
-            delay(10);
-        }
-    }
-    else if (bmiAccel.begin() == 1 && bmiGyro.begin() == 1)
-    {
-        detectedSensor = SENSOR_Bmi088Accel; // SENSOR_Bmi088Gyro
-        while (1)
-        {
-            delay(10);
-        }
-    }
-    else if (bmp3xx.begin_I2C(0x76, &Wire)) // using I2C
-    {
-        detectedSensor = SENSOR_BMP3xx;
-        while (1)
-        {
-            delay(10);
-        }
-    }
-    else if (lis2mdl.begin(0x1E, &Wire)) // using I2C
-    {
-        detectedSensor = SENSOR_LIS2MDL;
-        while (1)
-        {
-            delay(10);
-        }
-    }
-    else if (hdc.begin(0x44, &Wire)) // using I2C
-    {
-        detectedSensor = SENSOR_HDC302x;
-        while (1)
-        {
-            delay(10);
-        }
-    }
-    else
-    {
-        Serial.print("Unknown sensor");
-        return;
-    }
+//     if (regID_lsm6ds.read() == LSM6DS_WHOAMI)
+//     {
+//         lsm6ds.begin_SPI(LSM6DS_CS, SENSOR_SCK, SENSOR_MISO, SENSOR_MOSI, 0, 1000000);
+//         detectedSensor = SENSOR_LSM6DSO32;
+//     }
 
-    Serial.print("Detected sensor: ");
-    Serial.println(detectedSensor);
-}
+//     else if (regID_dps310.read() == DPS310_WHOAMI)
+//     {
+//         dps310.begin_SPI(DPS310_CS, &SENSOR_SPI);
+//         detectedSensor = SENSOR_DPS310;
+//     }
+//     else if (regID_bmi.read() == BMI_WHOAMI)
+//     {
+//         bmiAccel.begin() && bmiGyro.begin();
+//         detectedSensor = SENSOR_Bmi088Accel;
+//     }
+
+//     // ADD else if for I2Cs
+//     else
+//     {
+//         detectedSensor = SENSOR_UNKNOWN;
+//         Serial.print("Unknown sensor");
+//         return;
+//     }
+
+//     Serial.print("Detected sensor: ");
+//     Serial.println(detectedSensor);
+// }
+
+// // I2C
+// // else if (bmp3xx.begin_I2C(0x76, &SENSOR_I2C))
+// // {
+// //     detectedSensor = SENSOR_BMP3xx;
+// // }
+// // else if (lis2mdl.begin(0x1E, &SENSOR_I2C))
+// // {
+// //     detectedSensor = SENSOR_LIS2MDL;
+// // }
+// // else if (hdc.begin(0x44, &SENSOR_I2C))
+// // {
+// //     detectedSensor = SENSOR_HDC302x;
+// // }

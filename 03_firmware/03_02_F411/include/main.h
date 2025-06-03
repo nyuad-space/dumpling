@@ -7,6 +7,7 @@
 
 // Sensor libraries
 #include <Adafruit_LSM6DSO32.h>
+#include <Adafruit_LSM6DS.h>
 #include <Adafruit_DPS310.h>
 #include "BMI088.h"
 #include <Adafruit_BMP3XX.h>
@@ -20,7 +21,8 @@
 #include "flash_config.h"
 
 // Others
+#include "globals.h"
 #include "flash_format.h"
-#include "sensor_detect.h"
-#include "sensor_types.h"
+// #include "sensor_detect.h"
 #include "pinout.h"
+#include "sensor2flash.h"
