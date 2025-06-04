@@ -41,7 +41,7 @@
 // Adafruit_BusIO_Register regID_bmi;
 
 // Declare your detectSensor function
-void detectSensor();
+String detectSensor();
 
 struct SensorData
 {

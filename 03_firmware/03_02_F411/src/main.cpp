@@ -5,22 +5,18 @@
 // FatVolume fatfs;
 // File32 sensorFile;
 
-Adafruit_SPIDevice spi_lsm6ds = Adafruit_SPIDevice(LSM6DS_CS, 10000, SPI_BITORDER_MSBFIRST, SPI_MODE0, &SENSOR_SPI);
-Adafruit_BusIO_Register regID_lsm6ds = Adafruit_BusIO_Register(&spi_lsm6ds, LSM6DS_WHOAMI_ADDR, ADDRBIT8_HIGH_TOREAD);
-
 // === Setup ===
 // Assuming that flash has been initialied with SdFat_format.ino
 void setup()
 {
     Serial.begin(115200);
     delay(500); // Give time for power stabilization
-    SENSOR_SPI.begin();
 
     /*
-// Configure sensor
-Serial.println("Configuring sensor...");
-configSensor(detectedSensor);
-Serial.println("Sensor configured.");
+    // Configure sensor
+    Serial.println("Configuring sensor...");
+    configSensor(detectedSensor);
+    Serial.println("Sensor configured.");
 
 
 // Initialize Flash
@@ -50,10 +46,9 @@ void loop()
 {
 
     // Detect and initialize sensor
-    // Serial.println("Detecting sensor...");
-    // detectSensor();
-    // delay(1000);
-    Serial.println(regID_lsm6ds.read());
+    Serial.println("Detecting sensor...");
+    Serial.println(detectSensor());
+    delay(1000);
 
     // If I2C START trigger from F405,
     // read sensor data and write to local flash // create .csv of name of sensor, date, time, proper header
