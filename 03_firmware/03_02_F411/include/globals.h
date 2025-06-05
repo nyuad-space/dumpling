@@ -18,8 +18,6 @@ extern TwoWire SENSOR_I2C;
 extern SPIClass SENSOR_SPI;
 extern SPIClass FLASH_SPI;
 
-
-
 // Sensor objects
 extern Adafruit_LSM6DS lsm6ds;
 extern Adafruit_DPS310 dps310;

@@ -1,6 +1,8 @@
 #include "sensor_detect.h"
 
+// Set up SPI between sensors and F411
 Adafruit_SPIDevice spi_lsm6ds = Adafruit_SPIDevice(LSM6DS_CS, 10000, SPI_BITORDER_MSBFIRST, SPI_MODE0, &SENSOR_SPI);
+// Points to WHOAMI register of sensor
 Adafruit_BusIO_Register regID_lsm6ds = Adafruit_BusIO_Register(&spi_lsm6ds, LSM6DS_WHOAMI_ADDR, ADDRBIT8_HIGH_TOREAD);
 
 Adafruit_SPIDevice spi_dps310 = Adafruit_SPIDevice(DPS310_CS, 10000, SPI_BITORDER_MSBFIRST, SPI_MODE0, &SENSOR_SPI);
@@ -11,44 +13,43 @@ Adafruit_BusIO_Register regID_bmi = Adafruit_BusIO_Register(&spi_bmi, BMI_WHOAMI
 
 String detectSensor()
 {
+    SENSOR_SPI.begin();
     SENSOR_I2C.begin();
 
-    if (regID_lsm6ds.read() == LSM6DS_WHOAMI)
+    uint8_t id = 0;
+
+    if (spi_lsm6ds.begin())
     {
-        SENSOR_SPI.begin(LSM6DS_CS);
-        // lsm6ds.begin_SPI(LSM6DS_CS, SENSOR_SCK, SENSOR_MISO, SENSOR_MOSI, 0, 1000000);
-        detectedSensor = SENSOR_LSM6DSO32;
-        SENSOR_SPI.end();
-        return "lsm";
+        if (regID_lsm6ds.read(&id) && id == LSM6DS_WHOAMI)
+        {
+            detectedSensor = SENSOR_LSM6DSO32;
+            return "LSM6DSO32";
+        }
     }
 
-    else if (regID_dps310.read() == DPS310_WHOAMI)
+    if (spi_dps310.begin())
     {
-        SENSOR_SPI.begin(DPS310_CS);
-        // dps310.begin_SPI(DPS310_CS, &SENSOR_SPI);
-        detectedSensor = SENSOR_DPS310;
-        SENSOR_SPI.end();
-        return "sdf";
+        if (regID_dps310.read(&id) && id == DPS310_WHOAMI)
+        {
+            detectedSensor = SENSOR_DPS310;
+            return "DPS310";
+        }
     }
-    else if (regID_bmi.read() == BMI_WHOAMI)
+    if (spi_bmi.begin())
     {
-        SENSOR_SPI.begin(bmiAccel_CS);
-        // bmiAccel.begin() && bmiGyro.begin();
-        detectedSensor = SENSOR_Bmi088Accel;
-        SENSOR_SPI.end();
-        return "weweff";
+        if (regID_bmi.read(&id) && id == BMI_WHOAMI)
+        {
+            detectedSensor = SENSOR_Bmi088Accel;
+            return "BMI088";
+        }
     }
 
     // ADD else if for I2Cs
     else
     {
         detectedSensor = SENSOR_UNKNOWN;
-        Serial.print("Unknown sensor");
-        return "sdfsdfa";
+        return "unknown";
     }
-
-    Serial.print("Detected sensor: ");
-    Serial.println(detectedSensor);
 }
 
 // I2C

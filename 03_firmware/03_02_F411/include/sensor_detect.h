@@ -22,23 +22,14 @@
 #define DPS310_WHOAMI 0x10
 #define BMI_WHOAMI 0x1E
 
-// extern Adafruit_SPIDevice spi_lsm6ds;
-// extern Adafruit_BusIO_Register regID_lsm6ds;
+extern Adafruit_SPIDevice spi_lsm6ds;
+extern Adafruit_BusIO_Register regID_lsm6ds;
 
-// extern Adafruit_SPIDevice spi_dps310;
-// extern Adafruit_BusIO_Register regID_dps310;
+extern Adafruit_SPIDevice spi_dps310;
+extern Adafruit_BusIO_Register regID_dps310;
 
-// extern Adafruit_SPIDevice spi_bmi;
-// extern Adafruit_BusIO_Register regID_bmi;
-
-// Adafruit_SPIDevice spi_lsm6ds;
-// Adafruit_BusIO_Register regID_lsm6ds;
-
-// Adafruit_SPIDevice spi_dps310;
-// Adafruit_BusIO_Register regID_dps310;
-
-// Adafruit_SPIDevice spi_bmi;
-// Adafruit_BusIO_Register regID_bmi;
+extern Adafruit_SPIDevice spi_bmi;
+extern Adafruit_BusIO_Register regID_bmi;
 
 // Declare your detectSensor function
 String detectSensor();
