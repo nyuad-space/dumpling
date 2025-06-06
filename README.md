@@ -6,3 +6,6 @@
 - SWD TagConnect: Layout is too close to XT30 or M.2 sockets and connector is difficult to source.
 - Check and recheck DRC.
 - Look out for "x"ed POS in the BOM file. May have been accidentally toggled off.
+- Reset button is too small & hard to reach
+- Vertical USB is less stress-tolerant (pulls on solder)
+- Arbitrary STM32F411 DFU bootloading error

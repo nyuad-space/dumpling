@@ -22,7 +22,7 @@ const unsigned long HEARTBEAT_INTERVAL = 3000;
 void setup()
 {
     Serial.begin(115200);
-    delay(1000); // Give time for power stabilization
+    delay(5000); // Give time for power stabilization
     // initSensorPins(); // Initialize CS pins
 
     // Initialize SPI buses
@@ -66,14 +66,11 @@ void setup()
 // === Loop ===
 void loop()
 {
-    // Detect and initialize sensor
-    if (knowSensor == false)
-    {
-        Serial.println("Detecting sensor...");
-        Serial.print("Connected to: ");
-        Serial.println(detectSensor());
-        knowSensor = true;
-    }
+
+    Serial.println("Detecting sensor...");
+    Serial.print("Connected to: ");
+    Serial.println(detectSensor());
+    delay(5000);
 
     // Configure sensor
     Serial.println("Configuring sensor...");
