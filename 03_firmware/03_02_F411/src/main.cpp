@@ -49,10 +49,11 @@ void loop()
         knowSensor = true;
     }
 
-    // // Configure sensor
-    // Serial.println("Configuring sensor...");
-    // configSensor(detectedSensor);
-    // Serial.println("Sensor configured.");
+    /*
+    // Configure sensor
+    Serial.println("Configuring sensor...");
+    configSensor(detectedSensor);
+    Serial.println("Sensor configured.");
 
     // If I2C START trigger from F405,
     // read sensor data and write to local flash // create .csv of name of sensor, date, time, proper header
@@ -65,4 +66,5 @@ void loop()
     // When transfer is done, ..
 
     // c.f. Sensor logging rates: define standard sample interval for all sensors or configurable via compile-time flags.
+    */
 }

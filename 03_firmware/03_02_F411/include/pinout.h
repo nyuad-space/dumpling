@@ -4,6 +4,7 @@
 #define SENSOR_MOSI PB5
 
 // Sensor CS
+#define SENSOR_CS PA15
 #define LSM6DS_CS PA15
 #define DPS310_CS PA15
 #define bmiAccel_CS PA15
