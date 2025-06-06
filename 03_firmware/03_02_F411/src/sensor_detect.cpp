@@ -34,12 +34,12 @@ String detectSensor()
     // == SPI sensors ==
     if (regID_lsm6ds.read(&id) && id == LSM6DS_WHOAMI_VAL)
     {
-        detectedSensor = SENSOR_LSM6DSO32;
+        detectedSensor = SENSOR_LSM6DS_ACCEL_GYRO;
         return "LSM6DSO32";
     }
     else if (regID_dps310.read(&id) && id == DPS310_WHOAMI_VAL)
     {
-        detectedSensor = SENSOR_DPS310;
+        detectedSensor = SENSOR_DPS310_BARO_TEMP;
         return "DPS310";
     }
     
@@ -47,23 +47,23 @@ String detectSensor()
     // Then mask first byte
     else if (regID_bmi.read(&id) && ((id >> 8) & 0xFF) == BMI_WHOAMI_VAL)
     {
-        detectedSensor = SENSOR_Bmi088Accel;
+        detectedSensor = SENSOR_BMI088_ACCEL;
         return "BMI088";
     }
     // Mask the upper byte
     else if (regID_bmp390.read(&id) && (id & 0xFF) == BMP390_WHOAMI_VAL)
     {
-        detectedSensor = SENSOR_BMP3xx;
+        detectedSensor = SENSOR_BMP390_BARO;
         return "BMP390";
     }
     else if (regID_lis2mdl.read(&id) && (id & 0xFF) == LIS2MDL_WHOAMI_VAL)
     {
-        detectedSensor = SENSOR_LIS2MDL;
+        detectedSensor = SENSOR_LIS2MDL_MAG;
         return "LIS2MDLTR";
     }
     else if (regID_hdc302.read(&id) && ((id >> 8) & 0xFF) == HDC302_WHOAMI_VAL)
     {
-        detectedSensor = SENSOR_HDC302;
+        detectedSensor = SENSOR_HDC302_TEMP_HUM;
         return "HDC302";
     }
     else
