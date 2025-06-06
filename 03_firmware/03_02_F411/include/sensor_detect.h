@@ -19,16 +19,17 @@
 #define DPS310_WHOAMI_ADDR 0x0D
 #define BMI_WHOAMI_ADDR 0x00
 #define BMP390_WHOAMI_ADDR 0x00
-#define LIS2_WHOAMI_ADDR 0x4F
-#define HDC302_WHOAMI_ADDR 0x37
+#define LIS2MDL_WHOAMI_ADDR 0x4F
+#define HDC302_WHOAMI_ADDR 0x8137
 
 // WhoAmI register values
-#define LSM6DS_WHOAMI 0x6C
-#define DPS310_WHOAMI 0x10
-#define BMI_WHOAMI 0x1E
-#define BMP390_WHOAMI 0x60
-#define LIS2MDL_WHOAMI 0x40
-#define HDC302_WHOAMI 0x3000
+#define LSM6DS_WHOAMI_VAL 0x6C
+#define DPS310_WHOAMI_VAL 0x10
+#define BMI_WHOAMI_VAL 0x1E
+#define BMP390_WHOAMI_VAL 0x60
+#define LIS2MDL_WHOAMI_VAL 0x40
+// This is a hacky workaround, the actual data is 0x3000, we just read the upper byte!
+#define HDC302_WHOAMI_VAL 0x30
 
 // I2C sensors address
 #define BMP390_I2C_ADDR 0x76
