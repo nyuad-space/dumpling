@@ -1,12 +1,12 @@
 #include "globals.h"
 #include "pinout.h"
-// #include <Adafruit_LSM6DSO32.h>
-// #include <Adafruit_LSM6DS.h>
-// #include <Adafruit_DPS310.h>
-// #include "BMI088.h"
-// #include <Adafruit_BMP3XX.h>
-// #include <Adafruit_LIS2MDL.h>
-// #include <Adafruit_HDC302x.h>
+#include <Adafruit_LSM6DSO32.h>
+#include <Adafruit_LSM6DS.h>
+#include <Adafruit_DPS310.h>
+#include "BMI088.h"
+#include <Adafruit_BMP3XX.h>
+#include <Adafruit_LIS2MDL.h>
+#include <Adafruit_HDC302x.h>
 
 // sensor_detect.h
 #ifndef SENSOR_DETECT_H
@@ -64,6 +64,16 @@ struct SensorData
     float gx = NAN, gy = NAN, gz = NAN;
 };
 
-
+enum SensorType
+{
+    SENSOR_UNKNOWN,
+    SENSOR_LSM6DSO32,
+    SENSOR_DPS310,
+    SENSOR_Bmi088Accel,
+    SENSOR_Bmi088Gyro,
+    SENSOR_BMP3xx,
+    SENSOR_LIS2MDL,
+    SENSOR_HDC302
+};
 
 #endif // SENSOR_DETECT_H

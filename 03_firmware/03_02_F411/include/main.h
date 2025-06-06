@@ -5,20 +5,24 @@
 #include "Wire.h"
 #include "float.h"
 
+// Sensor libraries
+#include <Adafruit_LSM6DSO32.h>
+#include <Adafruit_LSM6DS.h>
+#include <Adafruit_DPS310.h>
+#include "BMI088.h"
+#include <Adafruit_BMP3XX.h>
+#include <Adafruit_LIS2MDL.h>
+#include <Adafruit_HDC302x.h>
+
 // Flash libraries
 #include <Adafruit_SPIFlash.h>
 #include <SPIFlash.h>
 #include <SdFat_Adafruit_Fork.h>
 #include "flash_config.h"
-#include "flash_format.h"
-
-// Sensor communication libraries
-#include "globals.h"
-#include "pinout.h"
-#include "sensor_detect.h"
-#include "sensor_config.h"
-#include "sensor2flash.h"
 
 // Others
-#include "Adafruit_NeoPixel.h"
-#include "SPIPacket.h"
+#include "globals.h"
+#include "flash_format.h"
+// #include "sensor_detect.h"
+#include "pinout.h"
+#include "sensor2flash.h"

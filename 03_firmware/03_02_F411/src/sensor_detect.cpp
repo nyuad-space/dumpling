@@ -1,4 +1,3 @@
-#include "globals.h"
 #include "sensor_detect.h"
 
 // Set up SPI between sensors and F411

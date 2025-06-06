@@ -1,16 +1,4 @@
-// SPI bus (SPI1- Flash)
-#define FLASH_CS PA4
-#define FLASH_SCK PA5
-#define FLASH_MISO PA6
-#define FLASH_MOSI PA7
-
-// SPI bus (SPI2- Interboard)
-#define INTERBOARD_SCK PB13
-#define INTERBOARD_MISO PB14
-#define INTERBOARD_MOSI PB15
-#define INTERBOARD_CS PB12
-
-// SPI bus (SPI3- Sensor)
+// SPI bus (SPI3)
 #define SENSOR_SCK PB3
 #define SENSOR_MISO PB4
 #define SENSOR_MOSI PB5
@@ -21,10 +9,6 @@
 #define DPS310_CS PA15
 #define bmiAccel_CS PA15
 #define bmiGyro_CS PA2
-
-// I2C sensors (I2C1)
-#define SENSOR_SCL PB6
-#define SENSOR_SDA PB7
 
 // inline void initSensorPins()
 // {
@@ -38,3 +22,17 @@
 //     digitalWrite(bmiAccel_CS, HIGH);
 //     digitalWrite(bmiGyro_CS, HIGH);
 // }
+
+// SPI bus (SPI2)
+#define INTERBOARD_SCK PB13
+#define INTERBOARD_MISO PB14
+#define INTERBOARD_MOSI PB15
+
+// SPI bus (SPI1)
+#define FLASH_SCK PA5
+#define FLASH_MISO PA6
+#define FLASH_MOSI PA7
+
+// I2C sensors (I2C1)
+#define SENSOR_SCL PB6
+#define SENSOR_SDA PB7
