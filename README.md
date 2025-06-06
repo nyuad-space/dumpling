@@ -9,3 +9,4 @@
 - Reset button is too small & hard to reach
 - Vertical USB is less stress-tolerant (pulls on solder)
 - Arbitrary STM32F411 DFU bootloading error
+- Check forward current rating for Schottky diodes. Generally 1A would work
