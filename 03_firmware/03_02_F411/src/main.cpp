@@ -11,7 +11,7 @@ bool knowSensor = false;
 void setup()
 {
     Serial.begin(115200);
-    delay(10000); // Give time for power stabilization
+    delay(5000); // Give time for power stabilization
     // initSensorPins(); // Initialize CS pins
 
     /*
@@ -40,14 +40,11 @@ void setup()
 // === Loop ===
 void loop()
 {
-    // Detect and initialize sensor
-    if (knowSensor == false)
-    {
-        Serial.println("Detecting sensor...");
-        Serial.print("Connected to: ");
-        Serial.println(detectSensor());
-        knowSensor = true;
-    }
+
+    Serial.println("Detecting sensor...");
+    Serial.print("Connected to: ");
+    Serial.println(detectSensor());
+    delay(5000);
 
     /*
     // Configure sensor
