@@ -17,59 +17,65 @@ Adafruit_BusIO_Register regID_lis2mdl = Adafruit_BusIO_Register(&i2c_lis2mdl, LI
 
 Adafruit_I2CDevice i2c_hdc302 = Adafruit_I2CDevice(HDC302_I2C_ADDR, &SENSOR_I2C);
 Adafruit_BusIO_Register regID_hdc302 = Adafruit_BusIO_Register(
-    &i2c_hdc302, 
+    &i2c_hdc302,
     HDC302_WHOAMI_ADDR, // reg_addr: this will be split as addrbuffer[0]=0x37, addrbuffer[1]=0x81
     3,                  // width: read 3 bytes (2 data + 1 CRC)
-    MSBFIRST,           // byteorder: MSB first for the returned data
+    MSBFIRST,           // byteorder: MSB first for the name =ed data
     2                   // address_width: send 2 bytes for the command
 );
 
 String detectSensor()
 {
+    String name = "";
     // SENSOR_SPI.begin();
     adafruit_spi_device.begin();
     SENSOR_I2C.begin();
 
     uint16_t id = 0xFFFF;
 
+    // TODO: if condition failing at compare id to WHOAMI_VAL for LSM6DS.
+
     // == SPI sensors ==
-    if (regID_lsm6ds.read(&id) && id == LSM6DS_WHOAMI_VAL)
+    if (regID_lsm6ds.read(&id)) // && id == LSM6DS_WHOAMI_VAL
     {
-        detectedSensor = SENSOR_LSM6DSO32;
-        return "LSM6DSO32";
+        detectedSensor = SENSOR_LSM6DS_ACCEL_GYRO;
+        name = "LSM6DSO32";
     }
     else if (regID_dps310.read(&id) && id == DPS310_WHOAMI_VAL)
     {
-        detectedSensor = SENSOR_DPS310;
-        return "DPS310";
+        detectedSensor = SENSOR_DPS310_BARO_TEMP;
+        name = "DPS310";
     }
-    
+
     // Shift first byte (ID) down to second (empty)
     // Then mask first byte
     else if (regID_bmi.read(&id) && ((id >> 8) & 0xFF) == BMI_WHOAMI_VAL)
     {
-        detectedSensor = SENSOR_Bmi088Accel;
-        return "BMI088";
+        detectedSensor = SENSOR_BMI088_ACCEL;
+        name = "BMI088";
     }
     // Mask the upper byte
     else if (regID_bmp390.read(&id) && (id & 0xFF) == BMP390_WHOAMI_VAL)
     {
-        detectedSensor = SENSOR_BMP3xx;
-        return "BMP390";
+        detectedSensor = SENSOR_BMP390_BARO;
+        name = "BMP390";
     }
     else if (regID_lis2mdl.read(&id) && (id & 0xFF) == LIS2MDL_WHOAMI_VAL)
     {
-        detectedSensor = SENSOR_LIS2MDL;
-        return "LIS2MDLTR";
+        detectedSensor = SENSOR_LIS2MDL_MAG;
+        name = "LIS2MDLTR";
     }
     else if (regID_hdc302.read(&id) && ((id >> 8) & 0xFF) == HDC302_WHOAMI_VAL)
     {
-        detectedSensor = SENSOR_HDC302;
-        return "HDC302";
+        detectedSensor = SENSOR_HDC302_TEMP_HUM;
+        name = "HDC302";
     }
     else
     {
         detectedSensor = SENSOR_UNKNOWN;
-        return "unknown";
+        name = "unknown";
     }
+    SENSOR_I2C.end();
+    delete &adafruit_spi_device;
+    return name;
 }

@@ -1,49 +1,76 @@
 #include "globals.h"
 #include "sensor_config.h"
+#include "sensor_detect.h"
 
 void configSensor(SensorType sensorType)
 {
     switch (sensorType)
     {
-    case SENSOR_LSM6DSO32:
-        lsm6ds.setAccelRange(LSM6DSO32_ACCEL_RANGE_8_G);
-        Serial.print("Accelerometer range set to: +-8G"); // 4, 8, 16, 32G
-        lsm6ds.setGyroRange(LSM6DS_GYRO_RANGE_250_DPS);
-        Serial.print("Gyro range set to: 250 degrees/s"); // 125, 250, 500, 1000, 2000
-        lsm6ds.setAccelDataRate(LSM6DS_RATE_12_5_HZ);
-        Serial.print("Accelerometer data rate set to: 12.5 Hz"); // 0,12.5,26,52,104,208,416,833,1.66k,3.33k,6.66k
-        lsm6ds.setGyroDataRate(LSM6DS_RATE_12_5_HZ);
-        Serial.print("Gyro data rate set to: 12.5 Hz"); // 0,12.5,26,52,104,208,416,833,1.66k,3.33k,6.66k
+    case SENSOR_LSM6DS_ACCEL_GYRO:
+        lsm6ds_accel_gyro.begin_SPI(LSM6DS_CS, &SENSOR_SPI, 0L, 1000000UL);
+        lsm6ds_accel_gyro.setAccelRange(LSM6DSO32_ACCEL_RANGE_8_G);
+        Serial.println("Accelerometer range set to: +-8G");
+        // lsm6ds_accel_gyro.setGyroRange(LSM6DS_GYRO_RANGE_250_DPS);
+        // Serial.println("Gyro range set to: 250 degrees/s");
+        // lsm6ds_accel_gyro.setAccelDataRate(LSM6DS_RATE_104_HZ); // Output Data Range (ODR)= 16MB/(data size*600sec)
+        // Serial.println("Accelerometer data rate set to: 104 Hz");
+        // lsm6ds_accel_gyro.setGyroDataRate(LSM6DS_RATE_104_HZ);
+        // Serial.println("Gyro data rate set to: 104 Hz");
         break;
-    case SENSOR_DPS310:
-        dps310.configurePressure(DPS310_64HZ, DPS310_64SAMPLES);
-        dps310.configureTemperature(DPS310_64HZ, DPS310_64SAMPLES);
+    case SENSOR_DPS310_BARO_TEMP:
+        dps310_baro_temp.configurePressure(DPS310_64HZ, DPS310_8SAMPLES);
+        Serial.println("Pressure data rate / oversampling set to: 64 Hz / 8x");
+        dps310_baro_temp.configureTemperature(DPS310_64HZ, DPS310_8SAMPLES);
+        Serial.println("Temperature data rate / oversampling set to: 64 Hz / 8x");
         break;
-    case SENSOR_Bmi088Accel:
-        bmiAccel.setOdr(Bmi088Accel::ODR_1600HZ_BW_280HZ); // Output data rate and bandwidth
-        bmiAccel.setRange(Bmi088Accel::RANGE_24G);
-        bmiGyro.setOdr(Bmi088Gyro::ODR_200HZ_BW_23HZ);
-        bmiGyro.setRange(Bmi088Gyro::RANGE_1000DPS);
+    // case SENSOR_BMI088_ACCEL:
+    //     bmi088_accel.setOdr(Bmi088Accel::ODR_1600HZ_BW_280HZ); // Output data rate and bandwidth
+    //     Serial.println("Accelerometer output data rate / bandwidth set to: 1600 Hz / 280 Hz");
+    //     bmi088_accel.setRange(Bmi088Accel::RANGE_24G);
+    //     Serial.println("Accelerometer range set to: 24 G");
+    //     bmi088_gyro.setOdr(Bmi088Gyro::ODR_200HZ_BW_23HZ);
+    //     Serial.println("Gyro output data rate / bandwidth set to: 1600 Hz / 280 Hz");
+    //     bmi088_gyro.setRange(Bmi088Gyro::RANGE_1000DPS);
+    //     Serial.println("Gyro range set to: 1000 degrees/s");
+    //     break;
+    // case SENSOR_BMI088_GYRO:
+    //     bmi088_accel.setOdr(Bmi088Accel::ODR_1600HZ_BW_280HZ); // Output data rate and bandwidth
+    //     Serial.println("Accelerometer output data rate / bandwidth set to: 1600 Hz / 280 Hz");
+    //     bmi088_accel.setRange(Bmi088Accel::RANGE_24G);
+    //     Serial.println("Accelerometer range set to: 24 G");
+    //     bmi088_gyro.setOdr(Bmi088Gyro::ODR_200HZ_BW_23HZ);
+    //     Serial.println("Gyro output data rate / bandwidth set to: 1600 Hz / 280 Hz");
+    //     bmi088_gyro.setRange(Bmi088Gyro::RANGE_1000DPS);
+    //     Serial.println("Gyro range set to: 1000 degrees/s");
+    //     break;
+    case SENSOR_BMP390_BARO:
+        bmp390_baro.setTemperatureOversampling(BMP3_OVERSAMPLING_8X);
+        Serial.println("Temperature oversampling set to: 8x");
+        bmp390_baro.setPressureOversampling(BMP3_OVERSAMPLING_8X);
+        Serial.println("Pressure oversampling set to: 8x");
+        bmp390_baro.setIIRFilterCoeff(BMP3_IIR_FILTER_COEFF_3); // IIR (Infiinite Impulse Response) smooth out sudden changes in readings
+        Serial.println("IIR Filter coefficient set to: 3");
+        bmp390_baro.setOutputDataRate(BMP3_ODR_50_HZ);
+        Serial.println("Output data rate set to: 50 Hz");
         break;
-    case SENSOR_Bmi088Gyro:
-        bmiAccel.setOdr(Bmi088Accel::ODR_1600HZ_BW_280HZ); // Output data rate and bandwidth
-        bmiAccel.setRange(Bmi088Accel::RANGE_24G);
-        bmiGyro.setOdr(Bmi088Gyro::ODR_200HZ_BW_23HZ);
-        bmiGyro.setRange(Bmi088Gyro::RANGE_1000DPS);
+    case SENSOR_LIS2MDL_MAG:
+        lis2mdl_mag.reset(); // Set up register bits (Temperature compensation, Continuous mode, Block Data Update, etc.)
+        lis2mdl_mag.setDataRate(LIS2MDL_RATE_100_HZ);
+        Serial.println("Data rate set to: 100 Hz");
+        lis2mdl_mag.enableAutoRange(true); // Enable higher precision
+        Serial.println("Enabled Auto Range adjustment.");
         break;
-    case SENSOR_BMP3xx:
-        bmp3xx.setTemperatureOversampling(BMP3_OVERSAMPLING_8X);
-        bmp3xx.setPressureOversampling(BMP3_OVERSAMPLING_4X);
-        bmp3xx.setIIRFilterCoeff(BMP3_IIR_FILTER_COEFF_3);
-        bmp3xx.setOutputDataRate(BMP3_ODR_50_HZ);
+    case SENSOR_HDC302_TEMP_HUM:
+        hdc302_temp_hum.heaterEnable(HEATER_QUARTER_POWER); // Enable heater for better accuracy against condensation
+        Serial.println("Enabled heater.");
+        // set measurement resolution, measurement interval, etc. (no function found)
         break;
-    case SENSOR_LIS2MDL:
-        lis2mdl.setDataRate(LIS2MDL_RATE_100_HZ);
-        lis2mdl.enableAutoRange(true);
+    case SENSOR_UNKNOWN: // SENSOR_UNKNOWN
+                         // No configuration needed for unknown sensor
+                         // printlnf("Warning: Unknown sensor type\n");
         break;
-    case SENSOR_HDC302: // no configuration settings?!
-        break;
-    default: // SENSOR_UNKNOWN
+    default:
         break;
     }
+    return;
 }

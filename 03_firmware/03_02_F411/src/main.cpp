@@ -1,88 +1,76 @@
 #include "main.h"
 
-SPIClass INTERBOARD_SPI(INTERBOARD_MOSI, INTERBOARD_MISO, INTERBOARD_SCK);
-SPIClass FLASH_SPI(FLASH_MOSI, FLASH_MISO, FLASH_SCK);
-SPIClass SENSOR_SPI(SENSOR_MOSI, SENSOR_MISO, SENSOR_SCK);
-
 // Adafruit_NeoPixel rgb_led(1, RGB_LED, NEO_GRB + NEO_KHZ800);
 
-// // Flash object (ref: sensor2flash.ino)
-// Adafruit_SPIFlash flash(&flashTransport);
-// FatVolume fatfs;
-// File32 sensorFile;
+// uint8_t heartbeat_status = 0x00;
 
-bool knowSensor = false;
-uint8_t heartbeat_status = 0x00;
+// // Timing variables
+// const unsigned long HEARTBEAT_INTERVAL = 3000;
 
-// Timing variables
-const unsigned long HEARTBEAT_INTERVAL = 3000;
-
-// Function headers
-void create_heartbeat_response(uint8_t heartbeat_stat);
+// // Function headers
+// void create_heartbeat_response(uint8_t heartbeat_stat);
 
 // === Setup ===
 // Assuming that flash has been initialied with SdFat_format.ino
 void setup()
 {
-    Serial.begin(115200);
-    delay(5000); // Give time for power stabilization
+    delay(5000);
+    // Serial.begin(115200);
+    // delay(5000); // Give time for power stabilization
     // initSensorPins(); // Initialize CS pins
 
     // Initialize SPI buses (CS HIGH = inactive, safe default)
     // Interboard SPI (slave mode)
-    INTERBOARD_SPI.begin();
-    SPCR0 |= _BV(SPE);                // set up slave mode
-    INTERBOARD_SPI.attachInterrupt(); // turn on interrupt //  SPCR |= (1 << SPIE)
-    pinMode(INTERBOARD_CS, INPUT);
-    digitalWrite(INTERBOARD_CS, HIGH);
+    // INTERBOARD_SPI.begin();
+    // // SPCR0 |= _BV(SPE);                // set up slave mode
+    // INTERBOARD_SPI.attachInterrupt(); // turn on interrupt //  SPCR |= (1 << SPIE)
+    // pinMode(INTERBOARD_CS, INPUT);
+    // digitalWrite(INTERBOARD_CS, HIGH);
 
-    // Flash SPI (master mode)
-    FLASH_SPI.begin();
-    pinMode(FLASH_CS, OUTPUT);
-    digitalWrite(FLASH_CS, HIGH);
+    // // Flash SPI (master mode)
+    // FLASH_SPI.begin();
+    // pinMode(FLASH_CS, OUTPUT);
+    // digitalWrite(FLASH_CS, HIGH);
 
-    // Sensor SPI (master mode)
-    SENSOR_SPI.begin();
+    // // Sensor SPI (master mode)
+    // SENSOR_SPI.begin();
+    // pinMode(SENSOR_CS, OUTPUT);
+    // digitalWrite(SENSOR_CS, HIGH);
+
     pinMode(SENSOR_CS, OUTPUT);
     digitalWrite(SENSOR_CS, HIGH);
 
-    /*
-    // Initialize Flash
-    Serial.println("Initializing flash memory...");
-    if (!flash.begin())
-    {
-       Serial.println("Flash init failed!");
-       while (1)
-           yield();
-    }
-    // Mount filesystem
-    if (!fatfs.begin(&flash))
-    {
-       Serial.println("Filesystem not found. Please run formatter first.");
-       while (1)
-           yield();
-    }
-    Serial.println("Filesystem mounted.");
-    */
-
-    // Store sensor ID
-    // Respond to I2C from F405 with sensor ID
+    // Detect sensor
+    Serial.println("Detecting sensor...");
+    Serial.print("Connected to: ");
+    Serial.println(detectSensor());
 }
 
 // === Loop ===
 void loop()
 {
-    // Detect sensor
-    Serial.println("Detecting sensor...");
-    Serial.print("Connected to: ");
-    Serial.println(detectSensor());
-    delay(5000);
+    Adafruit_SPIDevice *spi_dev = NULL;
+    spi_dev = new Adafruit_SPIDevice(SENSOR_CS,
+                                     10000,                 // frequency
+                                     SPI_BITORDER_MSBFIRST, // bit order
+                                     SPI_MODE0,             // data mode
+                                     &SENSOR_SPI);
 
+    if (!spi_dev->begin())
+    {
+        Serial.println("false");
+    }
+    Serial.println("spi dev created");
+    delete spi_dev;
+    delay(2000);
+    /*
     // Configure sensor
     Serial.println("Configuring sensor...");
     configSensor(detectedSensor);
     Serial.println("Sensor configured.");
+    delay(2000);
 
+    /*
     // SPI- Respond heartbeat to F405
     create_heartbeat_response(heartbeat_status);
     Serial.print("Heartbeat status: ");
@@ -104,24 +92,24 @@ void loop()
     */
 }
 
-// Functions
-void create_heartbeat_response(uint8_t heartbeat_stat)
-{
-    if (INTERBOARD_CS == LOW) // change to: if (deserialize request, handle part of buffer that asks for heartbeat )
+// // Functions
+// void create_heartbeat_response(uint8_t heartbeat_stat)
+// {
+//     if (INTERBOARD_CS == LOW) // change to: if (deserialize request, handle part of buffer that asks for heartbeat )
 
-    {
-        SPIPacket response_packet;
-        uint8_t tx_buf[MAX_PACKET_SIZE];
-        uint8_t rx_buf[MAX_PACKET_SIZE];
+//     {
+//         SPIPacket response_packet;
+//         uint8_t tx_buf[MAX_PACKET_SIZE];
+//         uint8_t rx_buf[MAX_PACKET_SIZE];
 
-        // Send status as response
-        response_packet.addByte(heartbeat_stat);
-        // Serialize packet into buffer
-        response_packet.serialize(tx_buf);
-        uint8_t packet_size = response_packet.getTotalSize();
-    }
-}
+//         // Send status as response
+//         response_packet.addByte(heartbeat_stat);
+//         // Serialize packet into buffer
+//         response_packet.serialize(tx_buf);
+//         uint8_t packet_size = response_packet.getTotalSize();
+//     }
+// }
 
-ISR(SPI_STC_vect)
-{
-}
+// ISR(SPI_STC_vect)
+// {
+// }

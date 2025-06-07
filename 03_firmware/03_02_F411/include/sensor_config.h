@@ -1,5 +1,5 @@
-#include "globals.h"
-#include "pinout.h"
+// #include "globals.h"
+// #include "pinout.h"
 // #include "sensor_detect.h"
 
 #ifndef SENSOR_CONFIG_H
