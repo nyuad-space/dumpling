@@ -3,6 +3,6 @@
 
 #include <Arduino.h>
 
-void configSensor(String sensorType); // Takes sensor name as argument
+void configSensor(SensorType sensor_type);
 
 #endif
