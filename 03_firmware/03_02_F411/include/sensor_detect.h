@@ -36,23 +36,6 @@
 #define LISMDL_I2C_ADDR 0x1E
 #define HDC302_I2C_ADDR 0x44
 
-// SPI devices
-extern Adafruit_SPIDevice adafruit_spi_device;
-
-extern Adafruit_BusIO_Register regID_lsm6ds;
-extern Adafruit_BusIO_Register regID_dps310;
-extern Adafruit_BusIO_Register regID_bmi;
-
-// I2C devices
-extern Adafruit_I2CDevice i2c_bmp390;
-extern Adafruit_BusIO_Register regID_bmp390;
-
-extern Adafruit_I2CDevice i2c_lis2mdl;
-extern Adafruit_BusIO_Register regID_lis2mdl;
-
-extern Adafruit_I2CDevice i2c_hdc302;
-extern Adafruit_BusIO_Register regID_hdc302;
-
 // Declare your detectSensor function
 String detectSensor();
 
@@ -67,13 +50,12 @@ struct SensorData
 enum SensorType
 {
     SENSOR_UNKNOWN,
-    SENSOR_LSM6DSO32,
-    SENSOR_DPS310,
-    SENSOR_Bmi088Accel,
-    SENSOR_Bmi088Gyro,
-    SENSOR_BMP3xx,
-    SENSOR_LIS2MDL,
-    SENSOR_HDC302
+    SENSOR_LSM6DS_ACCEL_GYRO,
+    SENSOR_DPS310_BARO_TEMP,
+    SENSOR_BMI088_ACCEL,
+    SENSOR_BMP390_BARO,
+    SENSOR_LIS2MDL_MAG,
+    SENSOR_HDC302_TEMP_HUM
 };
 
 #endif // SENSOR_DETECT_H
