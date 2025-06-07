@@ -17,6 +17,9 @@ uint8_t heartbeat_status = 0x00;
 // Timing variables
 const unsigned long HEARTBEAT_INTERVAL = 3000;
 
+// Function headers
+void create_heartbeat_response(uint8_t heartbeat_stat);
+
 // === Setup ===
 // Assuming that flash has been initialied with SdFat_format.ino
 void setup()
@@ -25,10 +28,13 @@ void setup()
     delay(5000); // Give time for power stabilization
     // initSensorPins(); // Initialize CS pins
 
-    // Initialize SPI buses
+    // Initialize SPI buses (CS HIGH = inactive, safe default)
     // Interboard SPI (slave mode)
     INTERBOARD_SPI.begin();
+    SPCR0 |= _BV(SPE);                // set up slave mode
+    INTERBOARD_SPI.attachInterrupt(); // turn on interrupt //  SPCR |= (1 << SPIE)
     pinMode(INTERBOARD_CS, INPUT);
+    digitalWrite(INTERBOARD_CS, HIGH);
 
     // Flash SPI (master mode)
     FLASH_SPI.begin();
@@ -66,7 +72,7 @@ void setup()
 // === Loop ===
 void loop()
 {
-
+    // Detect sensor
     Serial.println("Detecting sensor...");
     Serial.print("Connected to: ");
     Serial.println(detectSensor());
@@ -77,7 +83,7 @@ void loop()
     configSensor(detectedSensor);
     Serial.println("Sensor configured.");
 
-    // Respond heartbeat
+    // SPI- Respond heartbeat to F405
     create_heartbeat_response(heartbeat_status);
     Serial.print("Heartbeat status: ");
     Serial.println(heartbeat_status);
@@ -99,15 +105,23 @@ void loop()
 }
 
 // Functions
-void create_heartbeat_response(uint8_t heartbeat_status)
+void create_heartbeat_response(uint8_t heartbeat_stat)
 {
-    SPIPacket response_packet;
-    uint8_t tx_buf[MAX_PACKET_SIZE];
-    uint8_t rx_buf[MAX_PACKET_SIZE];
+    if (INTERBOARD_CS == LOW) // change to: if (deserialize request, handle part of buffer that asks for heartbeat )
 
-    // Send status as response
-    response_packet.addByte(heartbeat_status);
-    // Serialize packet into buffer
-    response_packet.serialize(tx_buf);
-    uint8_t packet_size = response_packet.getTotalSize();
+    {
+        SPIPacket response_packet;
+        uint8_t tx_buf[MAX_PACKET_SIZE];
+        uint8_t rx_buf[MAX_PACKET_SIZE];
+
+        // Send status as response
+        response_packet.addByte(heartbeat_stat);
+        // Serialize packet into buffer
+        response_packet.serialize(tx_buf);
+        uint8_t packet_size = response_packet.getTotalSize();
+    }
+}
+
+ISR(SPI_STC_vect)
+{
 }

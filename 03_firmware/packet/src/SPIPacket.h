@@ -11,7 +11,7 @@
 enum SenderID : uint8_t
 {
     MASTER_CONTROLLER = 0x00,
-    LOCAL_CONTROLLER = 0x01
+    LOCAL_CONTROLLER = 0x01,
     // SLAVE_CO1 = 0x01,
     // SLAVE_CO2 = 0x02,
     // SLAVE_CO3 = 0x03,
