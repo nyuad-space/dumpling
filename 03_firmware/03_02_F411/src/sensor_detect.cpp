@@ -21,7 +21,7 @@ String detectSensor()
     // I2C register objects
     Adafruit_I2CDevice i2c_bmp390(BMP390_I2C_ADDR, &SENSOR_I2C);
     Adafruit_BusIO_Register regID_bmp390(&i2c_bmp390, BMP390_WHOAMI_ADDR);
-    Adafruit_I2CDevice i2c_lis2mdl(LISMDL_I2C_ADDR, &SENSOR_I2C);
+    Adafruit_I2CDevice i2c_lis2mdl(LIS2MDL_I2C_ADDR, &SENSOR_I2C);
     Adafruit_BusIO_Register regID_lis2mdl(&i2c_lis2mdl, LIS2MDL_WHOAMI_ADDR);
     Adafruit_I2CDevice i2c_hdc302(HDC302_I2C_ADDR, &SENSOR_I2C);
     Adafruit_BusIO_Register regID_hdc302(
