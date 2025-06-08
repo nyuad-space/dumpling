@@ -6,12 +6,15 @@ SPIPacket heartbeat_request(MASTER_CONTROLLER); // Global declaration
 uint8_t heartbeat_statuses[InterboardSPI_CS::COUNT] = {0}; // Initialize to zero
 
 // Timing variables
-const unsigned long HEARTBEAT_INTERVAL = 3000;
+const unsigned long HEARTBEAT_INTERVAL = 5000;
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(1000);
+
+  // Initialize RGB LED
+  rgb_led.begin();
 
   // Chip selects high
   initialize_spi_system();
@@ -22,17 +25,20 @@ void setup()
 
 void loop()
 {
-  broadcast_heartbeat_request(heartbeat_request, heartbeat_statuses);
-  
-  // Print all heartbeat statuses
-  Serial.print("Heartbeat statuses: ");
-  for(int i = 0; i < InterboardSPI_CS::COUNT; i++) {
-    Serial.print(heartbeat_statuses[i]);
-    Serial.print(" ");
-  }
-  Serial.println();
-  
+  // debug delay
   delay(HEARTBEAT_INTERVAL);
+  
+  // CS INTERBOARD_SPI_CO2_CS
+  digitalWrite(INTERBOARD_SPI_CO2_CS, LOW);
+  INTERBOARD_SPI.transfer(0xAA); // Send some random data
+  digitalWrite(INTERBOARD_SPI_CO2_CS, HIGH);
+  
+  // Flash neopixel rgb for a second
+  rgb_led.setPixelColor(0, rgb_led.Color(255, 0, 0));
+  rgb_led.show();
+  delay(1000);
+  rgb_led.clear();
+  rgb_led.show();
 }
 
 // Functions
@@ -49,29 +55,4 @@ void initialize_spi_system()
   // Initialize SPI bus
   INTERBOARD_SPI.begin();
   Serial.println("SPI bus initialized");
-}
-void broadcast_heartbeat_request(SPIPacket request_packet, uint8_t* statuses) {
-  uint8_t tx_buf[MAX_PACKET_SIZE];
-  uint8_t rx_buf[MAX_PACKET_SIZE];
-  
-  // Serialize packet into buffer
-  request_packet.serialize(tx_buf);
-  uint8_t packet_size = request_packet.getTotalSize();
-  
-  // Iterate through all co-procesors
-  for (size_t i = 0; i < InterboardSPI_CS::COUNT; i++) {
-
-    // Transfer
-    digitalWrite(InterboardSPI_CS::PINS_LIST[i], LOW);
-    INTERBOARD_SPI.transfer(tx_buf, rx_buf, packet_size);
-    digitalWrite(InterboardSPI_CS::PINS_LIST[i], HIGH);
-    
-    // Get response data
-    SPIPacket response;
-    if (response.deserialize(rx_buf, packet_size) && response.getDataLength() > 0) {
-      statuses[i] = response.getData()[0];  // First data byte is status
-    } else {
-      statuses[i] = 0x00;  // Offline/no response
-    }
-  }
 }
