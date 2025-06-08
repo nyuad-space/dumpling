@@ -73,7 +73,6 @@ void readSensor(SensorType sensorType)
         }
         break;
     }
-        // into SPI Packet
 
     case SENSOR_BMI088_ACCEL:
     {
@@ -114,6 +113,7 @@ void readSensor(SensorType sensorType)
         if (currentMillis - previousMillis >= interval)
         {
             previousMillis = currentMillis;
+
             // availability checker not supported
 
             // Read sensor data (Temp: *C, Pressure: hPa)
@@ -135,10 +135,58 @@ void readSensor(SensorType sensorType)
 
     case SENSOR_LIS2MDL_MAG:
     {
+        if (currentMillis - previousMillis >= interval)
+        {
+            previousMillis = currentMillis;
+
+            // availability checker not supported
+
+            // Read sensor data (Magnetic vector: uT)
+            sensors_event_t mag_event;
+            lis2mdl_mag.getEvent(&mag_event);
+
+            // Timestamp
+            Serial.print(millis());
+            Serial.print("ms, T: ");
+            // Display on Serial
+            Serial.print("X: ");
+            Serial.print(mag_event.magnetic.x);
+            Serial.print("  ");
+            Serial.print("Y: ");
+            Serial.print(mag_event.magnetic.y);
+            Serial.print("  ");
+            Serial.print("Z: ");
+            Serial.print(mag_event.magnetic.z);
+            Serial.print("  ");
+            Serial.println("uT");
+        }
         break;
     }
     case SENSOR_HDC302_TEMP_HUM:
     {
+        double readT = 0.0;
+        double readRH = 0.0;
+
+        if (currentMillis - previousMillis >= interval)
+        {
+            previousMillis = currentMillis;
+
+            // availability checker not supported
+
+            // Read sensor data (Relative humidity: %, Temperature: *C)
+            hdc302_temp_hum.readOffsets(readT, readRH);
+
+            // Timestamp
+            Serial.print(millis());
+            Serial.print("ms,");
+            // Display on Serial
+            Serial.print(" RH Offset: ");
+            Serial.print(readRH);
+
+            Serial.print(", T Offset: ");
+            Serial.print(readT);
+            Serial.print("\n");
+        }
         break;
     }
 
