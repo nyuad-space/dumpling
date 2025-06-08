@@ -1,7 +1,9 @@
 // SPI bus (SPI3)
-#define SENSOR_SCK PB3
-#define SENSOR_MISO PB4
-#define SENSOR_MOSI PB5
+// Use ALT1 pin names to avoid SPI conflict. 
+// This guarantees SENSOR_SPI will use SPI3, as expected.
+#define SENSOR_SCK PB3_ALT1
+#define SENSOR_MISO PB4_ALT1  
+#define SENSOR_MOSI PB5_ALT1
 
 // Sensor CS
 #define SENSOR_CS PA15
