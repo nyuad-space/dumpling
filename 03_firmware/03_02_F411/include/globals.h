@@ -11,6 +11,8 @@
 #include <Adafruit_LIS2MDL.h>
 #include <Adafruit_HDC302x.h>
 #include "sensor_detect.h"
+#include "SdFat_Adafruit_Fork.h"
+#include <Adafruit_SPIFlash.h>
 
 // Bus
 extern SPIClass INTERBOARD_SPI;
@@ -29,5 +31,9 @@ extern Adafruit_HDC302x hdc302_temp_hum;
 
 // Sensor detect
 extern SensorType detectedSensor;
+
+// Flash objects
+extern Adafruit_FlashTransport_SPI adafruit_flash_spi;
+extern Adafruit_SPIFlash flash_memory;
 
 #endif
