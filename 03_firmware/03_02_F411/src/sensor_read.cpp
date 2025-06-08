@@ -4,12 +4,13 @@
 
 unsigned long previousMillis = 0; // will store last time LED was updated
 const long interval = 1000;       // interval at which to blink (milliseconds)
+#define SEALEVELPRESSURE_HPA (1013.25)
 
 void readSensor(SensorType sensorType)
 
 {
     unsigned long currentMillis = millis();
-    
+
     switch (sensorType)
     {
     case SENSOR_LSM6DS_ACCEL_GYRO:
@@ -105,26 +106,42 @@ void readSensor(SensorType sensorType)
             Serial.print(bmi088_accel.getTemperature_C());
             Serial.print("\n");
         }
+        break;
     }
 
-        //     break;
+    case SENSOR_BMP390_BARO:
+    {
+        if (currentMillis - previousMillis >= interval)
+        {
+            previousMillis = currentMillis;
+            // availability checker not supported
 
-        // case SENSOR_BMI088_GYRO:
+            // Read sensor data (Temp: *C, Pressure: hPa)
+            bmp390_baro.performReading();
 
-        //     break;
-
-        // case SENSOR_BMP390_BARO:
-
-        //     break;
-
-        // case SENSOR_LIS2MDL_MAG:
-
-        //     break;
-
-        // case SENSOR_HDC302_TEMP_HUM:
-
-        //     break;
+            // Timestamp
+            Serial.print(millis());
+            Serial.print("ms, T: ");
+            // Display on Serial
+            Serial.print(bmp390_baro.temperature, 3);
+            Serial.print("*C, P: ");
+            Serial.print(bmp390_baro.pressure, 3);
+            Serial.print("hPa");
+            Serial.print(bmp390_baro.readAltitude(SEALEVELPRESSURE_HPA), 3);
+            Serial.println("m");
+        }
+        break;
     }
 
-    return;
+    case SENSOR_LIS2MDL_MAG:
+    {
+        break;
+    }
+    case SENSOR_HDC302_TEMP_HUM:
+    {
+        break;
+    }
+
+        return;
+    }
 }
