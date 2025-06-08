@@ -62,15 +62,6 @@ void configSensor(SensorType sensorType)
         Serial.println("Gyro output data rate / bandwidth set to: 1600 Hz / 280 Hz");
         bmi088_gyro.setRange(Bmi088Gyro::RANGE_1000DPS);
         Serial.println("Gyro range set to: 1000 degrees/s");
-
-        bmi088_accel.setOdr(Bmi088Accel::ODR_1600HZ_BW_280HZ); // Output data rate and bandwidth
-        Serial.println("Accelerometer output data rate / bandwidth set to: 1600 Hz / 280 Hz");
-        bmi088_accel.setRange(Bmi088Accel::RANGE_24G);
-        Serial.println("Accelerometer range set to: 24 G");
-        bmi088_gyro.setOdr(Bmi088Gyro::ODR_200HZ_BW_23HZ);
-        Serial.println("Gyro output data rate / bandwidth set to: 1600 Hz / 280 Hz");
-        bmi088_gyro.setRange(Bmi088Gyro::RANGE_1000DPS);
-        Serial.println("Gyro range set to: 1000 degrees/s");
         break;
     case SENSOR_BMP390_BARO:
         bmp390_baro.setTemperatureOversampling(BMP3_OVERSAMPLING_8X);
