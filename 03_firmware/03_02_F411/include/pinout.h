@@ -11,10 +11,10 @@
 #define BMI088_Gyro_CS PA2
 
 // SPI bus (SPI2)
+#define INTERBOARD_CS PB12 // Dummy
 #define INTERBOARD_SCK PB13
 #define INTERBOARD_MISO PB14
 #define INTERBOARD_MOSI PB15
-
 // SPI bus (SPI1)
 #define FLASH_SCK PA5
 #define FLASH_MISO PA6
