@@ -28,6 +28,9 @@ void readSensor(SensorType sensorType)
             sensors_event_t accel_event, gyro_event, temp_event;
             lsm6ds_accel_gyro.getEvent(&accel_event, &gyro_event, &temp_event);
 
+            // Timestamp
+            Serial.print(millis());
+            Serial.print("ms, T: ");
             // Display on Serial (Timestamp done internally)
             Serial.print("Accel X: ");
             Serial.print(accel_event.acceleration.x, 3);
@@ -189,7 +192,6 @@ void readSensor(SensorType sensorType)
         }
         break;
     }
-
         return;
     }
 }
