@@ -7,8 +7,8 @@
 #define SENSOR_CS PA15
 #define LSM6DS_CS PA15
 #define DPS310_CS PA15
-#define bmiAccel_CS PA15
-#define bmiGyro_CS PA2
+#define BMI088_Accel_CS PA15
+#define BMI088_Gyro_CS PA2
 
 // SPI bus (SPI2)
 #define INTERBOARD_SCK PB13
