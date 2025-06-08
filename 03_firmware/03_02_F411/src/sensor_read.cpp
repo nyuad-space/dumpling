@@ -2,9 +2,44 @@
 #include "sensor_read.h"
 #include "pinout.h"
 
-unsigned long previousMillis = 0; // will store last time LED was updated
-const long interval = 1000;       // interval at which to blink (milliseconds)
 #define SEALEVELPRESSURE_HPA (1013.25)
+
+// delay
+unsigned long previousMillis = 0; // store last updated time
+const long interval = 1000;       // interval at which to delay (milliseconds)
+
+// LSM6DS
+float lsm6ds_accel_x_read;
+float lsm6ds_accel_y_read;
+float lsm6ds_accel_z_read;
+float lsm6ds_gyro_x_read;
+float lsm6ds_gyro_y_read;
+float lsm6ds_gyro_z_read;
+float lsm6ds_temp_read;
+// DPS310
+float dps310_temp_read;
+float dps310_press_read;
+// BMI088
+float bmi088_accel_x_read;
+float bmi088_accel_y_read;
+float bmi088_accel_z_read;
+float bmi088_gyro_x_read;
+float bmi088_gyro_y_read;
+float bmi088_gyro_z_read;
+float bmi088_temp_read;
+// BMP390
+float bmp390_temp_read;
+float bmp390_press_read;
+float bmp390_alt_read;
+// LIS2MDL
+float lis2mdl_mag_x_read;
+float lis2mdl_mag_y_read;
+float lis2mdl_mag_z_read;
+// HDC302
+float hdc302_hum_read;
+float hdc302_temp_read;
+
+// TODO: remove Serial prints
 
 void readSensor(SensorType sensorType)
 
@@ -24,28 +59,42 @@ void readSensor(SensorType sensorType)
             {
                 return;
             }
-            // Read sensor data (Accel: m/s^2, Gyro: rad/s)
-            sensors_event_t accel_event, gyro_event, temp_event;
-            lsm6ds_accel_gyro.getEvent(&accel_event, &gyro_event, &temp_event);
+
+            // Read sensor data (Accel: m/s^2, Gyro: rad/s) to three decimals
+            float x, y, z, temp;
+            sensors_event_t temp_event;
+
+            lsm6ds_accel_gyro.readAcceleration(x, y, z);
+            lsm6ds_accel_x_read = roundf(x * 1000) / 1000.0f;
+            lsm6ds_accel_y_read = roundf(y * 1000) / 1000.0f;
+            lsm6ds_accel_z_read = roundf(z * 1000) / 1000.0f;
+
+            lsm6ds_accel_gyro.readGyroscope(x, y, z);
+            lsm6ds_gyro_x_read = roundf(x * 1000) / 1000.0f;
+            lsm6ds_gyro_y_read = roundf(y * 1000) / 1000.0f;
+            lsm6ds_gyro_z_read = roundf(z * 1000) / 1000.0f;
+
+            lsm6ds_accel_gyro.getEvent(NULL, NULL, &temp_event);
+            lsm6ds_temp_read = roundf(temp_event.temperature * 1000) / 1000.0f;
 
             // Timestamp
             Serial.print(millis());
             Serial.print("ms, T: ");
             // Display on Serial (Timestamp done internally)
             Serial.print("Accel X: ");
-            Serial.print(accel_event.acceleration.x, 3);
+            Serial.print(lsm6ds_accel_x_read);
             Serial.print(" Accel Y: ");
-            Serial.print(accel_event.acceleration.y, 3);
+            Serial.print(lsm6ds_accel_y_read);
             Serial.print(" Accel Z: ");
-            Serial.print(accel_event.acceleration.z, 3);
+            Serial.print(lsm6ds_accel_z_read);
             Serial.print(" Gyro X: ");
-            Serial.print(gyro_event.gyro.x, 3);
+            Serial.print(lsm6ds_gyro_x_read);
             Serial.print(" Gyro Y: ");
-            Serial.print(gyro_event.gyro.y, 3);
+            Serial.print(lsm6ds_gyro_y_read);
             Serial.print(" Gyro Z: ");
-            Serial.print(gyro_event.gyro.z, 3);
+            Serial.print(lsm6ds_gyro_z_read);
             Serial.print(" T: ");
-            Serial.println(temp_event.temperature, 3);
+            Serial.println(lsm6ds_temp_read, 3);
         }
         break;
     }
@@ -61,17 +110,19 @@ void readSensor(SensorType sensorType)
             {
                 return;
             }
-            // Read sensor data (Temp: *C, Pressure: hPa)
+            // Read sensor data (Temp: *C, Pressure: hPa) to three decimals
             sensors_event_t temp_event, pressure_event;
             dps310_baro_temp.getEvents(&temp_event, &pressure_event);
+            dps310_temp_read = roundf(temp_event.temperature * 1000) / 1000.0f;
+            dps310_press_read = roundf(pressure_event.pressure * 1000) / 1000.0f;
 
             // Timestamp
             Serial.print(millis());
             Serial.print("ms, T: ");
             // Display on Serial
-            Serial.print(temp_event.temperature, 3);
+            Serial.print(dps310_temp_read);
             Serial.print("*C, P: ");
-            Serial.print(pressure_event.pressure, 3);
+            Serial.print(dps310_press_read);
             Serial.println("hPa");
         }
         break;
@@ -85,27 +136,35 @@ void readSensor(SensorType sensorType)
 
             // availability checker not supported
 
-            // Read sensor data (Accel: m/ss, Gyro: rad/s)
+            // Read sensor data (Accel: m/ss, Gyro: rad/s) to three decimals
             bmi088_accel.readSensor();
             bmi088_gyro.readSensor();
+
+            bmi088_accel_x_read = roundf(bmi088_accel.getAccelX_mss() * 1000) / 1000.0f;
+            bmi088_accel_y_read = roundf(bmi088_accel.getAccelY_mss() * 1000) / 1000.0f;
+            bmi088_accel_z_read = roundf(bmi088_accel.getAccelZ_mss() * 1000) / 1000.0f;
+            bmi088_gyro_x_read = roundf(bmi088_gyro.getGyroX_rads() * 1000) / 1000.0f;
+            bmi088_gyro_y_read = roundf(bmi088_gyro.getGyroY_rads() * 1000) / 1000.0f;
+            bmi088_gyro_z_read = roundf(bmi088_gyro.getGyroZ_rads() * 1000) / 1000.0f;
+            bmi088_temp_read = roundf(bmi088_accel.getTemperature_C() * 1000) / 1000.0f;
 
             // Timestamp
             Serial.print(millis());
             Serial.print("ms, T: ");
             // Display on Serial
-            Serial.print(bmi088_accel.getAccelX_mss());
+            Serial.print(bmi088_accel_x_read);
             Serial.print("\t");
-            Serial.print(bmi088_accel.getAccelY_mss());
+            Serial.print(bmi088_accel_y_read);
             Serial.print("\t");
-            Serial.print(bmi088_accel.getAccelZ_mss());
+            Serial.print(bmi088_accel_z_read);
             Serial.print("\t");
-            Serial.print(bmi088_gyro.getGyroX_rads());
+            Serial.print(bmi088_gyro_x_read);
             Serial.print("\t");
-            Serial.print(bmi088_gyro.getGyroY_rads());
+            Serial.print(bmi088_gyro_y_read);
             Serial.print("\t");
-            Serial.print(bmi088_gyro.getGyroZ_rads());
+            Serial.print(bmi088_gyro_z_read);
             Serial.print("\t");
-            Serial.print(bmi088_accel.getTemperature_C());
+            Serial.print(bmi088_temp_read);
             Serial.print("\n");
         }
         break;
@@ -119,18 +178,21 @@ void readSensor(SensorType sensorType)
 
             // availability checker not supported
 
-            // Read sensor data (Temp: *C, Pressure: hPa)
+            // Read sensor data (Temp: *C, Pressure: hPa) to three decimals
             bmp390_baro.performReading();
+            bmp390_temp_read = roundf(bmp390_baro.temperature * 1000) / 1000.0f;
+            bmp390_press_read = roundf(bmp390_baro.pressure * 1000) / 1000.0f;
+            bmp390_alt_read = roundf(bmp390_baro.readAltitude(SEALEVELPRESSURE_HPA) * 1000) / 1000.0f;
 
             // Timestamp
             Serial.print(millis());
             Serial.print("ms, T: ");
             // Display on Serial
-            Serial.print(bmp390_baro.temperature, 3);
+            Serial.print(bmp390_temp_read);
             Serial.print("*C, P: ");
-            Serial.print(bmp390_baro.pressure, 3);
+            Serial.print(bmp390_press_read);
             Serial.print("hPa");
-            Serial.print(bmp390_baro.readAltitude(SEALEVELPRESSURE_HPA), 3);
+            Serial.print(bmp390_alt_read);
             Serial.println("m");
         }
         break;
@@ -144,22 +206,26 @@ void readSensor(SensorType sensorType)
 
             // availability checker not supported
 
-            // Read sensor data (Magnetic vector: uT)
+            // Read sensor data (Magnetic vector: uT) to three decimals
             sensors_event_t mag_event;
             lis2mdl_mag.getEvent(&mag_event);
+
+            lis2mdl_mag_x_read = roundf(mag_event.magnetic.x * 1000) / 1000.0f;
+            lis2mdl_mag_y_read = roundf(mag_event.magnetic.y * 1000) / 1000.0f;
+            lis2mdl_mag_z_read = roundf(mag_event.magnetic.z * 1000) / 1000.0f;
 
             // Timestamp
             Serial.print(millis());
             Serial.print("ms, T: ");
             // Display on Serial
             Serial.print("X: ");
-            Serial.print(mag_event.magnetic.x);
+            Serial.print(lis2mdl_mag_x_read);
             Serial.print("  ");
             Serial.print("Y: ");
-            Serial.print(mag_event.magnetic.y);
+            Serial.print(lis2mdl_mag_y_read);
             Serial.print("  ");
             Serial.print("Z: ");
-            Serial.print(mag_event.magnetic.z);
+            Serial.print(lis2mdl_mag_z_read);
             Serial.print("  ");
             Serial.println("uT");
         }
@@ -176,18 +242,20 @@ void readSensor(SensorType sensorType)
 
             // availability checker not supported
 
-            // Read sensor data (Relative humidity: %, Temperature: *C)
+            // Read sensor data (Relative humidity: %, Temperature: *C) to three decimals
             hdc302_temp_hum.readOffsets(readT, readRH);
+            hdc302_hum_read = roundf(readT * 1000) / 1000.0f;
+            hdc302_temp_read = roundf(readRH * 1000) / 1000.0f;
 
             // Timestamp
             Serial.print(millis());
             Serial.print("ms,");
             // Display on Serial
             Serial.print(" RH Offset: ");
-            Serial.print(readRH);
+            Serial.print(hdc302_hum_read);
 
             Serial.print(", T Offset: ");
-            Serial.print(readT);
+            Serial.print(hdc302_temp_read);
             Serial.print("\n");
         }
         break;
