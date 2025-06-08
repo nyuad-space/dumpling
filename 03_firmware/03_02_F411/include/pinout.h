@@ -10,19 +10,6 @@
 #define bmiAccel_CS PA15
 #define bmiGyro_CS PA2
 
-// inline void initSensorPins()
-// {
-//     pinMode(LSM6DS_CS, OUTPUT);
-//     pinMode(DPS310_CS, OUTPUT);
-//     pinMode(bmiAccel_CS, OUTPUT);
-//     pinMode(bmiGyro_CS, OUTPUT);
-
-//     digitalWrite(LSM6DS_CS, HIGH);
-//     digitalWrite(DPS310_CS, HIGH);
-//     digitalWrite(bmiAccel_CS, HIGH);
-//     digitalWrite(bmiGyro_CS, HIGH);
-// }
-
 // SPI bus (SPI2)
 #define INTERBOARD_SCK PB13
 #define INTERBOARD_MISO PB14
