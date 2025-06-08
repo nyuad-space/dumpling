@@ -9,13 +9,13 @@ TwoWire SENSOR_I2C(SENSOR_SDA, SENSOR_SCL);
 
 
 // Declare the sensor objects
-Adafruit_LSM6DS lsm6ds;
-Adafruit_DPS310 dps310;
-Bmi088Accel bmiAccel(SENSOR_SPI, bmiAccel_CS);
-Bmi088Gyro bmiGyro(SENSOR_SPI, bmiGyro_CS);
-Adafruit_BMP3XX bmp3xx;
-Adafruit_LIS2MDL lis2mdl;
-Adafruit_HDC302x hdc;
+Adafruit_LSM6DSO32 lsm6ds_accel_gyro;
+Adafruit_DPS310 dps310_baro_temp;
+Bmi088Accel bmi088_accel(SENSOR_SPI, bmiAccel_CS);
+Bmi088Gyro bmi088_gyro(SENSOR_SPI, bmiGyro_CS);
+Adafruit_BMP3XX bmp390_baro;
+Adafruit_LIS2MDL lis2mdl_mag;
+Adafruit_HDC302x hdc302_temp_hum;
 
 // Sensor detect
 SensorType detectedSensor = SENSOR_UNKNOWN;

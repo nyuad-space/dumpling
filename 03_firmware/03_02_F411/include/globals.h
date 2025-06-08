@@ -19,13 +19,13 @@ extern SPIClass SENSOR_SPI;
 extern SPIClass FLASH_SPI;
 
 // Sensor objects
-extern Adafruit_LSM6DS lsm6ds;
-extern Adafruit_DPS310 dps310;
-extern Bmi088Accel bmiAccel;
-extern Bmi088Gyro bmiGyro;
-extern Adafruit_BMP3XX bmp3xx;
-extern Adafruit_LIS2MDL lis2mdl;
-extern Adafruit_HDC302x hdc;
+extern Adafruit_LSM6DSO32 lsm6ds_accel_gyro;
+extern Adafruit_DPS310 dps310_baro_temp;
+extern Bmi088Accel bmi088_accel;
+extern Bmi088Gyro bmi088_gyro;
+extern Adafruit_BMP3XX bmp390_baro;
+extern Adafruit_LIS2MDL lis2mdl_mag;
+extern Adafruit_HDC302x hdc302_temp_hum;
 
 // Sensor detect
 extern SensorType detectedSensor;

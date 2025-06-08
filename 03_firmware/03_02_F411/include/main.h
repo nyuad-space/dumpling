@@ -18,11 +18,9 @@
 #include <Adafruit_SPIFlash.h>
 #include <SPIFlash.h>
 #include <SdFat_Adafruit_Fork.h>
-#include "flash_config.h"
 
 // Others
 #include "globals.h"
-#include "flash_format.h"
-// #include "sensor_detect.h"
+#include "sensor_detect.h"
+#include "sensor_config.h"
 #include "pinout.h"
-#include "sensor2flash.h"
