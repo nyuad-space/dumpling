@@ -11,8 +11,8 @@ TwoWire SENSOR_I2C(SENSOR_SDA, SENSOR_SCL);
 // Declare the sensor objects
 Adafruit_LSM6DSO32 lsm6ds_accel_gyro;
 Adafruit_DPS310 dps310_baro_temp;
-Bmi088Accel bmi088_accel(SENSOR_SPI, bmiAccel_CS);
-Bmi088Gyro bmi088_gyro(SENSOR_SPI, bmiGyro_CS);
+Bmi088Accel bmi088_accel(SENSOR_SPI, BMI088_Accel_CS);
+Bmi088Gyro bmi088_gyro(SENSOR_SPI, BMI088_Gyro_CS);
 Adafruit_BMP3XX bmp390_baro;
 Adafruit_LIS2MDL lis2mdl_mag;
 Adafruit_HDC302x hdc302_temp_hum;
