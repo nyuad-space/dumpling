@@ -9,6 +9,7 @@ void readSensor(SensorType sensorType)
 
 {
     unsigned long currentMillis = millis();
+    
     switch (sensorType)
     {
     case SENSOR_LSM6DS_ACCEL_GYRO:
