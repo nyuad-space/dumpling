@@ -33,7 +33,7 @@
 
 // I2C sensors address
 #define BMP390_I2C_ADDR 0x76
-#define LISMDL_I2C_ADDR 0x1E
+#define LIS2MDL_I2C_ADDR 0x1E
 #define HDC302_I2C_ADDR 0x44
 
 // Declare your detectSensor function
