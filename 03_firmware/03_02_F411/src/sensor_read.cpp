@@ -2,57 +2,109 @@
 #include "sensor_read.h"
 #include "pinout.h"
 
+unsigned long previousMillis = 0; // will store last time LED was updated
+const long interval = 1000;       // interval at which to blink (milliseconds)
+
 void readSensor(SensorType sensorType)
 
 {
+    unsigned long currentMillis = millis();
     switch (sensorType)
     {
     case SENSOR_LSM6DS_ACCEL_GYRO:
-        // NOTE: remove below line when sensor_config.cpp is resolved
-        lsm6ds_accel_gyro.begin_SPI(LSM6DS_CS, &SENSOR_SPI);
+    {
+        if (currentMillis - previousMillis >= interval)
+        {
+            previousMillis = currentMillis;
 
-        // Read sensor data
-        sensors_event_t accel_event, gyro_event, temp_event;
-        dps310_baro_accel.getEvents(&accel_event, &gyro_event, &temp_event);
+            // true if new data available to read
+            if (!lsm6ds_accel_gyro.accelerationAvailable() || !lsm6ds_accel_gyro.gyroscopeAvailable())
+            {
+                return;
+            }
+            // Read sensor data (Accel: m/s^2, Gyro: rad/s)
+            sensors_event_t accel_event, gyro_event, temp_event;
+            lsm6ds_accel_gyro.getEvent(&accel_event, &gyro_event, &temp_event);
 
-        // Display on Serial
-        Serial.print(millis());
-        Serial.print("ms, T: ");
-        Serial.print(accel_event.acceleration, 3);
-        Serial.print("*C, P: ");
-        Serial.print(gyro_event.gyro, 3);
-        Serial.println("hPa");
-
+            // Display on Serial (Timestamp done internally)
+            Serial.print("Accel X: ");
+            Serial.print(accel_event.acceleration.x, 3);
+            Serial.print(" Accel Y: ");
+            Serial.print(accel_event.acceleration.y, 3);
+            Serial.print(" Accel Z: ");
+            Serial.print(accel_event.acceleration.z, 3);
+            Serial.print(" Gyro X: ");
+            Serial.print(gyro_event.gyro.x, 3);
+            Serial.print(" Gyro Y: ");
+            Serial.print(gyro_event.gyro.y, 3);
+            Serial.print(" Gyro Z: ");
+            Serial.print(gyro_event.gyro.z, 3);
+            Serial.print(" T: ");
+            Serial.println(temp_event.temperature, 3);
+        }
         break;
+    }
 
     case SENSOR_DPS310_BARO_TEMP:
-
-        // NOTE: remove below line when sensor_config.cpp is resolved
-        dps310_baro_temp.begin_SPI(DPS310_CS, &SENSOR_SPI);
-
-        // true if new data available to read
-        if (!dps310_baro_temp.temperatureAvailable() || !dps310_baro_temp.pressureAvailable())
+    {
+        if (currentMillis - previousMillis >= interval)
         {
-            delay(100);
-            return;
+            previousMillis = currentMillis;
+
+            // true if new data available to read
+            if (!dps310_baro_temp.temperatureAvailable() || !dps310_baro_temp.pressureAvailable())
+            {
+                return;
+            }
+            // Read sensor data (Temp: *C, Pressure: hPa)
+            sensors_event_t temp_event, pressure_event;
+            dps310_baro_temp.getEvents(&temp_event, &pressure_event);
+
+            // Timestamp
+            Serial.print(millis());
+            Serial.print("ms, T: ");
+            // Display on Serial
+            Serial.print(temp_event.temperature, 3);
+            Serial.print("*C, P: ");
+            Serial.print(pressure_event.pressure, 3);
+            Serial.println("hPa");
         }
-        // Read sensor data
-        sensors_event_t temp_event, pressure_event;
-        dps310_baro_temp.getEvents(&temp_event, &pressure_event);
-
-        // Display on Serial
-        Serial.print(millis());
-        Serial.print("ms, T: ");
-        Serial.print(temp_event.temperature, 3);
-        Serial.print("*C, P: ");
-        Serial.print(pressure_event.pressure, 3);
-        Serial.println("hPa");
-
+        break;
+    }
         // into SPI Packet
 
-        break;
+    case SENSOR_BMI088_ACCEL:
+    {
+        if (currentMillis - previousMillis >= interval)
+        {
+            previousMillis = currentMillis;
 
-        // case SENSOR_BMI088_ACCEL:
+            // availability checker not supported
+
+            // Read sensor data (Accel: m/ss, Gyro: rad/s)
+            bmi088_accel.readSensor();
+            bmi088_gyro.readSensor();
+
+            // Timestamp
+            Serial.print(millis());
+            Serial.print("ms, T: ");
+            // Display on Serial
+            Serial.print(bmi088_accel.getAccelX_mss());
+            Serial.print("\t");
+            Serial.print(bmi088_accel.getAccelY_mss());
+            Serial.print("\t");
+            Serial.print(bmi088_accel.getAccelZ_mss());
+            Serial.print("\t");
+            Serial.print(bmi088_gyro.getGyroX_rads());
+            Serial.print("\t");
+            Serial.print(bmi088_gyro.getGyroY_rads());
+            Serial.print("\t");
+            Serial.print(bmi088_gyro.getGyroZ_rads());
+            Serial.print("\t");
+            Serial.print(bmi088_accel.getTemperature_C());
+            Serial.print("\n");
+        }
+    }
 
         //     break;
 
