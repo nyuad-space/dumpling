@@ -9,14 +9,14 @@ void setup()
     // Initialize interboard SPI in slave mode
     // The CS pin is required, dummy in slave mode
     INTERBOARD_SPI.begin(INTERBOARD_CS, SPI_SLAVE);
-    INTERBOARD_SPI.attachSlaveInterrupt(INTERBOARD_CS, INTERBOARD_SPI_ISR); 
+    INTERBOARD_SPI.attachSlaveInterrupt(INTERBOARD_CS, INTERBOARD_SPI_ISR);
 
     Serial.print("Connected to: ");
     Serial.println(detectSensor());
 
     Serial.println("Initialize communication (SPI or I2C)");
     initSensorComm(detectedSensor);
-    
+
     Serial.println("Configuring sensor: ");
     configSensor(detectedSensor);
 
@@ -31,15 +31,18 @@ void setup()
 }
 
 void loop()
-{    
-    if (spiRxFlag) {
+{
+    if (spiRxFlag)
+    {
         Serial.println("I received something!");
         Serial.print("BTW I'm using sensor");
         Serial.println(detectedSensor);
         spiRxFlag = false;
     }
+    readSensor(detectedSensor);
 }
 
-void INTERBOARD_SPI_ISR() {
-  spiRxFlag = true;
+void INTERBOARD_SPI_ISR()
+{
+    spiRxFlag = true;
 }
