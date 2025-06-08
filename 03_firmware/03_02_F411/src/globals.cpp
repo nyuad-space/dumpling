@@ -7,7 +7,6 @@ SPIClass SENSOR_SPI(SENSOR_MOSI, SENSOR_MISO, SENSOR_SCK);
 SPIClass FLASH_SPI(FLASH_MOSI, FLASH_MISO, FLASH_SCK);
 TwoWire SENSOR_I2C(SENSOR_SDA, SENSOR_SCL);
 
-
 // Declare the sensor objects
 Adafruit_LSM6DSO32 lsm6ds_accel_gyro;
 Adafruit_DPS310 dps310_baro_temp;
@@ -19,3 +18,7 @@ Adafruit_HDC302x hdc302_temp_hum;
 
 // Sensor detect
 SensorType detectedSensor = SENSOR_UNKNOWN;
+
+// Flash
+Adafruit_FlashTransport_SPI adafruit_flash_spi(FLASH_CS, FLASH_SPI);
+Adafruit_SPIFlash flash_memory(&adafruit_flash_spi);
