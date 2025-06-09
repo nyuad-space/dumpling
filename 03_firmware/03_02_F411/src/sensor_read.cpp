@@ -57,12 +57,12 @@ void readSensor(SensorType sensorType)
             accel_y_read = roundf(y * 1000) / 1000.0f;
             accel_z_read = roundf(z * 1000) / 1000.0f;
 
-            accel_gyro.readGyroscope(x, y, z);
+            lsm6ds_accel_gyro.readGyroscope(x, y, z);
             gyro_x_read = roundf(x * 1000) / 1000.0f;
             gyro_y_read = roundf(y * 1000) / 1000.0f;
             gyro_z_read = roundf(z * 1000) / 1000.0f;
 
-            accel_gyro.getEvent(NULL, NULL, &temp_event);
+            lsm6ds_accel_gyro.getEvent(NULL, NULL, &temp_event);
             temp_read = roundf(temp_event.temperature * 1000) / 1000.0f;
 
             break;
