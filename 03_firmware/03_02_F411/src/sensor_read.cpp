@@ -57,17 +57,13 @@ void readSensor(SensorType sensorType)
             accel_y_read = roundf(y * 1000) / 1000.0f;
             accel_z_read = roundf(z * 1000) / 1000.0f;
 
-            accel_gyro.readGyroscope(x, y, z);
+            lsm6ds_accel_gyro.readGyroscope(x, y, z);
             gyro_x_read = roundf(x * 1000) / 1000.0f;
             gyro_y_read = roundf(y * 1000) / 1000.0f;
             gyro_z_read = roundf(z * 1000) / 1000.0f;
 
-            accel_gyro.getEvent(NULL, NULL, &temp_event);
+            lsm6ds_accel_gyro.getEvent(NULL, NULL, &temp_event);
             temp_read = roundf(temp_event.temperature * 1000) / 1000.0f;
-
-            // Timestamp
-            Serial.print(millis());
-            Serial.print("ms, T: ");
 
             break;
         }
@@ -84,10 +80,6 @@ void readSensor(SensorType sensorType)
             dps310_baro_temp.getEvents(&temp_event, &pressure_event);
             temp_read = roundf(temp_event.temperature * 1000) / 1000.0f;
             press_read = roundf(pressure_event.pressure * 1000) / 1000.0f;
-
-            // Timestamp
-            Serial.print(millis());
-            Serial.print("ms, T: ");
 
             break;
         }
@@ -108,10 +100,6 @@ void readSensor(SensorType sensorType)
             gyro_z_read = roundf(bmi088_gyro.getGyroZ_rads() * 1000) / 1000.0f;
             temp_read = roundf(bmi088_accel.getTemperature_C() * 1000) / 1000.0f;
 
-            // Timestamp
-            Serial.print(millis());
-            Serial.print("ms, T: ");
-
             break;
         }
 
@@ -124,10 +112,6 @@ void readSensor(SensorType sensorType)
             temp_read = roundf(bmp390_baro.temperature * 1000) / 1000.0f;
             press_read = roundf(bmp390_baro.pressure * 1000) / 1000.0f;
             bmp390_alt_read = roundf(bmp390_baro.readAltitude(SEALEVELPRESSURE_HPA) * 1000) / 1000.0f;
-
-            // Timestamp
-            Serial.print(millis());
-            Serial.print("ms, T: ");
 
             break;
         }
@@ -144,10 +128,6 @@ void readSensor(SensorType sensorType)
             mag_y_read = roundf(mag_event.magnetic.y * 1000) / 1000.0f;
             mag_z_read = roundf(mag_event.magnetic.z * 1000) / 1000.0f;
 
-            // Timestamp
-            Serial.print(millis());
-            Serial.print("ms, T: ");
-
             break;
         }
         case SENSOR_HDC302_TEMP_HUM:
@@ -161,10 +141,6 @@ void readSensor(SensorType sensorType)
             hdc302_temp_hum.readOffsets(readT, readRH);
             hum_read = roundf(readT * 1000) / 1000.0f;
             temp_read = roundf(readRH * 1000) / 1000.0f;
-
-            // Timestamp
-            Serial.print(millis());
-            Serial.print("ms,");
 
             break;
         }
