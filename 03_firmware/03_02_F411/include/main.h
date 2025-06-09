@@ -20,9 +20,10 @@
 
 // Others
 #include "globals.h"
+#include "pinout.h"
 #include "sensor_detect.h"
 #include "sensor_config.h"
-#include "pinout.h"
+#include "flash_write.h"
 
 // ISR
 volatile bool spiRxFlag;

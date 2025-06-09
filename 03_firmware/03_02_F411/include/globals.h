@@ -38,4 +38,11 @@ extern Adafruit_SPIFlash flash_memory;
 extern FatVolume fatfs;
 extern File32 sensorFile;
 
+// Flash struct
+union flashStruct
+{
+    int deviceId;
+    uint32_t unixTime;
+};
+
 #endif

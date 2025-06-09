@@ -22,9 +22,11 @@ void setup()
 
     // Initialize Flash
     Serial.println("Initializing flash memory...");
-    if (!flash_memory.begin()) {
+    if (!flash_memory.begin())
+    {
         Serial.println("Flash init failed!");
-        while (1) yield();
+        while (1)
+            yield();
     }
 
     uint32_t jedec_id = flash_memory.getJEDECID();
@@ -35,12 +37,13 @@ void setup()
     Serial.println(" KB");
 
     // Mount filesystem
-    if (!fatfs.begin(&flash_memory)) {
+    if (!fatfs.begin(&flash_memory))
+    {
         Serial.println("Filesystem not found. Please run formatter first.");
-        while (1) yield();
+        while (1)
+            yield();
     }
     Serial.println("Filesystem mounted.");
-    
 }
 
 void loop()
