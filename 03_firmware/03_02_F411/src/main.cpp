@@ -33,14 +33,9 @@ void setup()
     Serial.print("Flash size (usable): ");
     Serial.print(flash_memory.size() / 1024);
     Serial.println(" KB");
-
-    // Mount filesystem
-    if (!fatfs.begin(&flash_memory)) {
-        Serial.println("Filesystem not found. Please run formatter first.");
-        while (1) yield();
-    }
-    Serial.println("Filesystem mounted.");
     
+    initFlashWrite();
+
 }
 
 void loop()
@@ -53,6 +48,7 @@ void loop()
         spiRxFlag = false;
     }
     readSensor(detectedSensor);
+    writeSensorData(detectedSensor);
 }
 
 void INTERBOARD_SPI_ISR()
