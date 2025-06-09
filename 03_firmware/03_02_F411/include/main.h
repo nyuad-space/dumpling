@@ -24,6 +24,7 @@
 #include "sensor_detect.h"
 #include "sensor_config.h"
 #include "flash_write.h"
+#include "pinout.h"
 
 // ISR
 volatile bool spiRxFlag;

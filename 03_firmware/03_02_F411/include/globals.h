@@ -13,7 +13,7 @@
 #include "sensor_detect.h"
 #include "SdFat_Adafruit_Fork.h"
 #include <Adafruit_SPIFlash.h>
-
+#include "flash_write.h"
 // Bus
 extern SPIClass INTERBOARD_SPI;
 extern TwoWire SENSOR_I2C;
@@ -36,7 +36,12 @@ extern SensorType detectedSensor;
 extern Adafruit_FlashTransport_SPI adafruit_flash_spi;
 extern Adafruit_SPIFlash flash_memory;
 extern FatVolume fatfs;
-extern File32 sensorFile;
+extern File32 lsm6dsFile;
+extern File32 dps310File;
+extern File32 bmi088File;
+extern File32 bmp390File;
+extern File32 lis2mdlFile;
+extern File32 hdc302File;
 
 // Flash struct
 union flashStruct

@@ -1,110 +1,296 @@
 #include "globals.h"
 #include "flash_write.h"
+#include "sensor_read.h"
+#include "pinout.h"
 
-static unsigned long currentFlashAddress = 0;
-
-bool writeSensorToFlash(SensorType sensorType, const flashStruct &data, unsigned long flashAddress)
+// Initialize flash storage for writing
+bool initFlashWrite()
 {
-    SensorRecord record;
-    record.timestamp = millis();
-    record.type = sensorType;
-    record.data = data;
-
-    // Use provided address or auto-increment
-    unsigned long writeAddress = (flashAddress == 0) ? currentFlashAddress : flashAddress;
-
-    // Open file and append data
-    sensorFile = fatfs.open("sensor.txt", FILE_WRITE);
-    if (sensorFile)
+    // Initialize the flash file system (assuming fatfs is already initialized in globals)
+    if (!fatfs.begin(&flash_memory))
     {
-
-        // TODO: Do other cases, Format sensorFile.print contents and header
-        switch (sensorType)
-        {
-            // XYZ data
-        case SENSOR_LSM6DS_ACCEL_GYRO || SENSOR_BMI088_ACCEL || SENSOR_LIS2MDL_MAG:
-            Serial.println("Writing accelerometer data to flash");
-            // Validate data before writing
-            if (isnan(data.accel.accel_x_read) || isnan(data.accel.accel_y_read) || isnan(data.accel.accel_z_read))
-            {
-                Serial.println("Error: Invalid accelerometer data");
-                return false;
-            }
-            // Write header
-            sensorFile.println("Timestamp,Accel_X(g),Accel_Y(g),Accel_Z(g),Gyro_X(°/s),Gyro_Y(°/s),Gyro_Z(°/s),Temp(°C)");
-
-            // Write ata rows with timestamp
-            sensorFile.print(millis());
-            sensorFile.print(",");
-            sensorFile.print(accel_x_read);
-            sensorFile.print(",");
-            sensorFile.print(accel_y_read);
-            sensorFile.print(",");
-            sensorFile.print(accel_z_read);
-            sensorFile.print(",");
-            sensorFile.print(gyro_x_read);
-            sensorFile.print(",");
-            sensorFile.print(gyro_y_read);
-            sensorFile.print(",");
-            sensorFile.print(gyro_z_read);
-            sensorFile.print(",");
-            sensorFile.println(temp_read);
-            break;
-
-            // Temperature, Pressure data
-        case SENSOR_DPS310_BARO_TEMP || SENSOR_BMP390_BARO:
-            Serial.println("Writing gyroscope data to flash");
-            if (isnan(data.gyro.gyro_x_read) || isnan(data.gyro.gyro_y_read) || isnan(data.gyro.gyro_z_read))
-            {
-                Serial.println("Error: Invalid gyroscope data");
-                return false;
-
-                // TODO: sensorFile.print();
-            }
-
-            break;
-
-            // Temperature, Humidity data
-        case SENSOR_HDC302_TEMP_HUM:
-            Serial.println("Writing magnetometer data to flash");
-            if (isnan(data.magnetometer.mag_x_read) || isnan(data.magnetometer.mag_y_read) || isnan(data.magnetometer.mag_z_read))
-            {
-                Serial.println("Error: Invalid magnetometer data");
-                return false;
-            }
-            // TODO: sensorFile.print();
-            break;
-
-        case SENSOR_UNKNOWN:
-            break;
-
-        default:
-            Serial.println("Error: Unknown sensor type");
-            return false;
-        }
+        Serial.println("Filesystem not found. Please run formatter first.");
+        while (1)
+            yield();
     }
+    Serial.println("Filesystem mounted.");
 
-    else
-    {
-        Serial.println("Failed to open sensor.txt for writing");
-    }
-
-    // // Update global address counter if using auto-increment
-    // if (flashAddress == 0)
-    // {
-    //     currentFlashAddress += recordSize;
-    // }
-
-    // Serial.print("Successfully wrote ");
-    // Serial.print(recordSize);
-    // Serial.print(" bytes to flash at address ");
-    // Serial.println(writeAddress);
-
-    // return true;
-}
-
-bool readSensorFromFlash(SensorRecord &record, unsigned long flashAddress)
-{
+    // Create headers for CSV files if they don't exist
+    createCSVHeaders(detectedSensor);
 
     return true;
+}
+
+// Create CSV headers for each sensor file
+void createCSVHeaders(SensorType sensorType)
+{
+    switch (sensorType)
+    {
+    case SENSOR_LSM6DS_ACCEL_GYRO:
+        if (!fatfs.exists("lsm6ds_data.csv"))
+        {
+            lsm6dsFile = fatfs.open("lsm6ds_data.csv", FILE_WRITE);
+            if (lsm6dsFile)
+            {
+                lsm6dsFile.println("timestamp_ms,accel_x_mss,accel_y_mss,accel_z_mss,gyro_x_rads,gyro_y_rads,gyro_z_rads,temperature_c");
+                lsm6dsFile.close();
+                Serial.println("Created lsm6ds_data.csv with headers");
+            }
+        }
+        break;
+
+    case SENSOR_DPS310_BARO_TEMP:
+        if (!fatfs.exists("dps310_data.csv"))
+        {
+            dps310File = fatfs.open("dps310_data.csv", FILE_WRITE);
+            if (dps310File)
+            {
+                dps310File.println("timestamp_ms,temperature_c,pressure_hpa");
+                dps310File.close();
+                Serial.println("Created dps310_data.csv with headers");
+            }
+        }
+        break;
+
+    case SENSOR_BMI088_ACCEL:
+        if (!fatfs.exists("bmi088_data.csv"))
+        {
+            bmi088File = fatfs.open("bmi088_data.csv", FILE_WRITE);
+            if (bmi088File)
+            {
+                bmi088File.println("timestamp_ms,accel_x_mss,accel_y_mss,accel_z_mss,gyro_x_rads,gyro_y_rads,gyro_z_rads,temperature_c");
+                bmi088File.close();
+                Serial.println("Created bmi088_data.csv with headers");
+            }
+        }
+        break;
+
+    case SENSOR_BMP390_BARO:
+        if (!fatfs.exists("bmp390_data.csv"))
+        {
+            bmp390File = fatfs.open("bmp390_data.csv", FILE_WRITE);
+            if (bmp390File)
+            {
+                bmp390File.println("timestamp_ms,temperature_c,pressure_hpa,altitude_m");
+                bmp390File.close();
+                Serial.println("Created bmp390_data.csv with headers");
+            }
+        }
+        break;
+
+    case SENSOR_LIS2MDL_MAG:
+        if (!fatfs.exists("lis2mdl_data.csv"))
+        {
+            lis2mdlFile = fatfs.open("lis2mdl_data.csv", FILE_WRITE);
+            if (lis2mdlFile)
+            {
+                lis2mdlFile.println("timestamp_ms,mag_x_ut,mag_y_ut,mag_z_ut");
+                lis2mdlFile.close();
+                Serial.println("Created lis2mdl_data.csv with headers");
+            }
+        }
+        break;
+
+    case SENSOR_HDC302_TEMP_HUM:
+        if (!fatfs.exists("hdc302_data.csv"))
+        {
+            hdc302File = fatfs.open("hdc302_data.csv", FILE_WRITE);
+            if (hdc302File)
+            {
+                hdc302File.println("timestamp_ms,humidity_percent,temperature_c");
+                hdc302File.close();
+                Serial.println("Created hdc302_data.csv with headers");
+            }
+        }
+        break;
+    }
+}
+
+// Write sensor data to appropriate CSV file
+void writeSensorData(SensorType sensorType)
+{
+    unsigned long timestamp = millis();
+
+    switch (sensorType)
+    {
+    case SENSOR_LSM6DS_ACCEL_GYRO:
+    {
+        lsm6dsFile = fatfs.open("lsm6ds_data.csv", FILE_WRITE);
+        if (lsm6dsFile)
+        {
+            Serial.println("LSM6DS data written");
+            lsm6dsFile.print(timestamp);
+            lsm6dsFile.print(",");
+            lsm6dsFile.print(accel_x_read);
+            lsm6dsFile.print(",");
+            lsm6dsFile.print(accel_y_read);
+            lsm6dsFile.print(",");
+            lsm6dsFile.print(accel_z_read);
+            lsm6dsFile.print(",");
+            lsm6dsFile.print(gyro_x_read);
+            lsm6dsFile.print(",");
+            lsm6dsFile.print(gyro_y_read);
+            lsm6dsFile.print(",");
+            lsm6dsFile.print(gyro_z_read);
+            lsm6dsFile.print(",");
+            lsm6dsFile.println(temp_read);
+            lsm6dsFile.close();
+            Serial.println("LSM6DS data written");
+        }
+        else
+        {
+            // Serial.println("Failed to open lsm6ds_data.csv");
+        }
+        break;
+    }
+
+    case SENSOR_DPS310_BARO_TEMP:
+    {
+        dps310File = fatfs.open("dps310_data.csv", FILE_WRITE);
+        if (dps310File)
+        {
+            dps310File.print(timestamp);
+            dps310File.print(",");
+            dps310File.print(temp_read);
+            dps310File.print(",");
+            dps310File.println(press_read);
+            dps310File.close();
+            Serial.println("DPS310 data written");
+        }
+        else
+        {
+            Serial.println("Failed to open dps310_data.csv");
+        }
+        break;
+    }
+
+    case SENSOR_BMI088_ACCEL:
+    {
+        bmi088File = fatfs.open("bmi088_data.csv", FILE_WRITE);
+        if (bmi088File)
+        {
+            bmi088File.print(timestamp);
+            bmi088File.print(",");
+            bmi088File.print(accel_x_read);
+            bmi088File.print(",");
+            bmi088File.print(accel_y_read);
+            bmi088File.print(",");
+            bmi088File.print(accel_z_read);
+            bmi088File.print(",");
+            bmi088File.print(gyro_x_read);
+            bmi088File.print(",");
+            bmi088File.print(gyro_y_read);
+            bmi088File.print(",");
+            bmi088File.print(gyro_z_read);
+            bmi088File.print(",");
+            bmi088File.println(temp_read);
+            bmi088File.close();
+            Serial.println("BMI088 data written");
+        }
+        else
+        {
+            Serial.println("Failed to open bmi088_data.csv");
+        }
+        break;
+    }
+
+    case SENSOR_BMP390_BARO:
+    {
+        bmp390File = fatfs.open("bmp390_data.csv", FILE_WRITE);
+        if (bmp390File)
+        {
+            bmp390File.print(timestamp);
+            bmp390File.print(",");
+            bmp390File.print(temp_read);
+            bmp390File.print(",");
+            bmp390File.print(press_read);
+            bmp390File.print(",");
+            bmp390File.println(bmp390_alt_read);
+            bmp390File.close();
+            Serial.println("BMP390 data written");
+        }
+        else
+        {
+            Serial.println("Failed to open bmp390_data.csv");
+        }
+        break;
+    }
+
+    case SENSOR_LIS2MDL_MAG:
+    {
+        lis2mdlFile = fatfs.open("lis2mdl_data.csv", FILE_WRITE);
+        if (lis2mdlFile)
+        {
+            lis2mdlFile.print(timestamp);
+            lis2mdlFile.print(",");
+            lis2mdlFile.print(mag_x_read);
+            lis2mdlFile.print(",");
+            lis2mdlFile.print(mag_y_read);
+            lis2mdlFile.print(",");
+            lis2mdlFile.println(mag_z_read);
+            lis2mdlFile.close();
+            Serial.println("LIS2MDL data written");
+        }
+        else
+        {
+            Serial.println("Failed to open lis2mdl_data.csv");
+        }
+        break;
+    }
+
+    case SENSOR_HDC302_TEMP_HUM:
+    {
+        hdc302File = fatfs.open("hdc302_data.csv", FILE_WRITE);
+        if (hdc302File)
+        {
+            hdc302File.print(timestamp);
+            hdc302File.print(",");
+            hdc302File.print(hum_read);
+            hdc302File.print(",");
+            hdc302File.println(temp_read);
+            hdc302File.close();
+            Serial.println("HDC302 data written");
+        }
+        else
+        {
+            Serial.println("Failed to open hdc302_data.csv");
+        }
+        break;
+    }
+    }
+}
+
+// Get file size for monitoring storage usage
+unsigned long getFileSize(const char *filename)
+{
+    File file = fatfs.open(filename, FILE_READ);
+    if (file)
+    {
+        unsigned long size = file.size();
+        file.close();
+        return size;
+    }
+    return 0;
+}
+
+// Get the appropriate filename for a sensor type
+const char *getSensorFilename(SensorType sensorType)
+{
+    switch (sensorType)
+    {
+    case SENSOR_LSM6DS_ACCEL_GYRO:
+        return "lsm6ds_data.csv";
+    case SENSOR_DPS310_BARO_TEMP:
+        return "dps310_data.csv";
+    case SENSOR_BMI088_ACCEL:
+        return "bmi088_data.csv";
+    case SENSOR_BMP390_BARO:
+        return "bmp390_data.csv";
+    case SENSOR_LIS2MDL_MAG:
+        return "lis2mdl_data.csv";
+    case SENSOR_HDC302_TEMP_HUM:
+        return "hdc302_data.csv";
+    default:
+        return "unknown_sensor.csv";
+    }
 }
