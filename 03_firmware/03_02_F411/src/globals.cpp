@@ -22,3 +22,5 @@ SensorType detectedSensor = SENSOR_UNKNOWN;
 // Flash
 Adafruit_FlashTransport_SPI adafruit_flash_spi(FLASH_CS, FLASH_SPI);
 Adafruit_SPIFlash flash_memory(&adafruit_flash_spi);
+FatVolume fatfs;
+File32 sensorFile;

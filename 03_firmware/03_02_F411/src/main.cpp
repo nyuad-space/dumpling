@@ -20,14 +20,27 @@ void setup()
     Serial.println("Configuring sensor: ");
     configSensor(detectedSensor);
 
-    // Flash
-    flash_memory.begin();
+    // Initialize Flash
+    Serial.println("Initializing flash memory...");
+    if (!flash_memory.begin()) {
+        Serial.println("Flash init failed!");
+        while (1) yield();
+    }
+
     uint32_t jedec_id = flash_memory.getJEDECID();
     Serial.print("JEDEC ID: 0x");
     Serial.println(jedec_id, HEX);
     Serial.print("Flash size (usable): ");
     Serial.print(flash_memory.size() / 1024);
     Serial.println(" KB");
+
+    // Mount filesystem
+    if (!fatfs.begin(&flash_memory)) {
+        Serial.println("Filesystem not found. Please run formatter first.");
+        while (1) yield();
+    }
+    Serial.println("Filesystem mounted.");
+    
 }
 
 void loop()

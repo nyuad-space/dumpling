@@ -35,5 +35,7 @@ extern SensorType detectedSensor;
 // Flash objects
 extern Adafruit_FlashTransport_SPI adafruit_flash_spi;
 extern Adafruit_SPIFlash flash_memory;
+extern FatVolume fatfs;
+extern File32 sensorFile;
 
 #endif
