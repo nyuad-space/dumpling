@@ -27,3 +27,4 @@
 // ISR
 volatile bool spiRxFlag;
 void INTERBOARD_SPI_ISR();
+#include "sensor_read.h"

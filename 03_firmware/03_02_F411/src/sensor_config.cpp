@@ -54,6 +54,8 @@ void configSensor(SensorType sensorType)
         Serial.println("Temperature data rate / oversampling set to: 64 Hz / 8x");
         break;
     case SENSOR_BMI088_ACCEL:
+        bmi088_accel.begin(); // Activate sensor
+        bmi088_gyro.begin();
         bmi088_accel.setOdr(Bmi088Accel::ODR_1600HZ_BW_280HZ); // Output data rate and bandwidth
         Serial.println("Accelerometer output data rate / bandwidth set to: 1600 Hz / 280 Hz");
         bmi088_accel.setRange(Bmi088Accel::RANGE_24G);
