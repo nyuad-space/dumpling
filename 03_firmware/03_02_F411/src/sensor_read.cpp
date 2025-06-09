@@ -65,6 +65,26 @@ void readSensor(SensorType sensorType)
             lsm6ds_accel_gyro.getEvent(NULL, NULL, &temp_event);
             temp_read = roundf(temp_event.temperature * 1000) / 1000.0f;
 
+            // // Timestamp
+            // Serial.print(millis());
+            // Serial.print("ms, T: ");
+
+            // // Display on Serial (Timestamp done internally)
+            // Serial.print("Accel X: ");
+            // Serial.print(accel_x_read);
+            // Serial.print(" Accel Y: ");
+            // Serial.print(accel_y_read);
+            // Serial.print(" Accel Z: ");
+            // Serial.print(accel_z_read);
+            // Serial.print(" Gyro X: ");
+            // Serial.print(gyro_x_read);
+            // Serial.print(" Gyro Y: ");
+            // Serial.print(gyro_y_read);
+            // Serial.print(" Gyro Z: ");
+            // Serial.print(gyro_z_read);
+            // Serial.print(" T: ");
+            // Serial.println(temp_read);
+
             break;
         }
 
@@ -80,6 +100,16 @@ void readSensor(SensorType sensorType)
             dps310_baro_temp.getEvents(&temp_event, &pressure_event);
             temp_read = roundf(temp_event.temperature * 1000) / 1000.0f;
             press_read = roundf(pressure_event.pressure * 1000) / 1000.0f;
+
+            // // TimestampAdd commentMore actions
+            // Serial.print(millis());
+            // Serial.print("ms, T: ");
+
+            // // Display on Serial
+            // Serial.print(temp_read);
+            // Serial.print("*C, P: ");
+            // Serial.print(press_read);
+            // Serial.println("hPa");
 
             break;
         }
@@ -100,6 +130,26 @@ void readSensor(SensorType sensorType)
             gyro_z_read = roundf(bmi088_gyro.getGyroZ_rads() * 1000) / 1000.0f;
             temp_read = roundf(bmi088_accel.getTemperature_C() * 1000) / 1000.0f;
 
+            // // Timestamp
+            // Serial.print(millis());
+            // Serial.print("ms, T: ");
+
+            // // Display on Serial
+            // Serial.print(accel_x_read);
+            // Serial.print("\t");
+            // Serial.print(accel_y_read);
+            // Serial.print("\t");
+            // Serial.print(accel_z_read);
+            // Serial.print("\t");
+            // Serial.print(gyro_x_read);
+            // Serial.print("\t");
+            // Serial.print(gyro_y_read);
+            // Serial.print("\t");
+            // Serial.print(gyro_z_read);
+            // Serial.print("\t");
+            // Serial.print(temp_read);
+            // Serial.print("\n");
+
             break;
         }
 
@@ -112,6 +162,18 @@ void readSensor(SensorType sensorType)
             temp_read = roundf(bmp390_baro.temperature * 1000) / 1000.0f;
             press_read = roundf(bmp390_baro.pressure * 1000) / 1000.0f;
             bmp390_alt_read = roundf(bmp390_baro.readAltitude(SEALEVELPRESSURE_HPA) * 1000) / 1000.0f;
+
+            // // Timestamp
+            // Serial.print(millis());
+            // Serial.print("ms, T: ");
+
+            // // Display on Serial
+            // Serial.print(temp_read);
+            // Serial.print("*C, P: ");
+            // Serial.print(press_read);
+            // Serial.print("hPa");
+            // Serial.print(bmp390_alt_read);
+            // Serial.println("m");
 
             break;
         }
@@ -128,6 +190,22 @@ void readSensor(SensorType sensorType)
             mag_y_read = roundf(mag_event.magnetic.y * 1000) / 1000.0f;
             mag_z_read = roundf(mag_event.magnetic.z * 1000) / 1000.0f;
 
+            // // Timestamp
+            // Serial.print(millis());
+            // Serial.print("ms, T: ");
+
+            // // Display on Serial
+            // Serial.print("X: ");
+            // Serial.print(mag_x_read);
+            // Serial.print("  ");
+            // Serial.print("Y: ");
+            // Serial.print(mag_y_read);
+            // Serial.print("  ");
+            // Serial.print("Z: ");
+            // Serial.print(mag_z_read);
+            // Serial.print("  ");
+            // Serial.println("uT");
+
             break;
         }
         case SENSOR_HDC302_TEMP_HUM:
@@ -141,6 +219,17 @@ void readSensor(SensorType sensorType)
             hdc302_temp_hum.readOffsets(readT, readRH);
             hum_read = roundf(readT * 1000) / 1000.0f;
             temp_read = roundf(readRH * 1000) / 1000.0f;
+
+            // // Timestamp
+            // Serial.print(millis());
+            // Serial.print("ms,");
+
+            // // Display on Serial
+            // Serial.print(" RH Offset: ");
+            // Serial.print(hum_read);
+            // Serial.print(", T Offset: ");
+            // Serial.print(temp_read);
+            // Serial.print("\n");
 
             break;
         }
