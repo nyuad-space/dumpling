@@ -27,3 +27,6 @@
 // I2C sensors (I2C1)
 #define SENSOR_SCL PB6
 #define SENSOR_SDA PB7
+
+#define RGB_LED PB1
+

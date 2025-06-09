@@ -1,3 +1,72 @@
+/**
+ * @file SPIPacket.h
+ * @brief SPI Communication Packet Format and Management
+ * 
+ * =============================================================================
+ * SPI PACKET FORMAT SPECIFICATION
+ * =============================================================================
+ * 
+ * This class implements a structured packet format for reliable SPI communication
+ * between devices. Each packet contains a fixed header, variable-length data 
+ * payload, and checksum for basic error detection.
+ * 
+ * PACKET STRUCTURE:
+ * ┌─────────────┬─────────────┬─────────────┬─────────────────┬─────────────┐
+ * │  Sender ID  │ Data Length │  Reserved   │   Data Payload  │  Checksum   │
+ * │   (1 byte)  │  (1 byte)   │  (1 byte)   │ (0-N bytes)     │  (1 byte)   │
+ * └─────────────┴─────────────┴─────────────┴─────────────────┴─────────────┘
+ *  Byte 0        Byte 1        Byte 2       Bytes 3..3+N-1    Byte 3+N
+ * 
+ * FIELD DESCRIPTIONS:
+ * 
+ * • Sender ID (1 byte):
+ *   - Identifies the originating device/module sending the packet
+ *   - Type: SenderID enum (see SenderID definition)
+ *   - Used for packet routing and source identification
+ * 
+ * • Data Length (1 byte):
+ *   - Number of bytes in the data payload (0-255)
+ *   - Does NOT include header or checksum bytes
+ *   - Maximum value limited by MAX_PACKET_DATA_SIZE constant
+ * 
+ * • Reserved (1 byte):
+ *   - Currently unused, set to 0x00
+ *   - Reserved for future protocol extensions (e.g., packet flags, sequence numbers)
+ *   - Should be initialized to 0 and ignored on reception
+ * 
+ * • Data Payload (0-N bytes):
+ *   - Variable-length application data
+ *   - Can contain any binary data (strings, sensor readings, commands, etc.)
+ *   - Length specified by Data Length field
+ *   - Maximum size: MAX_PACKET_DATA_SIZE bytes
+ * 
+ * • Checksum (1 byte):
+ *   - Error detection mechanism (currently placeholder implementation)
+ *   - Calculated over entire packet (header + data)
+ *   - TODO: Implement proper checksum algorithm (CRC8, XOR, etc.)
+ * 
+ * TOTAL PACKET SIZE:
+ * Minimum: 4 bytes (header + checksum, no data)
+ * Maximum: 4 + MAX_PACKET_DATA_SIZE bytes
+ * 
+ * USAGE EXAMPLES:
+ * 
+ * // Creating and sending a packet
+ * SPIPacket packet(SENSOR_MODULE);
+ * packet.addString("TEMP:25.3");
+ * uint8_t buffer[64];
+ * packet.serialize(buffer);
+ * // Send buffer via SPI...
+ * 
+ * // Receiving and parsing a packet
+ * SPIPacket received_packet;
+ * if (received_packet.deserialize(rx_buffer, rx_size)) {
+ *     received_packet.printPacket();  // Debug output
+ *     // Process packet data...
+ * }
+ * =============================================================================
+ */
+
 #pragma once
 #include "Arduino.h"
 
@@ -22,7 +91,8 @@ enum SenderID : uint8_t {
 // Communication types enum
 enum CommType : uint8_t {
     HEARTBEAT = 0x01,
-    READING = 0x02
+    READING = 0x02, 
+    DUMMY = 0x03,
 };
 
 // Status

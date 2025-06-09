@@ -4,17 +4,19 @@ void setup()
 {
     /* COMMS SETUP */
     Serial.begin(115200);
-    delay(5000); // Give time for power stabilization
+    // delay(5000); // Give time for power stabilization
 
-    // Initialize interboard SPI in slave mode
-    // The CS pin is required, dummy in slave mode
+    // Initialize Interboard comms
     INTERBOARD_SPI.begin(INTERBOARD_CS, SPI_SLAVE);
     INTERBOARD_SPI.attachSlaveInterrupt(INTERBOARD_CS, INTERBOARD_SPI_ISR);
 
+    // Initialize RGB LED
+    neopixel.begin();
+    neopixel.clear();
+
+    // Sensor setup
     Serial.print("Connected to: ");
     Serial.println(detectSensor());
-
-    Serial.println("Initialize communication (SPI or I2C)");
     initSensorComm(detectedSensor);
 
     Serial.println("Configuring sensor... ");
@@ -60,18 +62,42 @@ void setup()
 
 void loop()
 {
-    if (spiRxFlag) 
+    if(INTERBOARD_RCVD)
     {
-        Serial.println("I received something!");
-        Serial.print("BTW I'm using sensor");
-        Serial.println(detectedSensor);
-        spiRxFlag = false;
+        INTERBOARD_SPI_PROCESS_MSG();
     }
+}
 
-    // readSensor(detectedSensor);
+void INTERBOARD_SPI_PROCESS_MSG()
+{
+    // Read maximum possible bytes
+    HAL_SPI_Receive(hspi, INTERBOARD_RX_BUFFER, MAX_PACKET_SIZE, 100);
+
+    // Calculate actual message length
+    data_size = INTERBOARD_RX_BUFFER[1];    
+    SPI_message_size = PACKET_HEADER_SIZE + data_size + PACKET_CHECKSUM_SIZE;
+    
+    // Validate the calculated length
+    if(SPI_message_size <= MAX_PACKET_SIZE && SPI_message_size >= (PACKET_HEADER_SIZE + PACKET_CHECKSUM_SIZE))
+    {
+        Serial.print("Message length: ");
+        Serial.print(SPI_message_size);
+        Serial.print(" bytes (data size: ");
+        Serial.print(data_size);
+        Serial.println(")");
+        
+        // Print only the valid bytes
+        for (int i = 0; i < SPI_message_size; i++) {
+            Serial.print("0x");
+            Serial.print(INTERBOARD_RX_BUFFER[i], HEX);
+            Serial.print(" ");
+        }
+        Serial.println();
+    }
+    INTERBOARD_RCVD = false;
 }
 
 void INTERBOARD_SPI_ISR()
 {
-    spiRxFlag = true;
+    INTERBOARD_RCVD = true;
 }

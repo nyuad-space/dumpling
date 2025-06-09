@@ -13,19 +13,31 @@
 #include <Adafruit_BMP3XX.h>
 #include <Adafruit_LIS2MDL.h>
 #include <Adafruit_HDC302x.h>
+#include <Adafruit_NeoPixel.h>
 
 // Flash libraries
 #include <Adafruit_SPIFlash.h>
-#include "SdFat_Adafruit_Fork.h"
+#include <SdFat_Adafruit_Fork.h>
 
 // Others
+#include "SPIPacket.h"
 #include "globals.h"
 #include "pinout.h"
 #include "sensor_detect.h"
 #include "sensor_config.h"
-#include "flash_write_read.h"
+#include "flash_write.h"
+#include "pinout.h"
 #include "sensor_read.h"
+#include "SPIPacket.h"
 
-// ISR
-volatile bool spiRxFlag;
+// LED
+Adafruit_NeoPixel neopixel(1, RGB_LED, NEO_GRB + NEO_KHZ800);
+
+// SPI Related
+SPI_HandleTypeDef *hspi = INTERBOARD_SPI.getHandle();
 void INTERBOARD_SPI_ISR();
+void INTERBOARD_SPI_PROCESS_MSG();
+uint8_t INTERBOARD_RX_BUFFER[MAX_PACKET_SIZE];
+volatile bool INTERBOARD_RCVD = false;
+uint8_t data_size;
+uint8_t SPI_message_size;
