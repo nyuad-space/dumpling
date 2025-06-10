@@ -16,5 +16,11 @@
 #define FLASH_SPI_MISO PA6
 #define FLASH_SPI_MOSI PA7
 
+// MPU Pins
+#define MPU_SCL PA8
+#define MPU_SDA PC9
+#define MPU_INT PA8
+
+// Indicators
 #define BUZZER PB8
 #define RGB_LED PB9

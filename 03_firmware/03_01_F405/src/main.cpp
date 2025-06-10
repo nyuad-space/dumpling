@@ -2,124 +2,113 @@
 
 void setup()
 {
+
+#if DEBUG
   Serial.begin(115200);
   delay(1000);
+#endif
 
   // Initialize RGB LED
-  rgb_led.begin();
+  neopixel.begin();
+  neopixel.clear();
+  neopixel.show();
 
   // Chip selects high
   // Must select chips manually!
-  initialize_spi_system();
+  initialize_interboard_spi();
+  initialize_mpu();
 
-  // Build heartbeat packet
+  // Build TX buffers
   dummy_packet_size = buildDummyRequest(dummy_buffer);
   command_packet_size = buildDataRequest(command_buffer);
+
+  // Set initial color
+  neopixel.setPixelColor(0, color_amber);
+  neopixel.show();
 }
 
-void loop() {
-  switch (currentState) {
+void loop()
+{
 
-    case FLIGHT_MONITORING:
-      // Flight monitoring indication
-      rgb_led.setPixelColor(0, color_green);
-      rgb_led.show();
-      
-      // Implement real flight end logic
-      delay(5000);
-      currentState = DATA_COLLECTION;
-      break;
+  switch (current_state)
+  {
+  case FLIGHT_READY_DETECTION:
+  {
+    // Check flight ready
+    bool flight_ready = detect_flight_ready();
 
-    case DATA_COLLECTION:
-      // Collect data from all coprocessors once
-      // make_data_request(COPROCESSOR_1_CS);
-      make_data_request(INTERBOARD_SPI_CO2_CS);
-
-      // store_to_sd(data);
-      // currentState = STANDBY;
-      break;
-      
-    case STANDBY:
-      rgb_led.setPixelColor(0, color_blue);
-      rgb_led.show();
-
-      delay(1000);
-      break;
-  }
-}
-
-bool make_data_request(uint8_t CS_PIN) {  
-  // Step 0: Amber flash
-  rgb_led.setPixelColor(0, color_amber);
-  rgb_led.show();
-  delay(500);
-  rgb_led.clear();
-  rgb_led.show();
-
-  // Debug: Print command_buffer contents
-  Serial.print("Packet size: ");
-  Serial.print(command_packet_size);
-  Serial.print(" | TX Buffer: ");
-  for(int i = 0; i < command_packet_size; i++) {
-    Serial.print("0x");
-    if(command_buffer[i] < 16) Serial.print("0");
-    Serial.print(command_buffer[i], HEX);
-    Serial.print(" ");
-  }
-  Serial.println();
-
-  // Step 1: Send request data packet
-  digitalWrite(CS_PIN, LOW);
-  INTERBOARD_SPI.transfer(command_buffer, rx_buffer, command_packet_size, SPI_LAST);
-  digitalWrite(CS_PIN, HIGH);
-
-  // Step 2: Wait for coprocessor, red flash
-  delay(1000);
-  rgb_led.setPixelColor(0, color_red);
-  rgb_led.show();
-  delay(500);
-  rgb_led.clear();
-  rgb_led.show();
-
-  // Step 3: Poll with dummy bytes until we get the end sequence or timeout
-  unsigned long start_time = millis();
-
-  while (millis() - start_time < POLLING_TIMEOUT_MS) {
-    // Debug: Print dummy_buffer contents
-    Serial.print("Packet size: ");
-    Serial.print(dummy_packet_size);
-    Serial.print(" | TX Buffer: ");
-    for(int i = 0; i < dummy_packet_size; i++) {
-      Serial.print("0x");
-      if(dummy_buffer[i] < 16) Serial.print("0");
-      Serial.print(dummy_buffer[i], HEX);
-      Serial.print(" ");
+    // Change state on detect ready
+    if (flight_ready)
+    {
+      neopixel.setPixelColor(0, color_green);
+      neopixel.show();
+      current_state = FLIGHT_MONITORING;
     }
+    break;
+  }
+
+  case FLIGHT_MONITORING:
+  {
+    // Initialize quiet timer on first entry to this state
+    static bool first_entry = true;
+    if (first_entry)
+    {
+      quiet_start_time = millis();
+      first_entry = false;
+    }
+
+    // If motion detected, restart timer
+    if (mpu.getMotionInterruptStatus())
+    {
+#if DEBUG
+      Serial.println("~~Flying~~");
+#endif
+      quiet_start_time = millis();
+    }
+
+    // If quiet for a while, change state
+    if (millis() - quiet_start_time > QUIET_TIME_THRESH_SEC)
+    {
+#if DEBUG
+      Serial.println();
+      Serial.println("It's been too quiet. Collecting logs now.");
+#endif
+      neopixel.setPixelColor(0, color_blue);
+      neopixel.show();
+      current_state = DATA_COLLECTION;
+      first_entry = true; // Reset for next time
+    }
+    break;
+  }
+
+  case DATA_COLLECTION:
+  {
+    // Collect data from all coprocessors
+    make_data_request(INTERBOARD_SPI_CO2_CS);
+    // store_to_sd(data);
+
+    // Switch to new state
+#if DEBUG
     Serial.println();
+    Serial.println("Data collection complete. Standing by.");
+#endif
+    neopixel.setPixelColor(0, color_red);
+    neopixel.show();
+    current_state = STANDBY;
+    break;
+  }
 
-    digitalWrite(CS_PIN, LOW);
-    INTERBOARD_SPI.transfer(dummy_buffer, rx_buffer, dummy_packet_size, SPI_LAST);
-    digitalWrite(CS_PIN, HIGH);
-    
-    // Check if we got the end sequence
-    if (check_end_sequence(rx_buffer)) {
-      return true;  // Success - data complete
-    }
-    
-    // Small delay between polls to not spam the coprocessor
-    delay(500);
-}
-  
-  return true;  // Timeout - failed to get end sequence
-}
-
-bool check_end_sequence(uint8_t* buffer) {
-  // Example: look for 0xBEEF pattern
-  // if (buffer[0] == 0xDE && buffer[1] == 0xAD) return true;
-  return false;  // Placeholder
+  case STANDBY:
+  {
+    // NOTE: This delay is okay! Arbitrary number
+    // The board will remain in this state unless restarted
+    delay(10000);
+    break;
+  }
+  }
 }
 
-void initialize_spi_system()
+void initialize_interboard_spi()
 {
   // Initialize all CS pins as outputs (HIGH = inactive, safe default)
   for (size_t i = 0; i < InterboardSPI_CS::COUNT; i++)
@@ -131,5 +120,156 @@ void initialize_spi_system()
 
   // Initialize SPI bus
   INTERBOARD_SPI.begin();
-  Serial.println("SPI bus initialized");
+}
+
+void initialize_mpu()
+{
+  if (!mpu.begin(MPU6050_I2CADDR_DEFAULT, &MPU_I2C))
+  {
+    Serial.println("Failed to find MPU6050 chip");
+    while (1)
+    {
+      delay(10);
+    }
+  }
+
+  // Setup motion detection
+  mpu.setHighPassFilter(MPU6050_HIGHPASS_0_63_HZ);
+  mpu.setMotionDetectionThreshold(1);
+  mpu.setMotionDetectionDuration(MPU_MOT_DET_DUR);
+  mpu.setInterruptPinLatch(true);
+  mpu.setInterruptPinPolarity(true);
+  mpu.setMotionInterrupt(true);
+}
+
+bool detect_flight_ready()
+{
+  // Only check if motion interrupt triggered
+  if (mpu.getMotionInterruptStatus())
+  {
+    // Check if rocket is currently upright
+    mpu.getEvent(&a, &g, &temp);
+    rocket_curr_upright = (abs(a.acceleration.y) > UPRIGHT_ACCEL_THRESH);
+
+    // If not upright anymore on new motion, reset upright tracker
+    if (!rocket_curr_upright && rocket_prev_upright)
+    {
+#if DEBUG
+      Serial.println("Rocket no longer upright, resetting timer.");
+#endif
+      rocket_prev_upright = false;
+    }
+
+    // If just became upright, start timer and set upright tracker
+    if (rocket_curr_upright && !rocket_prev_upright)
+    {
+      upright_start_time = millis();
+      rocket_prev_upright = true;
+#if DEBUG
+      Serial.println("Rocket became upright, starting timer.");
+#endif
+    }
+  }
+
+  // Check timer
+  // Switch state past threshold
+  if (rocket_prev_upright && (millis() - upright_start_time > UPRIGHT_TIME_THRESH_SEC))
+  {
+#if DEBUG
+    Serial.println("Rocket upright threshold met, switching to flight monitoring.");
+#endif
+    return true;
+  }
+
+  // Blink LED when timer is running
+  if (rocket_prev_upright)
+  {
+    if (millis() - led_blink_time > 500)
+    {
+      led_blink_state = !led_blink_state;
+      led_blink_time = millis();
+
+      if (led_blink_state)
+      {
+        neopixel.setPixelColor(0, color_amber);
+      }
+      else
+      {
+        neopixel.clear();
+      }
+      neopixel.show();
+    }
+  }
+  else
+  {
+    neopixel.setPixelColor(0, neopixel.Color(255, 191, 0));
+    neopixel.show();
+  }
+
+  return false;
+}
+
+bool make_data_request(uint8_t CS_PIN)
+{
+  // Send initial command packet
+  digitalWrite(CS_PIN, LOW);
+  INTERBOARD_SPI.transfer(command_buffer, rx_buffer, command_packet_size, SPI_LAST);
+  digitalWrite(CS_PIN, HIGH);
+
+#if DEBUG
+  _print_buffer("TX", command_buffer, command_packet_size);
+  _print_buffer("RX", rx_buffer, command_packet_size);
+#endif
+
+  // Delay to allow coprocessor to prepare data.
+  delay(3000);
+
+  // Poll for response data with a timeout
+  unsigned long start_time = millis();
+  while (millis() - start_time < POLLING_TIMEOUT_MS)
+  {
+    digitalWrite(CS_PIN, LOW);
+    delay(10);
+    INTERBOARD_SPI.transfer(dummy_buffer, rx_buffer, dummy_packet_size, SPI_LAST);
+    digitalWrite(CS_PIN, HIGH);
+
+#if DEBUG
+    _print_buffer("TX", dummy_buffer, 5);
+    _print_buffer("RX", rx_buffer, MAX_PACKET_SIZE);
+#endif
+
+    if (check_end_sequence(rx_buffer))
+    {
+      Serial.println("Got end sequence!");
+      return true;
+    }
+
+    // Delay before next poll
+    delay(100);
+  }
+
+  return false; // Timeout
+}
+
+bool check_end_sequence(uint8_t *buffer)
+{
+  return (buffer[0] == 0xBE && buffer[1] == 0xEF);
+}
+
+void _print_buffer(const char *label, uint8_t *buffer, uint8_t size)
+{
+  Serial.print("Packet size: ");
+  Serial.print(size);
+  Serial.print(" | ");
+  Serial.print(label);
+  Serial.print(" Buffer: ");
+  for (int i = 0; i < size; i++)
+  {
+    Serial.print("0x");
+    if (buffer[i] < 16)
+      Serial.print("0");
+    Serial.print(buffer[i], HEX);
+    Serial.print(" ");
+  }
+  Serial.println();
 }
