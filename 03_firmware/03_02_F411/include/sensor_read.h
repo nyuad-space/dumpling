@@ -1,4 +1,5 @@
 #include "globals.h"
+#include "flash_write.h"
 
 // sensor_read.h
 
@@ -15,20 +16,5 @@ void read_BMI088();
 void read_BMP390();
 void read_LIS2MDL();
 void read_HDC302();
-
-// Sensor readings
-extern float accel_x_read;
-extern float accel_y_read;
-extern float accel_z_read;
-extern float gyro_x_read;
-extern float gyro_y_read;
-extern float gyro_z_read;
-extern float temp_read;
-extern float press_read;
-extern float bmp390_alt_read;
-extern float mag_x_read;
-extern float mag_y_read;
-extern float mag_z_read;
-extern float hum_read;
 
 #endif // SENSOR_READ_R

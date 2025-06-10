@@ -29,3 +29,18 @@ File32 bmi088File;
 File32 bmp390File;
 File32 lis2mdlFile;
 File32 hdc302File;
+
+// Sensor readings
+float accel_x_read;
+float accel_y_read;
+float accel_z_read;
+float gyro_x_read;
+float gyro_y_read;
+float gyro_z_read;
+float temp_read;
+float press_read;
+float bmp390_alt_read;
+float mag_x_read;
+float mag_y_read;
+float mag_z_read;
+float hum_read;

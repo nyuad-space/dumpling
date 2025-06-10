@@ -1,6 +1,7 @@
 #include "globals.h"
 #include "sensor_read.h"
 #include "pinout.h"
+#include "flash_write.h"
 
 #define SEALEVELPRESSURE_HPA (1013.25)
 
@@ -8,20 +9,7 @@
 unsigned long previousMillis = 0; // store last updated time
 const long interval = 1000;       // interval at which to delay (milliseconds)
 
-// Sensor readings
-float accel_x_read;
-float accel_y_read;
-float accel_z_read;
-float gyro_x_read;
-float gyro_y_read;
-float gyro_z_read;
-float temp_read;
-float press_read;
-float bmp390_alt_read;
-float mag_x_read;
-float mag_y_read;
-float mag_z_read;
-float hum_read;
+// == readings for each sensors ==
 
 void read_LSM6DS()
 {
@@ -200,7 +188,7 @@ void read_HDC302()
     // Serial.print("\n");
 }
 
-// central function
+// == central function ==
 void readSensor(SensorType sensorType)
 {
     // Give buffer time between new sensor reading
@@ -209,6 +197,7 @@ void readSensor(SensorType sensorType)
     {
         previousMillis = currentMillis;
 
+        // Read sensors
         switch (sensorType)
         {
         case SENSOR_LSM6DS_ACCEL_GYRO:
@@ -247,5 +236,7 @@ void readSensor(SensorType sensorType)
         }
             return;
         }
+        // Write to flash in same rate as reading from sensor
+        writeSensorData(sensorType);
     }
 }

@@ -43,4 +43,19 @@ extern File32 bmp390File;
 extern File32 lis2mdlFile;
 extern File32 hdc302File;
 
+// Sensor readings
+extern float accel_x_read;
+extern float accel_y_read;
+extern float accel_z_read;
+extern float gyro_x_read;
+extern float gyro_y_read;
+extern float gyro_z_read;
+extern float temp_read;
+extern float press_read;
+extern float bmp390_alt_read;
+extern float mag_x_read;
+extern float mag_y_read;
+extern float mag_z_read;
+extern float hum_read;
+
 #endif

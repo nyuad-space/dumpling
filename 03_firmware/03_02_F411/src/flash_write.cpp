@@ -1,6 +1,5 @@
 #include "globals.h"
 #include "flash_write.h"
-#include "sensor_read.h"
 #include "pinout.h"
 
 // Initialize flash storage for writing
