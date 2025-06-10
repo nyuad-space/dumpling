@@ -11,3 +11,4 @@
 - Arbitrary STM32F411 DFU bootloading error
 - Check forward current rating for Schottky diodes. Generally 1A would work
 - Consider using more current sensors i.e. measure current draw from each board, from VIN total etc.
+- Add in extra LEDs, buttons, etc. for extra functions/debugging in the future
