@@ -234,8 +234,8 @@ void readSensor(SensorType sensorType)
             return;
         }
         // Write to flash in same rate as reading from sensor
-        writeSensorData(sensorType);
+        writeToFlash(sensorType);
         // // Read the data (for debug)
-        // readSensorData(sensorType);
+        // readFromFlash(sensorType);
     }
 }

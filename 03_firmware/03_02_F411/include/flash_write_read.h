@@ -13,7 +13,7 @@ bool initFlashWrite();
 void createCSVHeaders(SensorType sensorType);
 
 // Write current sensor reading to flash
-void writeSensorData(SensorType sensorType);
+void writeToFlash(SensorType sensorType);
 
 // Get file size in bytes
 unsigned long getFileSize(const char *filename);
@@ -22,7 +22,7 @@ unsigned long getFileSize(const char *filename);
 const char *getSensorFilename(SensorType sensorType);
 
 // Read current flash recordings
-void readSensorData(SensorType sensorType);
+void readFromFlash(SensorType sensorType);
 void read_by_line(File &fileHandle);
 
 #endif // FLASHWRITE_H

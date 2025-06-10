@@ -104,7 +104,7 @@ void createCSVHeaders(SensorType sensorType)
 }
 
 // Write sensor data to appropriate CSV file
-void writeSensorData(SensorType sensorType)
+void writeToFlash(SensorType sensorType)
 {
     unsigned long timestamp = millis();
 
@@ -330,7 +330,7 @@ void read_by_line(File &fileHandle)
 }
 
 // Read sensor data recordings from flash
-void readSensorData(SensorType sensorType)
+void readFromFlash(SensorType sensorType)
 {
     switch (sensorType)
     {

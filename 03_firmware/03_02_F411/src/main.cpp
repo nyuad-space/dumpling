@@ -49,6 +49,7 @@ void loop()
         spiRxFlag = false;
     }
     readSensor(detectedSensor);
+    readFromFlash(detectedSensor);
 }
 
 void INTERBOARD_SPI_ISR()
