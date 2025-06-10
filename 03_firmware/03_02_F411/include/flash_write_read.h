@@ -1,7 +1,6 @@
 #ifndef FLASHWRITE_H
 #define FLASHWRITE_H
 
-#include "sensor_read.h"
 #include "globals.h"
 #include "pinout.h"
 
@@ -21,5 +20,9 @@ unsigned long getFileSize(const char *filename);
 
 // Get the appropriate filename for a sensor type
 const char *getSensorFilename(SensorType sensorType);
+
+// Read current flash recordings
+void readSensorData(SensorType sensorType);
+void read_by_line(File &fileHandle);
 
 #endif // FLASHWRITE_H

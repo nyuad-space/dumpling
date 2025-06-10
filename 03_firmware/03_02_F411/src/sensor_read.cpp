@@ -1,7 +1,4 @@
-#include "globals.h"
 #include "sensor_read.h"
-#include "pinout.h"
-#include "flash_write.h"
 
 #define SEALEVELPRESSURE_HPA (1013.25)
 
@@ -35,25 +32,25 @@ void read_LSM6DS()
     lsm6ds_accel_gyro.getEvent(NULL, NULL, &temp_event);
     temp_read = roundf(temp_event.temperature * 1000) / 1000.0f;
 
-    // // Timestamp
-    // Serial.print(millis());
-    // Serial.print("ms, T: ");
+    // Timestamp
+    Serial.print(millis());
+    Serial.print("ms, T: ");
 
-    // // Display on Serial (Timestamp done internally)
-    // Serial.print("Accel X: ");
-    // Serial.print(accel_x_read);
-    // Serial.print(" Accel Y: ");
-    // Serial.print(accel_y_read);
-    // Serial.print(" Accel Z: ");
-    // Serial.print(accel_z_read);
-    // Serial.print(" Gyro X: ");
-    // Serial.print(gyro_x_read);
-    // Serial.print(" Gyro Y: ");
-    // Serial.print(gyro_y_read);
-    // Serial.print(" Gyro Z: ");
-    // Serial.print(gyro_z_read);
-    // Serial.print(" T: ");
-    // Serial.println(temp_read);
+    // Display on Serial (Timestamp done internally)
+    Serial.print("Accel X: ");
+    Serial.print(accel_x_read);
+    Serial.print(" Accel Y: ");
+    Serial.print(accel_y_read);
+    Serial.print(" Accel Z: ");
+    Serial.print(accel_z_read);
+    Serial.print(" Gyro X: ");
+    Serial.print(gyro_x_read);
+    Serial.print(" Gyro Y: ");
+    Serial.print(gyro_y_read);
+    Serial.print(" Gyro Z: ");
+    Serial.print(gyro_z_read);
+    Serial.print(" T: ");
+    Serial.println(temp_read);
 }
 void read_DPS310()
 {
@@ -238,5 +235,7 @@ void readSensor(SensorType sensorType)
         }
         // Write to flash in same rate as reading from sensor
         writeSensorData(sensorType);
+        // // Read the data (for debug)
+        // readSensorData(sensorType);
     }
 }

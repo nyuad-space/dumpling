@@ -23,9 +23,9 @@
 #include "pinout.h"
 #include "sensor_detect.h"
 #include "sensor_config.h"
-#include "flash_write.h"
+#include "flash_write_read.h"
+#include "sensor_read.h"
 
 // ISR
 volatile bool spiRxFlag;
 void INTERBOARD_SPI_ISR();
-#include "sensor_read.h"

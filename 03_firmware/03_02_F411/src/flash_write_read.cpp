@@ -1,6 +1,4 @@
-#include "globals.h"
-#include "flash_write.h"
-#include "pinout.h"
+#include "flash_write_read.h"
 
 // Initialize flash storage for writing
 bool initFlashWrite()
@@ -138,7 +136,7 @@ void writeSensorData(SensorType sensorType)
         }
         else
         {
-            // Serial.println("Failed to open lsm6ds_data.csv");
+            Serial.println("Failed to open lsm6ds_data.csv");
         }
         break;
     }
@@ -291,5 +289,91 @@ const char *getSensorFilename(SensorType sensorType)
         return "hdc302_data.csv";
     default:
         return "unknown_sensor.csv";
+    }
+}
+
+// Read sensor data file line by line
+void read_by_line(File &fileHandle)
+{
+    if (fileHandle)
+    {
+        String line = "";
+        while (fileHandle.available())
+        { // read until End of File
+            char c = fileHandle.read();
+            // read line by line
+            if (c == '\n')
+            {
+                if (line.length() > 0)
+                {
+                    Serial.println(line);
+                    line = "";
+                }
+            }
+            else if (c != '\r')
+            {
+                line += c;
+            }
+        }
+        // handles last line
+        if (line.length() > 0)
+        {
+            Serial.println(line);
+        }
+        fileHandle.close();
+        Serial.println("Sensor data fetched");
+    }
+    else
+    {
+        Serial.print("Failed to open csv file");
+    }
+}
+
+// Read sensor data recordings from flash
+void readSensorData(SensorType sensorType)
+{
+    switch (sensorType)
+    {
+    case SENSOR_LSM6DS_ACCEL_GYRO:
+    {
+        lsm6dsFile = fatfs.open("lsm6ds_data.csv");
+        read_by_line(lsm6dsFile);
+        break;
+    }
+
+    case SENSOR_DPS310_BARO_TEMP:
+    {
+        dps310File = fatfs.open("dps310_data.csv");
+        read_by_line(dps310File);
+        break;
+    }
+
+    case SENSOR_BMI088_ACCEL:
+    {
+        bmi088File = fatfs.open("bmi088_data.csv");
+        read_by_line(bmi088File);
+        break;
+    }
+
+    case SENSOR_BMP390_BARO:
+    {
+        bmp390File = fatfs.open("bmp390_data.csv");
+        read_by_line(bmp390File);
+        break;
+    }
+
+    case SENSOR_LIS2MDL_MAG:
+    {
+        lis2mdlFile = fatfs.open("lis2mdl_data.csv");
+        read_by_line(lis2mdlFile);
+        break;
+    }
+
+    case SENSOR_HDC302_TEMP_HUM:
+    {
+        hdc302File = fatfs.open("hdc302_data.csv");
+        read_by_line(hdc302File);
+        break;
+    }
     }
 }
