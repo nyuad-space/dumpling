@@ -22,7 +22,7 @@ unsigned long getFileSize(const char *filename);
 const char *getSensorFilename(SensorType sensorType);
 
 // Read current flash recordings
-void readFromFlash(SensorType sensorType);
+void readFromFlash(SensorType sensorType, size_t request_size);
 void read_by_line(File &fileHandle);
 
 #endif // FLASHWRITE_H

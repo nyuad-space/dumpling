@@ -292,16 +292,31 @@ const char *getSensorFilename(SensorType sensorType)
     }
 }
 
-// Read sensor data file line by line
-void read_by_line(File &fileHandle)
+void read_by_line(File &fileHandle, size_t request_size)
 {
     if (fileHandle)
     {
         String line = "";
-        while (fileHandle.available())
-        { // read until End of File
+        size_t fetched_size = 0;
+
+        while (fetched_size < request_size)
+        {
+            // Read until End of File
+            if (!fileHandle.available())
+            {
+                // handles last line
+                if (line.length() > 0)
+                {
+                    Serial.println(line);
+                    fetched_size += line.length() + 1; // +1 for newline
+                }
+                break;
+            }
+
             char c = fileHandle.read();
-            // read line by line
+            fetched_size++;
+
+            // Read line by line
             if (c == '\n')
             {
                 if (line.length() > 0)
@@ -309,19 +324,23 @@ void read_by_line(File &fileHandle)
                     Serial.println(line);
                     line = "";
                 }
+
+                // Check if we've read enough after completing a line
+                if (fetched_size >= request_size)
+                {
+                    break;
+                }
             }
             else if (c != '\r')
             {
                 line += c;
             }
         }
-        // handles last line
-        if (line.length() > 0)
-        {
-            Serial.println(line);
-        }
+
+        // only output complete lines (no partial lines of data)
         fileHandle.close();
-        Serial.println("Sensor data fetched");
+        Serial.print("Sensor data fetched. Bytes read: ");
+        Serial.println(fetched_size);
     }
     else
     {
@@ -329,50 +348,45 @@ void read_by_line(File &fileHandle)
     }
 }
 
-// Read sensor data recordings from flash
-void readFromFlash(SensorType sensorType)
+// Read sensor data recordings from flash with size limit
+void readFromFlash(SensorType sensorType, size_t request_size)
 {
     switch (sensorType)
     {
     case SENSOR_LSM6DS_ACCEL_GYRO:
     {
         lsm6dsFile = fatfs.open("lsm6ds_data.csv");
-        read_by_line(lsm6dsFile);
+        read_by_line(lsm6dsFile, request_size);
         break;
     }
-
     case SENSOR_DPS310_BARO_TEMP:
     {
         dps310File = fatfs.open("dps310_data.csv");
-        read_by_line(dps310File);
+        read_by_line(dps310File, request_size);
         break;
     }
-
     case SENSOR_BMI088_ACCEL:
     {
         bmi088File = fatfs.open("bmi088_data.csv");
-        read_by_line(bmi088File);
+        read_by_line(bmi088File, request_size);
         break;
     }
-
     case SENSOR_BMP390_BARO:
     {
         bmp390File = fatfs.open("bmp390_data.csv");
-        read_by_line(bmp390File);
+        read_by_line(bmp390File, request_size);
         break;
     }
-
     case SENSOR_LIS2MDL_MAG:
     {
         lis2mdlFile = fatfs.open("lis2mdl_data.csv");
-        read_by_line(lis2mdlFile);
+        read_by_line(lis2mdlFile, request_size);
         break;
     }
-
     case SENSOR_HDC302_TEMP_HUM:
     {
         hdc302File = fatfs.open("hdc302_data.csv");
-        read_by_line(hdc302File);
+        read_by_line(hdc302File, request_size);
         break;
     }
     }
