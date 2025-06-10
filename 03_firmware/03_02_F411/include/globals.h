@@ -43,11 +43,4 @@ extern File32 bmp390File;
 extern File32 lis2mdlFile;
 extern File32 hdc302File;
 
-// Flash struct
-union flashStruct
-{
-    int deviceId;
-    uint32_t unixTime;
-};
-
 #endif
