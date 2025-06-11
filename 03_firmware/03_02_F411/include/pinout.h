@@ -27,3 +27,10 @@
 // I2C sensors (I2C1)
 #define SENSOR_SCL PB6
 #define SENSOR_SDA PB7
+
+// Log triger
+#define LOG_TRIGGER_GPIO PB0
+
+// Indicator
+#define RGB_LED PB1
+

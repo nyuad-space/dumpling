@@ -2,26 +2,37 @@
 
 void setup()
 {
-    /* COMMS SETUP */
-    Serial.begin(115200);
-    delay(5000); // Give time for power stabilization
 
-    // Initialize interboard SPI in slave mode
-    // The CS pin is required, dummy in slave mode
+#if DEBUG
+    Serial.begin(115200);
+#endif
+
+    // Setup logging interrupts pins
+    pinMode(LOG_TRIGGER_GPIO, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(LOG_TRIGGER_GPIO), LOG_TRIGGER_ISR, CHANGE);
+
+    // Clear LED
+    neopixel.begin();
+    neopixel.clear();
+    neopixel.show();
+
+    // Setup SPI communication with main processor
     INTERBOARD_SPI.begin(INTERBOARD_CS, SPI_SLAVE);
     INTERBOARD_SPI.attachSlaveInterrupt(INTERBOARD_CS, INTERBOARD_SPI_ISR);
 
+    // Discover and configure sensor
+#if DEBUG
     Serial.print("Connected to: ");
     Serial.println(detectSensor());
-
-    Serial.println("Initialize communication (SPI or I2C)");
+#else
+    detectSensor();
+#endif
     initSensorComm(detectedSensor);
 
     Serial.println("Configuring sensor... ");
     configSensor(detectedSensor);
 
-    // Initialize Flash
-    Serial.println("Initializing flash memory...");
+    // Setup flash
     if (!flash_memory.begin())
     {
         Serial.println("Flash init failed!");
@@ -30,7 +41,7 @@ void setup()
     }
 
     uint32_t jedec_id = flash_memory.getJEDECID();
-    if (debug)
+    #
     {
         Serial.print("JEDEC ID: 0x");
         Serial.println(jedec_id, HEX);
@@ -40,14 +51,13 @@ void setup()
     }
     initFlashWrite();
 
-    if (debug)
-    {
+#if DEBUG
         Serial.println(getSensorFilename(detectedSensor));
         Serial.print("File size: ");
         getFileSize(getSensorFilename(detectedSensor));
         Serial.print("\n");
-    }
-
+#endif
+  
     uint8_t buffer[500];
     readFromFlash(detectedSensor, 100, buffer, 500);
     readFromFlash(detectedSensor, 100, buffer, 500);
@@ -56,18 +66,117 @@ void setup()
 
 void loop()
 {
-    if (spiRxFlag)
+    if (INTERBOARD_RCVD)
     {
-        Serial.println("I received something!");
-        Serial.print("BTW I'm using sensor");
-        Serial.println(detectedSensor);
-        spiRxFlag = false;
+        INTERBOARD_SPI_PROCESS_MSG();
+    }
+}
+
+void LOG_TRIGGER_ISR()
+{
+    // Read current pin state to determine edge direction
+    int pinState = digitalRead(LOG_TRIGGER_GPIO);
+    
+    if (pinState == LOW) {
+        // Falling edge detected, start logging
+#if DEBUG
+        Serial.println("Logging enabled.");
+#endif
+        logging_allowed = true;
+        neopixel.setPixelColor(0, color_green);
+        neopixel.show();
+    }
+    else {
+        // Rising edge detected, stop logging  
+#if DEBUG
+        Serial.println("Logging disabled.");
+#endif
+        logging_allowed = false;
+        neopixel.setPixelColor(0, color_amber);
+        neopixel.show();
+    }
+}
+
+void prepareResponse()
+{
+    SPIPacket response(SLAVE_CO1);
+    response.addByte(STATUS_OK);
+    response.addString("DATA");
+    response.serialize(INTERBOARD_TX_BUFFER);
+    coproc_response_size = response.getTotalSize();
+}
+
+void INTERBOARD_SPI_PROCESS_MSG()
+{
+    if (first_packet_from_master)
+    {
+        // Receive real data, send dummy response
+        HAL_SPI_Receive(hspi, INTERBOARD_RX_BUFFER, MAX_PACKET_SIZE, 100);
+
+        master_data_size = INTERBOARD_RX_BUFFER[1];
+        master_message_size = PACKET_HEADER_SIZE + master_data_size + PACKET_CHECKSUM_SIZE;
+
+        SPIPacket packet;
+        packet.deserialize(INTERBOARD_RX_BUFFER, master_message_size);
+
+#if DEBUG
+        packet.printPacket();
+#endif
+
+        prepareResponse();
+        first_packet_from_master = false;
+    }
+    else
+    {
+        // Send real response, receive dummy
+        uint8_t response_msg[] = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE};
+        uint8_t end_msg[] = {0xBE, 0xEF, 0x00, 0x00, 0x00};
+        uint8_t dummy_rx[MAX_PACKET_SIZE];
+        counter--;
+        if (counter)
+        {
+            memcpy(INTERBOARD_TX_BUFFER, response_msg, 5);
+            HAL_SPI_TransmitReceive(hspi, response_msg, dummy_rx, 5, 100);
+        }
+        else
+        {
+            memcpy(INTERBOARD_TX_BUFFER, end_msg, 5);
+            HAL_SPI_TransmitReceive(hspi, end_msg, dummy_rx, 5, 100);
+            counter = 5;
+            first_packet_from_master = true;
+
+            // Set blue to indicate end of transmission
+            neopixel.setPixelColor(0, color_blue);
+            neopixel.show();
+        }
+#if DEBUG
+        _print_buffer("TX", INTERBOARD_TX_BUFFER, 5);
+        _print_buffer("RX", dummy_rx, MAX_PACKET_SIZE);
+#endif
     }
 
-    // readSensor(detectedSensor);
+    INTERBOARD_RCVD = false;
 }
 
 void INTERBOARD_SPI_ISR()
 {
-    spiRxFlag = true;
+    INTERBOARD_RCVD = true;
+}
+
+void _print_buffer(const char *label, uint8_t *buffer, uint8_t size)
+{
+    Serial.print("Packet size: ");
+    Serial.print(size);
+    Serial.print(" | ");
+    Serial.print(label);
+    Serial.print(" Buffer: ");
+    for (int i = 0; i < size; i++)
+    {
+        Serial.print("0x");
+        if (buffer[i] < 16)
+            Serial.print("0");
+        Serial.print(buffer[i], HEX);
+        Serial.print(" ");
+    }
+    Serial.println();
 }

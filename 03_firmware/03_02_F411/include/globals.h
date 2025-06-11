@@ -14,9 +14,6 @@
 #include "SdFat_Adafruit_Fork.h"
 #include <Adafruit_SPIFlash.h>
 
-// Debug print
-#define debug 1
-
 // Bus
 extern SPIClass INTERBOARD_SPI;
 extern TwoWire SENSOR_I2C;
