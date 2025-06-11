@@ -7,7 +7,7 @@ void setup()
 #endif
 
     // Setup logging interrupts pins
-    pinMode(LOG_TRIGGER_GPIO, INPUT_PULLUP);
+    pinMode(LOG_TRIGGER_GPIO, INPUT);
     attachInterrupt(digitalPinToInterrupt(LOG_TRIGGER_GPIO), LOG_TRIGGER_ISR, CHANGE);
 
     // Clear LED
