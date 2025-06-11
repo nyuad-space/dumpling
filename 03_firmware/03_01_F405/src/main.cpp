@@ -18,9 +18,14 @@ void setup()
   initialize_interboard_spi();
   initialize_mpu();
 
+
   // Initialize trigger
   pinMode(LOG_TRIGGER_GPIO, OUTPUT);
   digitalWrite(LOG_TRIGGER_GPIO, HIGH);
+
+#if DEBUG
+  Serial.println("Logging disabled.");
+#endif
 
   // Build TX buffers
   dummy_packet_size = buildDummyRequest(dummy_buffer);
@@ -53,6 +58,10 @@ void loop()
       // Indicate
       neopixel.setPixelColor(0, color_green);
       neopixel.show();
+
+#if DEBUG
+        Serial.println("Logging enabled!");
+#endif
     }
     break;
   }
@@ -84,7 +93,7 @@ void loop()
         launch_detected = true;
         // quiet_start_time = millis();
 #if DEBUG
-        Serial.println("LAUNCH DETECTED!");
+        Serial.println("Launch Detected!");
 #endif
       }
 
@@ -127,7 +136,7 @@ void loop()
         neopixel.setPixelColor(0, color_blue);
         neopixel.show();
 #if DEBUG
-        Serial.println("Flight ended. Collecting logs now.");
+        Serial.println("Flight ended. Logging disabled. Collecting logs now.");
 #endif
       }
     }
