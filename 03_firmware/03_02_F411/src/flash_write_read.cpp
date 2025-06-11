@@ -121,7 +121,6 @@ void writeToFlash(SensorType sensorType)
         lsm6dsFile = fatfs.open("lsm6ds_data.csv", FILE_WRITE);
         if (lsm6dsFile)
         {
-            Serial.println("LSM6DS data written");
             lsm6dsFile.print(timestamp);
             lsm6dsFile.print(",");
             lsm6dsFile.print(accel_x_read);
@@ -271,6 +270,7 @@ unsigned long getFileSize(const char *filename)
     {
         unsigned long size = file.size();
         file.close();
+        Serial.println(size);
         return size;
     }
     return 0;
@@ -478,4 +478,124 @@ uint8_t *read_by_chunk(File &fileHandle, size_t request_size, uint8_t *buffer, s
         partialLine = "";
     }
     return buffer;
+=======
+void readFromFlash(SensorType sensorType, size_t request_size)
+{
+    const char *fileName = getSensorFilename(sensorType);
+    
+    // Check if we need to switch files
+    if (!fileIsOpen || currentFileName != fileName)
+    {
+        // Close current file if open
+        if (fileIsOpen && currentFile)
+        {
+            currentFile.close();
+            fileIsOpen = false;
+            partialLine = ""; // Reset when switching files
+        }
+        
+        // Open the new file into currentFile
+        switch (sensorType)
+        {
+        case SENSOR_LSM6DS_ACCEL_GYRO:
+            currentFile = fatfs.open("lsm6ds_data.csv");
+            break;
+        case SENSOR_DPS310_BARO_TEMP:
+            currentFile = fatfs.open("dps310_data.csv");
+            break;
+        case SENSOR_BMI088_ACCEL:
+            currentFile = fatfs.open("bmi088_data.csv");
+            break;
+        case SENSOR_BMP390_BARO:
+            currentFile = fatfs.open("bmp390_data.csv");
+            break;
+        case SENSOR_LIS2MDL_MAG:
+            currentFile = fatfs.open("lis2mdl_data.csv");
+            break;
+        case SENSOR_HDC302_TEMP_HUM:
+            currentFile = fatfs.open("hdc302_data.csv");
+            break;
+        default:
+            Serial.println("Unknown sensor type");
+            return;
+        }
+        
+        // Check if file opened successfully
+        if (!currentFile)
+        {
+            Serial.print("Failed to open csv file: ");
+            Serial.println(fileName);
+            fileIsOpen = false;
+            return;
+        }
+        
+        // Update state for successful open
+        currentFileName = fileName;
+        fileIsOpen = true;
+    }
+    
+    // Read chunk from the current file
+    read_by_chunk(currentFile, request_size);
 }
+
+// Read sensor data recordings from flash with size limit
+void read_by_chunk(File &fileHandle, size_t request_size)
+{
+    if (!fileHandle)
+    {
+        Serial.println("Failed to open csv file");
+        return;
+    }
+    
+    String currentChunk = partialLine; // Start with any partial line from previous read
+    size_t fetched_size = 0;
+    partialLine = ""; // Clear buffer
+    
+    // Read requested bytes or until EOF
+    while (fetched_size < request_size && fileHandle.available())
+    {
+        char c = fileHandle.read();
+        fetched_size++;
+        
+        if (c == '\n')
+        {
+            if (currentChunk.length() > 0)
+            {
+                Serial.println(currentChunk);
+                currentChunk = "";
+            }
+        }
+        else if (c != '\r')
+        {
+            currentChunk += c;
+        }
+    }
+    
+    // Handle any remaining data in currentChunk
+    if (currentChunk.length() > 0)
+    {
+        if (fileHandle.available())
+        {
+            // More data exists, save partial line for next chunk
+            partialLine = currentChunk;
+        }
+        else
+        {
+            // At EOF, print the last line
+            Serial.println(currentChunk);
+        }
+    }
+    
+    Serial.print("Read ");
+    Serial.print(fetched_size);
+    Serial.println(" bytes");
+    
+    // Only close file if we've reached EOF
+    if (!fileHandle.available())
+    {
+        Serial.println("End of file reached");
+        fileHandle.close();
+        fileIsOpen = false;
+        currentFileName = nullptr;
+        partialLine = "";
+    }

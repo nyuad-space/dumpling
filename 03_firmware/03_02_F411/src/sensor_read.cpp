@@ -190,9 +190,9 @@ void readSensor(SensorType sensorType)
 {
     // Give buffer time between new sensor reading
     unsigned long currentMillis = millis();
-    // if (currentMillis - previousMillis >= interval)
-    // {
-    //     previousMillis = currentMillis;
+    if (currentMillis - previousMillis >= interval)
+    {
+        previousMillis = currentMillis;
 
     // Read sensors
     switch (sensorType)
@@ -234,8 +234,8 @@ void readSensor(SensorType sensorType)
         return;
     }
     // // Write to flash in same rate as reading from sensor
-    // writeToFlash(sensorType);
+    writeToFlash(sensorType);
     // // Read the data (for debug)
     // readFromFlash(sensorType, size_t request_size);
-    // }
+    }
 }

@@ -40,6 +40,7 @@ void setup()
     }
     initFlashWrite();
 
+
     if (debug)
     {
         Serial.println(getSensorFilename(detectedSensor));
@@ -51,11 +52,15 @@ void setup()
     readFromFlash(detectedSensor, 10, buffer, 500);
     readFromFlash(detectedSensor, 10, buffer, 500);
     readFromFlash(detectedSensor, 10, buffer, 500);
+
+
+
+
 }
 
 void loop()
 {
-    if (spiRxFlag)
+    if (spiRxFlag) 
     {
         Serial.println("I received something!");
         Serial.print("BTW I'm using sensor");
@@ -64,8 +69,6 @@ void loop()
     }
 
     // readSensor(detectedSensor);
-    size_t request_size = 1000;
-    readFromFlash(detectedSensor, request_size);
 }
 
 void INTERBOARD_SPI_ISR()
