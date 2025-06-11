@@ -298,132 +298,48 @@ const char *getSensorFilename(SensorType sensorType)
     }
 }
 
-void read_by_chunk(File &fileHandle, size_t request_size)
-{
-    // partialLine = done reading in terms of chunk, but didn't hit new line
-    // currentChunk = working variable within chunk, reading char by char
-
-    if (!fileHandle)
-    {
-        Serial.print("Failed to open csv file");
-        return;
-    }
-    String currentChunk = partialLine; // Start with any partial line from previous read
-    size_t fetched_size = 0;
-    partialLine = ""; // Clear buffer
-
-    // Read while chunk needs more bytes & file has more data
-    while (fetched_size < request_size && fileHandle.available())
-    {
-        char c = fileHandle.read();
-        fetched_size++;
-
-        if (c == '\n') // at new line
-        {
-            if (currentChunk.length() > 0)
-            {
-                Serial.println(currentChunk);
-                currentChunk = "";
-            }
-        }
-        else if (c != '\r') // if not at new line
-        {
-            currentChunk += c; // continue reading char by char
-        }
-    }
-
-    // Handle end of chunk
-    if (!(fetched_size < request_size))
-    {
-        if (currentChunk.length() > 0)
-        {
-            if (fileHandle.available()) // file has more data
-            {
-                // more data available, save partial line for next read
-                partialLine = currentChunk;
-            }
-            else
-            {
-                // EOF, print the last line
-                Serial.println(currentChunk);
-            }
-        }
-        Serial.print("Read ");
-        Serial.print(fetched_size);
-        Serial.println(" bytes");
-    }
-    else // while fetching chunk
-    {
-        if (currentChunk.length() > 0) // if there is final line without \n
-        {
-            Serial.println(currentChunk);
-        }
-    }
-    Serial.println("End of file reached");
-    fileHandle.close();
-    fileIsOpen = false;
-    currentFileName = nullptr;
-    partialLine = "";
-}
-
-// Read sensor data recordings from flash with size limit
-void readFromFlash(SensorType sensorType, size_t request_size)
+void readFromFlash(SensorType sensorType, size_t request_size, uint8_t *buffer, size_t buffer_size)
 {
     const char *fileName = getSensorFilename(sensorType);
 
-    // If need to open a new file or switch files
+    // Check if we need to switch files
     if (!fileIsOpen || currentFileName != fileName)
     {
         // Close current file if open
-        if (fileIsOpen)
+        if (fileIsOpen && currentFile)
         {
             currentFile.close();
+            fileIsOpen = false;
+            partialLine = ""; // Reset when switching files
         }
 
+        // Open the new file into currentFile
         switch (sensorType)
         {
         case SENSOR_LSM6DS_ACCEL_GYRO:
-        {
-            lsm6dsFile = fatfs.open("lsm6ds_data.csv");
-            read_by_chunk(lsm6dsFile, request_size);
+            currentFile = fatfs.open("lsm6ds_data.csv");
             break;
-        }
         case SENSOR_DPS310_BARO_TEMP:
-        {
-            dps310File = fatfs.open("dps310_data.csv");
-            read_by_chunk(dps310File, request_size);
+            currentFile = fatfs.open("dps310_data.csv");
             break;
-        }
         case SENSOR_BMI088_ACCEL:
-        {
-            bmi088File = fatfs.open("bmi088_data.csv");
-            read_by_chunk(bmi088File, request_size);
+            currentFile = fatfs.open("bmi088_data.csv");
             break;
-        }
         case SENSOR_BMP390_BARO:
-        {
-            bmp390File = fatfs.open("bmp390_data.csv");
-            read_by_chunk(bmp390File, request_size);
+            currentFile = fatfs.open("bmp390_data.csv");
             break;
-        }
         case SENSOR_LIS2MDL_MAG:
-        {
-            lis2mdlFile = fatfs.open("lis2mdl_data.csv");
-            read_by_chunk(lis2mdlFile, request_size);
+            currentFile = fatfs.open("lis2mdl_data.csv");
             break;
-        }
         case SENSOR_HDC302_TEMP_HUM:
-        {
-            hdc302File = fatfs.open("hdc302_data.csv");
-            read_by_chunk(hdc302File, request_size);
+            currentFile = fatfs.open("hdc302_data.csv");
             break;
+        default:
+            Serial.println("Unknown sensor type");
+            return;
         }
-        }
-        // Update file state
-        currentFileName = fileName;
-        fileIsOpen = true;
-        partialLine = ""; // Reset partial chunk buffer when opening new file
 
+        // Check if file opened successfully
         if (!currentFile)
         {
             Serial.print("Failed to open csv file: ");
@@ -431,7 +347,135 @@ void readFromFlash(SensorType sensorType, size_t request_size)
             fileIsOpen = false;
             return;
         }
+
+        // Update state for successful open
+        currentFileName = fileName;
+        fileIsOpen = true;
     }
-    // Read the chunk from the currently open file
-    read_by_chunk(currentFile, request_size);
+
+    // Read chunk from the current file
+    read_by_chunk(currentFile, request_size, buffer, buffer_size);
+}
+
+// Read sensor data recordings from flash with size limit
+uint8_t *read_by_chunk(File &fileHandle, size_t request_size, uint8_t *buffer, size_t buffer_size)
+{
+    // partialLine = done reading in terms of chunk, but didn't hit new line
+    // currentChunk = working variable within chunk, reading char by char
+
+    if (!fileHandle)
+    {
+        Serial.println("Failed to open csv file");
+        return 0;
+    }
+
+    String currentChunk = partialLine; // Start with any partial line from previous read
+    size_t fetched_size = 0;
+    size_t buffer_pos = 0;
+    bool bufferFull = false;
+    partialLine = ""; // Clear buffer
+
+    // Read requested bytes or until EOF
+    while (fetched_size < request_size && fileHandle.available())
+    {
+        char c = fileHandle.read();
+        fetched_size++;
+
+        if (c == '\n')
+        {
+            if (currentChunk.length() > 0)
+            {
+                // Write to buffer with newline
+                size_t line_len = currentChunk.length();
+                if (buffer_pos + line_len + 1 < buffer_size) // +1 for newline
+                {
+                    memcpy(buffer + buffer_pos, currentChunk.c_str(), line_len);
+                    buffer_pos += line_len;
+                    buffer[buffer_pos++] = '\n';
+                    if (debug)
+                    {
+                        Serial.println(currentChunk);
+                    }
+                }
+                else
+                {
+                    bufferFull = true;
+                    if (debug)
+                    {
+                        Serial.println(currentChunk);
+                    }
+                    break;
+                }
+
+                currentChunk = "";
+            }
+        }
+        else if (c != '\r') // if not at new line
+        {
+            currentChunk += c;
+            if (debug)
+            {
+                Serial.println(currentChunk);
+            }
+        }
+    }
+
+    // Handle any remaining data in currentChunk
+    if (currentChunk.length() > 0)
+    {
+        if (currentChunk.length() > 0)
+        {
+            // More data exists, save partial line for next chunk
+            partialLine = currentChunk;
+        }
+        else
+        {
+            // At EOF, write the last line
+            size_t line_len = currentChunk.length();
+            if (buffer_pos + line_len + 1 < buffer_size)
+            {
+                memcpy(buffer + buffer_pos, currentChunk.c_str(), line_len);
+                buffer_pos += line_len;
+                buffer[buffer_pos++] = '\n';
+                if (debug)
+                {
+                    Serial.println(currentChunk);
+                }
+            }
+            else
+            {
+                bufferFull = true;
+                if (debug)
+                {
+                    Serial.println(currentChunk);
+                }
+            }
+        }
+    }
+    // Store bufferFull flag in the first byte of buffer
+    buffer[0] = bufferFull ? 1 : 0;
+
+    // Null terminate the buffer
+    if (buffer_pos < buffer_size && !bufferFull)
+    {
+        buffer[buffer_pos] = '\0';
+    }
+
+    if (debug)
+    {
+        Serial.print("Read ");
+        Serial.print(fetched_size);
+        Serial.println(" bytes");
+    }
+
+    // Only close file if we've reached EOF
+    if (!fileHandle.available())
+    {
+        Serial.println("End of file reached");
+        fileHandle.close();
+        fileIsOpen = false;
+        currentFileName = nullptr;
+        partialLine = "";
+    }
+    return buffer;
 }
