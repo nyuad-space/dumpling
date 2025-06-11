@@ -1,12 +1,5 @@
 #include "globals.h"
 #include "pinout.h"
-#include <Adafruit_LSM6DSO32.h>
-#include <Adafruit_LSM6DS.h>
-#include <Adafruit_DPS310.h>
-#include "BMI088.h"
-#include <Adafruit_BMP3XX.h>
-#include <Adafruit_LIS2MDL.h>
-#include <Adafruit_HDC302x.h>
 
 // sensor_detect.h
 #ifndef SENSOR_DETECT_H
