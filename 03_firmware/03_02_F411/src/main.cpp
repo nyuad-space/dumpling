@@ -40,7 +40,6 @@ void setup()
     }
     initFlashWrite();
 
-
     if (debug)
     {
         Serial.println(getSensorFilename(detectedSensor));
@@ -48,19 +47,16 @@ void setup()
         getFileSize(getSensorFilename(detectedSensor));
         Serial.print("\n");
     }
+
     uint8_t buffer[500];
-    readFromFlash(detectedSensor, 10, buffer, 500);
-    readFromFlash(detectedSensor, 10, buffer, 500);
-    readFromFlash(detectedSensor, 10, buffer, 500);
-
-
-
-
+    readFromFlash(detectedSensor, 100, buffer, 500);
+    readFromFlash(detectedSensor, 100, buffer, 500);
+    readFromFlash(detectedSensor, 100, buffer, 500);
 }
 
 void loop()
 {
-    if (spiRxFlag) 
+    if (spiRxFlag)
     {
         Serial.println("I received something!");
         Serial.print("BTW I'm using sensor");

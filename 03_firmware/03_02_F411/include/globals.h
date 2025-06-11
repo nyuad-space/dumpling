@@ -13,7 +13,6 @@
 #include "sensor_detect.h"
 #include "SdFat_Adafruit_Fork.h"
 #include <Adafruit_SPIFlash.h>
-#include "flash_write_read.h"
 
 // Debug print
 #define debug 1
