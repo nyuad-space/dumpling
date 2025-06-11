@@ -68,11 +68,6 @@ void loop()
 
   case FLIGHT_MONITORING:
   {
-    if (first_entry)
-    {
-      launch_detected = false;
-      first_entry = false;
-    }
 
     sensors_event_t a, g, temp;
     mpu.getEvent(&a, &g, &temp);
@@ -130,7 +125,6 @@ void loop()
 
         // Change state
         current_state = DATA_COLLECTION;
-        first_entry = true;
 
         // Indicate
         neopixel.setPixelColor(0, color_blue);
