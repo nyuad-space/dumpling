@@ -48,8 +48,12 @@ void loop()
         Serial.println(detectedSensor);
         spiRxFlag = false;
     }
-    readSensor(detectedSensor);
-    readFromFlash(detectedSensor, size_t request_size);
+
+    // readSensor(detectedSensor);
+
+    // for demo
+    size_t request_size = 1000;
+    readFromFlash(detectedSensor, request_size);
 }
 
 void INTERBOARD_SPI_ISR()

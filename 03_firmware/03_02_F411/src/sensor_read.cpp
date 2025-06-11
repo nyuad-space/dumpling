@@ -190,52 +190,52 @@ void readSensor(SensorType sensorType)
 {
     // Give buffer time between new sensor reading
     unsigned long currentMillis = millis();
-    if (currentMillis - previousMillis >= interval)
+    // if (currentMillis - previousMillis >= interval)
+    // {
+    //     previousMillis = currentMillis;
+
+    // Read sensors
+    switch (sensorType)
     {
-        previousMillis = currentMillis;
-
-        // Read sensors
-        switch (sensorType)
-        {
-        case SENSOR_LSM6DS_ACCEL_GYRO:
-        {
-            read_LSM6DS();
-            break;
-        }
-
-        case SENSOR_DPS310_BARO_TEMP:
-        {
-            read_DPS310();
-            break;
-        }
-
-        case SENSOR_BMI088_ACCEL:
-        {
-            read_BMI088();
-            break;
-        }
-
-        case SENSOR_BMP390_BARO:
-        {
-            read_BMP390();
-            break;
-        }
-
-        case SENSOR_LIS2MDL_MAG:
-        {
-            read_LIS2MDL();
-            break;
-        }
-        case SENSOR_HDC302_TEMP_HUM:
-        {
-            read_HDC302();
-            break;
-        }
-            return;
-        }
-        // Write to flash in same rate as reading from sensor
-        writeToFlash(sensorType);
-        // // Read the data (for debug)
-        // readFromFlash(sensorType, size_t request_size);
+    case SENSOR_LSM6DS_ACCEL_GYRO:
+    {
+        read_LSM6DS();
+        break;
     }
+
+    case SENSOR_DPS310_BARO_TEMP:
+    {
+        read_DPS310();
+        break;
+    }
+
+    case SENSOR_BMI088_ACCEL:
+    {
+        read_BMI088();
+        break;
+    }
+
+    case SENSOR_BMP390_BARO:
+    {
+        read_BMP390();
+        break;
+    }
+
+    case SENSOR_LIS2MDL_MAG:
+    {
+        read_LIS2MDL();
+        break;
+    }
+    case SENSOR_HDC302_TEMP_HUM:
+    {
+        read_HDC302();
+        break;
+    }
+        return;
+    }
+    // // Write to flash in same rate as reading from sensor
+    // writeToFlash(sensorType);
+    // // Read the data (for debug)
+    // readFromFlash(sensorType, size_t request_size);
+    // }
 }

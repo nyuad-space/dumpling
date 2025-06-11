@@ -23,6 +23,6 @@ const char *getSensorFilename(SensorType sensorType);
 
 // Read current flash recordings
 void readFromFlash(SensorType sensorType, size_t request_size);
-void read_by_line(File &fileHandle);
+void read_by_chunk(File &fileHandle, size_t request_size);
 
 #endif // FLASHWRITE_H

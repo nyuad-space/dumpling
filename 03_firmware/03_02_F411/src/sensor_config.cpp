@@ -42,9 +42,9 @@ void configSensor(SensorType sensorType)
         lsm6ds_accel_gyro.setGyroRange(LSM6DS_GYRO_RANGE_250_DPS);
         Serial.println("Gyro range set to: 250 degrees/s");
         // Output Data Range (ODR)= 16MB/(data size*600sec)
-        lsm6ds_accel_gyro.setAccelDataRate(LSM6DS_RATE_104_HZ);
+        lsm6ds_accel_gyro.setAccelDataRate(LSM6DS_RATE_6_66K_HZ);
         Serial.println("Accelerometer data rate set to: 104 Hz");
-        lsm6ds_accel_gyro.setGyroDataRate(LSM6DS_RATE_104_HZ);
+        lsm6ds_accel_gyro.setGyroDataRate(LSM6DS_RATE_6_66K_HZ);
         Serial.println("Gyro data rate set to: 104 Hz");
         break;
     case SENSOR_DPS310_BARO_TEMP:
