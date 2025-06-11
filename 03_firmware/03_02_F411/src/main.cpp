@@ -22,9 +22,11 @@ void setup()
 
     // Initialize Flash
     Serial.println("Initializing flash memory...");
-    if (!flash_memory.begin()) {
+    if (!flash_memory.begin())
+    {
         Serial.println("Flash init failed!");
-        while (1) yield();
+        while (1)
+            yield();
     }
 
     uint32_t jedec_id = flash_memory.getJEDECID();
@@ -33,9 +35,7 @@ void setup()
     Serial.print("Flash size (usable): ");
     Serial.print(flash_memory.size() / 1024);
     Serial.println(" KB");
-    
     initFlashWrite();
-
 }
 
 void loop()
@@ -47,8 +47,10 @@ void loop()
         Serial.println(detectedSensor);
         spiRxFlag = false;
     }
-    readSensor(detectedSensor);
-    writeSensorData(detectedSensor);
+
+    // readSensor(detectedSensor);
+    size_t request_size = 1000;
+    readFromFlash(detectedSensor, request_size);
 }
 
 void INTERBOARD_SPI_ISR()
