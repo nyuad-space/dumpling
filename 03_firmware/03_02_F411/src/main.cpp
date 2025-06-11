@@ -35,7 +35,6 @@ void setup()
     Serial.print("Flash size (usable): ");
     Serial.print(flash_memory.size() / 1024);
     Serial.println(" KB");
-
     initFlashWrite();
 }
 
@@ -50,8 +49,6 @@ void loop()
     }
 
     // readSensor(detectedSensor);
-
-    // for demo
     size_t request_size = 1000;
     readFromFlash(detectedSensor, request_size);
 }
