@@ -411,9 +411,6 @@ uint8_t *read_by_chunk(File &fileHandle, size_t request_size, uint8_t *buffer, s
         else if (c != '\r') // if not at new line
         {
             currentChunk += c;
-#if DEBUG
-            Serial.println(currentChunk);
-#endif
         }
     }
 

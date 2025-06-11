@@ -51,22 +51,17 @@ void setup()
     }
     initFlashWrite();
 
-
 #if DEBUG
         Serial.println(getSensorFilename(detectedSensor));
         Serial.print("File size: ");
         getFileSize(getSensorFilename(detectedSensor));
         Serial.print("\n");
 #endif
-
+  
     uint8_t buffer[500];
-    readFromFlash(detectedSensor, 10, buffer, 500);
-    readFromFlash(detectedSensor, 10, buffer, 500);
-    readFromFlash(detectedSensor, 10, buffer, 500);
-
-
-
-
+    readFromFlash(detectedSensor, 100, buffer, 500);
+    readFromFlash(detectedSensor, 100, buffer, 500);
+    readFromFlash(detectedSensor, 100, buffer, 500);
 }
 
 void loop()
