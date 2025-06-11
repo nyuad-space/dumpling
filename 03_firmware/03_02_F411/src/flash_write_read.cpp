@@ -392,18 +392,16 @@ uint8_t *read_by_chunk(File &fileHandle, size_t request_size, uint8_t *buffer, s
                     memcpy(buffer + buffer_pos, currentChunk.c_str(), line_len);
                     buffer_pos += line_len;
                     buffer[buffer_pos++] = '\n';
-                    if (debug)
-                    {
-                        Serial.println(currentChunk);
-                    }
+#if DEBUG
+                    Serial.println(currentChunk);
+#endif
                 }
                 else
                 {
                     bufferFull = true;
-                    if (debug)
-                    {
-                        Serial.println(currentChunk);
-                    }
+#if DEBUG
+                    Serial.println(currentChunk);
+#endif
                     break;
                 }
 
@@ -413,10 +411,9 @@ uint8_t *read_by_chunk(File &fileHandle, size_t request_size, uint8_t *buffer, s
         else if (c != '\r') // if not at new line
         {
             currentChunk += c;
-            if (debug)
-            {
-                Serial.println(currentChunk);
-            }
+#if DEBUG
+            Serial.println(currentChunk);
+#endif
         }
     }
 
@@ -437,18 +434,16 @@ uint8_t *read_by_chunk(File &fileHandle, size_t request_size, uint8_t *buffer, s
                 memcpy(buffer + buffer_pos, currentChunk.c_str(), line_len);
                 buffer_pos += line_len;
                 buffer[buffer_pos++] = '\n';
-                if (debug)
-                {
-                    Serial.println(currentChunk);
-                }
+#if DEBUG
+                Serial.println(currentChunk);
+#endif
             }
             else
             {
                 bufferFull = true;
-                if (debug)
-                {
-                    Serial.println(currentChunk);
-                }
+#if DEBUG
+                Serial.println(currentChunk);
+#endif
             }
         }
     }
@@ -461,12 +456,11 @@ uint8_t *read_by_chunk(File &fileHandle, size_t request_size, uint8_t *buffer, s
         buffer[buffer_pos] = '\0';
     }
 
-    if (debug)
-    {
-        Serial.print("Read ");
-        Serial.print(fetched_size);
-        Serial.println(" bytes");
-    }
+#if DEBUG
+    Serial.print("Read ");
+    Serial.print(fetched_size);
+    Serial.println(" bytes");
+#endif
 
     // Only close file if we've reached EOF
     if (!fileHandle.available())
@@ -478,11 +472,11 @@ uint8_t *read_by_chunk(File &fileHandle, size_t request_size, uint8_t *buffer, s
         partialLine = "";
     }
     return buffer;
-=======
+}
 void readFromFlash(SensorType sensorType, size_t request_size)
 {
     const char *fileName = getSensorFilename(sensorType);
-    
+
     // Check if we need to switch files
     if (!fileIsOpen || currentFileName != fileName)
     {
@@ -493,7 +487,7 @@ void readFromFlash(SensorType sensorType, size_t request_size)
             fileIsOpen = false;
             partialLine = ""; // Reset when switching files
         }
-        
+
         // Open the new file into currentFile
         switch (sensorType)
         {
@@ -519,7 +513,7 @@ void readFromFlash(SensorType sensorType, size_t request_size)
             Serial.println("Unknown sensor type");
             return;
         }
-        
+
         // Check if file opened successfully
         if (!currentFile)
         {
@@ -528,12 +522,12 @@ void readFromFlash(SensorType sensorType, size_t request_size)
             fileIsOpen = false;
             return;
         }
-        
+
         // Update state for successful open
         currentFileName = fileName;
         fileIsOpen = true;
     }
-    
+
     // Read chunk from the current file
     read_by_chunk(currentFile, request_size);
 }
@@ -546,17 +540,17 @@ void read_by_chunk(File &fileHandle, size_t request_size)
         Serial.println("Failed to open csv file");
         return;
     }
-    
+
     String currentChunk = partialLine; // Start with any partial line from previous read
     size_t fetched_size = 0;
     partialLine = ""; // Clear buffer
-    
+
     // Read requested bytes or until EOF
     while (fetched_size < request_size && fileHandle.available())
     {
         char c = fileHandle.read();
         fetched_size++;
-        
+
         if (c == '\n')
         {
             if (currentChunk.length() > 0)
@@ -570,7 +564,7 @@ void read_by_chunk(File &fileHandle, size_t request_size)
             currentChunk += c;
         }
     }
-    
+
     // Handle any remaining data in currentChunk
     if (currentChunk.length() > 0)
     {
@@ -585,11 +579,11 @@ void read_by_chunk(File &fileHandle, size_t request_size)
             Serial.println(currentChunk);
         }
     }
-    
+
     Serial.print("Read ");
     Serial.print(fetched_size);
     Serial.println(" bytes");
-    
+
     // Only close file if we've reached EOF
     if (!fileHandle.available())
     {
@@ -599,3 +593,4 @@ void read_by_chunk(File &fileHandle, size_t request_size)
         currentFileName = nullptr;
         partialLine = "";
     }
+}

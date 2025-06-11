@@ -15,9 +15,6 @@
 #include <Adafruit_SPIFlash.h>
 #include "flash_write_read.h"
 
-// Debug print
-#define debug 1
-
 // Bus
 extern SPIClass INTERBOARD_SPI;
 extern TwoWire SENSOR_I2C;

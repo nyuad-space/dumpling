@@ -41,7 +41,7 @@ void setup()
     }
 
     uint32_t jedec_id = flash_memory.getJEDECID();
-    if (debug)
+    #
     {
         Serial.print("JEDEC ID: 0x");
         Serial.println(jedec_id, HEX);
@@ -52,13 +52,13 @@ void setup()
     initFlashWrite();
 
 
-    if (debug)
-    {
+#if DEBUG
         Serial.println(getSensorFilename(detectedSensor));
         Serial.print("File size: ");
         getFileSize(getSensorFilename(detectedSensor));
         Serial.print("\n");
-    }
+#endif
+
     uint8_t buffer[500];
     readFromFlash(detectedSensor, 10, buffer, 500);
     readFromFlash(detectedSensor, 10, buffer, 500);
