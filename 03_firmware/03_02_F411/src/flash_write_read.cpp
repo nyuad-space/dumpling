@@ -470,3 +470,56 @@ uint8_t *read_by_chunk(File &fileHandle, size_t request_size, uint8_t *buffer, s
     }
     return buffer;
 }
+
+// Clear/delete the CSV file for the specified sensor type
+bool clearFlash(SensorType sensorType)
+{
+    const char *fileName = getSensorFilename(sensorType);
+    
+    if (fileName == nullptr)
+    {
+        #if DEBUG
+        Serial.println("Unknown sensor type - cannot clear file");
+        #endif
+        return false;
+    }
+    
+    // Close the file if it's currently open for reading
+    if (fileIsOpen && currentFileName == fileName)
+    {
+        currentFile.close();
+        fileIsOpen = false;
+        currentFileName = nullptr;
+        partialLine = "";
+    }
+    
+    // Check if file exists before attempting to delete
+    if (fatfs.exists(fileName))
+    {
+        if (fatfs.remove(fileName))
+        {
+            #if DEBUG
+            Serial.print("Successfully deleted: ");
+            Serial.println(fileName);
+            #endif
+            
+            return true;
+        }
+        else
+        {
+            #if DEBUG
+            Serial.print("Failed to delete: ");
+            Serial.println(fileName);
+            #endif
+            return false;
+        }
+    }
+    else
+    {
+        #if DEBUG
+        Serial.print("File does not exist: ");
+        Serial.println(fileName);
+        #endif
+        return true; // Consider this successful since file is already gone
+    }
+}

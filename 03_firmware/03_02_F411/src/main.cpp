@@ -2,7 +2,6 @@
 
 void setup()
 {
-
 #if DEBUG
     Serial.begin(115200);
 #endif
@@ -41,23 +40,22 @@ void setup()
     }
 
     uint32_t jedec_id = flash_memory.getJEDECID();
-    #
-    {
-        Serial.print("JEDEC ID: 0x");
-        Serial.println(jedec_id, HEX);
-        Serial.print("Flash size (usable): ");
-        Serial.print(flash_memory.size() / 1024);
-        Serial.println(" KB");
-    }
+#if DEBUG
+    Serial.print("JEDEC ID: 0x");
+    Serial.println(jedec_id, HEX);
+    Serial.print("Flash size (usable): ");
+    Serial.print(flash_memory.size() / 1024);
+    Serial.println(" KB");
+#endif
     initFlashWrite();
 
 #if DEBUG
-        Serial.println(getSensorFilename(detectedSensor));
-        Serial.print("File size: ");
-        getFileSize(getSensorFilename(detectedSensor));
-        Serial.print("\n");
+    Serial.println(getSensorFilename(detectedSensor));
+    Serial.print("File size: ");
+    getFileSize(getSensorFilename(detectedSensor));
+    Serial.print("\n");
 #endif
-  
+
     uint8_t buffer[500];
     readFromFlash(detectedSensor, 100, buffer, 500);
     readFromFlash(detectedSensor, 100, buffer, 500);
@@ -76,8 +74,9 @@ void LOG_TRIGGER_ISR()
 {
     // Read current pin state to determine edge direction
     int pinState = digitalRead(LOG_TRIGGER_GPIO);
-    
-    if (pinState == LOW) {
+
+    if (pinState == LOW)
+    {
         // Falling edge detected, start logging
 #if DEBUG
         Serial.println("Logging enabled.");
@@ -86,8 +85,9 @@ void LOG_TRIGGER_ISR()
         neopixel.setPixelColor(0, color_green);
         neopixel.show();
     }
-    else {
-        // Rising edge detected, stop logging  
+    else
+    {
+        // Rising edge detected, stop logging
 #if DEBUG
         Serial.println("Logging disabled.");
 #endif
