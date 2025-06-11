@@ -13,8 +13,7 @@ bool initFlashWrite()
     if (!fatfs.begin(&flash_memory))
     {
         Serial.println("Filesystem not found. Please run formatter first.");
-        while (1)
-            yield();
+        return false;
     }
     Serial.println("Filesystem mounted.");
 

@@ -26,40 +26,41 @@ void setup()
 #else
     detectSensor();
 #endif
-    initSensorComm(detectedSensor);
 
-    Serial.println("Configuring sensor... ");
+    // Catch bad initialization
+    success_flag = initSensorComm(detectedSensor);
     configSensor(detectedSensor);
 
-    // Setup flash
-    if (!flash_memory.begin())
-    {
-        Serial.println("Flash init failed!");
-        while (1)
-            yield();
-    }
-
-    uint32_t jedec_id = flash_memory.getJEDECID();
 #if DEBUG
+    Serial.println("Sensor configured.")
+#endif
+
+    // Setup flash
+    success_flag= flash_memory.begin();
+    success_flag = initFlashWrite();
+
+#if DEBUG
+    uint32_t jedec_id = flash_memory.getJEDECID();
     Serial.print("JEDEC ID: 0x");
     Serial.println(jedec_id, HEX);
     Serial.print("Flash size (usable): ");
     Serial.print(flash_memory.size() / 1024);
     Serial.println(" KB");
-#endif
-    initFlashWrite();
-
-#if DEBUG
     Serial.println(getSensorFilename(detectedSensor));
     Serial.print("File size: ");
     getFileSize(getSensorFilename(detectedSensor));
     Serial.print("\n");
 #endif
 
-    uint8_t buffer[500];
-    readFromFlash(detectedSensor, 100, buffer, 500);
-    readFromFlash(detectedSensor, 100, buffer, 500);
-    readFromFlash(detectedSensor, 100, buffer, 500);
+    if (!success_flag || detectedSensor == SENSOR_UNKNOWN)
+    {
+        Serial.println("Sensor init failed!");
+        while (1)
+        {
+            _blink_red();
+        }
+    }
+
 }
 
 void loop()
@@ -179,4 +180,29 @@ void _print_buffer(const char *label, uint8_t *buffer, uint8_t size)
         Serial.print(" ");
     }
     Serial.println();
+}
+
+void _blink_red()
+{
+    static unsigned long lastBlinkTime = 0;
+    static bool ledState = false;
+    const unsigned long blinkInterval = 500; // 500ms on/off cycle
+
+    unsigned long currentTime = millis();
+
+    if (currentTime - lastBlinkTime >= blinkInterval)
+    {
+        lastBlinkTime = currentTime;
+        ledState = !ledState;
+
+        if (ledState)
+        {
+            neopixel.setPixelColor(0, color_red);
+        }
+        else
+        {
+            neopixel.clear();
+        }
+        neopixel.show();
+    }
 }

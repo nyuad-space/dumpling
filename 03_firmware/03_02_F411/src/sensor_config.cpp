@@ -2,34 +2,28 @@
 #include "sensor_config.h"
 #include "sensor_detect.h"
 
-void initSensorComm(SensorType sensorType)
+bool initSensorComm(SensorType sensorType)
 {
     switch (sensorType)
     {
     case SENSOR_LSM6DS_ACCEL_GYRO:
-        lsm6ds_accel_gyro.begin_SPI(LSM6DS_CS, &SENSOR_SPI);
-        break;
+        return lsm6ds_accel_gyro.begin_SPI(LSM6DS_CS, &SENSOR_SPI);
     case SENSOR_DPS310_BARO_TEMP:
-        dps310_baro_temp.begin_SPI(DPS310_CS, &SENSOR_SPI);
-        break;
+        return dps310_baro_temp.begin_SPI(DPS310_CS, &SENSOR_SPI);
     case SENSOR_BMI088_ACCEL:
         // BMI088 automatically handles the correct SPI bus!
-        break;
+        return true;
     case SENSOR_BMP390_BARO:
-        bmp390_baro.begin_I2C(BMP390_I2C_ADDR, &SENSOR_I2C);
-        break;
+        return bmp390_baro.begin_I2C(BMP390_I2C_ADDR, &SENSOR_I2C);
     case SENSOR_LIS2MDL_MAG:
-        lis2mdl_mag.begin(LIS2MDL_I2C_ADDR, &SENSOR_I2C);
-        break;
+        return lis2mdl_mag.begin(LIS2MDL_I2C_ADDR, &SENSOR_I2C);
     case SENSOR_HDC302_TEMP_HUM:
-        hdc302_temp_hum.begin(HDC302_I2C_ADDR, &SENSOR_I2C);
-        break;
+        return hdc302_temp_hum.begin(HDC302_I2C_ADDR, &SENSOR_I2C);
     case SENSOR_UNKNOWN: // SENSOR_UNKNOWN
-        break;
+        return false;
     default:
-        break;
+        return false;
     }
-    return;
 }
 
 void configSensor(SensorType sensorType)

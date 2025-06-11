@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-void initSensorComm(SensorType sensorType);
+bool initSensorComm(SensorType sensorType);
 void configSensor(SensorType sensorType);
 
 #endif
