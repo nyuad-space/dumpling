@@ -32,7 +32,7 @@ void setup()
     configSensor(detectedSensor);
 
 #if DEBUG
-    Serial.println("Sensor configured.")
+    Serial.println("Sensor configured.");
 #endif
 
     // Setup flash
