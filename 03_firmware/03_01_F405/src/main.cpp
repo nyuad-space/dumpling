@@ -18,6 +18,10 @@ void setup()
   initialize_interboard_spi();
   initialize_mpu();
 
+  // Initialize trigger
+  pinMode(LOG_TRIGGER_GPIO, OUTPUT);
+  digitalWrite(LOG_TRIGGER_GPIO, HIGH);
+
   // Build TX buffers
   dummy_packet_size = buildDummyRequest(dummy_buffer);
   command_packet_size = buildDataRequest(command_buffer);
@@ -40,9 +44,15 @@ void loop()
     // Change state on detect ready
     if (flight_ready)
     {
+      // Start logging
+      digitalWrite(LOG_TRIGGER_GPIO, LOW);
+
+      // Change state
+      current_state = FLIGHT_MONITORING;
+
+      // Indicate
       neopixel.setPixelColor(0, color_green);
       neopixel.show();
-      current_state = FLIGHT_MONITORING;
     }
     break;
   }
@@ -105,10 +115,17 @@ void loop()
 
       else
       {
-        neopixel.setPixelColor(0, color_blue);
-        neopixel.show();
+
+        // Stop logging
+        digitalWrite(LOG_TRIGGER_GPIO, HIGH);
+
+        // Change state
         current_state = DATA_COLLECTION;
         first_entry = true;
+
+        // Indicate
+        neopixel.setPixelColor(0, color_blue);
+        neopixel.show();
 #if DEBUG
         Serial.println("Flight ended. Collecting logs now.");
 #endif

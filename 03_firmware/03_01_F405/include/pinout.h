@@ -10,11 +10,15 @@
 #define INTERBOARD_SPI_CO5_CS PC4
 #define INTERBOARD_SPI_CO6_CS PC5
 
+
 // Flash SPI pins
 #define FLASH_SPI_CS PA4
 #define FLASH_SPI_SCK PA5
 #define FLASH_SPI_MISO PA6
 #define FLASH_SPI_MOSI PA7
+
+// Log triger
+#define LOG_TRIGGER_GPIO PC13
 
 // MPU Pins
 #define MPU_SCL PA8

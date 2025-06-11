@@ -24,6 +24,7 @@
 // Flight end detection
 #define QUIET_TIME_THRESH_SEC 5000
 #define LAUNCH_DETECT_ACCEL_THRESH 20
+
 // Data collection
 #define POLLING_TIMEOUT_MS 60000
 
