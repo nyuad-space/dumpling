@@ -23,7 +23,7 @@
 
 // Flight end detection
 #define QUIET_TIME_THRESH_SEC 5000
-
+#define LAUNCH_DETECT_ACCEL_THRESH 20
 // Data collection
 #define POLLING_TIMEOUT_MS 60000
 
@@ -89,6 +89,8 @@ bool rocket_prev_upright = false;
 unsigned long upright_start_time = 0;
 
 // Flight end variables
+bool launch_detected = false;
+bool first_entry = true;
 unsigned long quiet_start_time = 0;
 
 // SPI communication 
@@ -99,7 +101,6 @@ uint8_t command_packet_size=0;
 
 uint8_t dummy_buffer[MAX_PACKET_SIZE];
 uint8_t dummy_packet_size=0;
-
 
 // Function declarations
 void initialize_interboard_spi();

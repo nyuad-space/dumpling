@@ -49,34 +49,70 @@ void loop()
 
   case FLIGHT_MONITORING:
   {
-    // Initialize quiet timer on first entry to this state
-    static bool first_entry = true;
     if (first_entry)
     {
-      quiet_start_time = millis();
+      launch_detected = false;
       first_entry = false;
     }
 
-    // If motion detected, restart timer
+    sensors_event_t a, g, temp;
+    mpu.getEvent(&a, &g, &temp);
+    rocket_curr_upright = (abs(a.acceleration.y) > UPRIGHT_ACCEL_THRESH);
+
     if (mpu.getMotionInterruptStatus())
     {
+
+      mpu.getEvent(&a, &g, &temp);
+
+      float totalAccel = sqrt(a.acceleration.x * a.acceleration.x +
+                              a.acceleration.y * a.acceleration.y +
+                              a.acceleration.z * a.acceleration.z);
+
+      // Detect launch event (significant acceleration spike)
+      if (!launch_detected && totalAccel > LAUNCH_DETECT_ACCEL_THRESH) // Adjust threshold
+      {
+        launch_detected = true;
+        // quiet_start_time = millis();
 #if DEBUG
-      Serial.println("~~Flying~~");
+        Serial.println("LAUNCH DETECTED!");
 #endif
-      quiet_start_time = millis();
+      }
+
+      // Reset quiet timer if we detected launch and there's still motion
+      if (launch_detected)
+      {
+        quiet_start_time = millis();
+#if DEBUG
+        Serial.println("~~Flying~~");
+#endif
+      }
     }
 
-    // If quiet for a while, change state
-    if (millis() - quiet_start_time > QUIET_TIME_THRESH_SEC)
+    // Only enter data collection if: launch detected AND quiet period elapsed AND we are upright
+    if (launch_detected && (millis() - quiet_start_time > QUIET_TIME_THRESH_SEC))
     {
+
+      // If rocket is still upright, still on pad
+      // Reset timer
+      if (rocket_curr_upright)
+      {
+        launch_detected = false;
+        quiet_start_time = millis();
 #if DEBUG
-      Serial.println();
-      Serial.println("It's been too quiet. Collecting logs now.");
+        Serial.println("Still upright - resetting timer");
 #endif
-      neopixel.setPixelColor(0, color_blue);
-      neopixel.show();
-      current_state = DATA_COLLECTION;
-      first_entry = true; // Reset for next time
+      }
+
+      else
+      {
+        neopixel.setPixelColor(0, color_blue);
+        neopixel.show();
+        current_state = DATA_COLLECTION;
+        first_entry = true;
+#if DEBUG
+        Serial.println("Flight ended. Collecting logs now.");
+#endif
+      }
     }
     break;
   }
