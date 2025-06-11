@@ -17,7 +17,7 @@ void setup()
     Serial.println("Initialize communication (SPI or I2C)");
     initSensorComm(detectedSensor);
 
-    Serial.println("Configuring sensor: ");
+    Serial.println("Configuring sensor... ");
     configSensor(detectedSensor);
 
     // Initialize Flash
@@ -30,16 +30,30 @@ void setup()
     }
 
     uint32_t jedec_id = flash_memory.getJEDECID();
-    Serial.print("JEDEC ID: 0x");
-    Serial.println(jedec_id, HEX);
-    Serial.print("Flash size (usable): ");
-    Serial.print(flash_memory.size() / 1024);
-    Serial.println(" KB");
+    if (debug)
+    {
+        Serial.print("JEDEC ID: 0x");
+        Serial.println(jedec_id, HEX);
+        Serial.print("Flash size (usable): ");
+        Serial.print(flash_memory.size() / 1024);
+        Serial.println(" KB");
+    }
     initFlashWrite();
-    Serial.println(getSensorFilename(detectedSensor));
-    getFileSize(getSensorFilename(detectedSensor));
-    readFromFlash(detectedSensor, 100);
-    readFromFlash(detectedSensor, 100);
+
+
+    if (debug)
+    {
+        Serial.println(getSensorFilename(detectedSensor));
+        Serial.print("File size: ");
+        getFileSize(getSensorFilename(detectedSensor));
+        Serial.print("\n");
+    }
+    uint8_t buffer[500];
+    readFromFlash(detectedSensor, 10, buffer, 500);
+    readFromFlash(detectedSensor, 10, buffer, 500);
+    readFromFlash(detectedSensor, 10, buffer, 500);
+
+
 
 
 }
