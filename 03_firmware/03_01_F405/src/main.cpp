@@ -69,30 +69,39 @@ void loop()
   case FLIGHT_MONITORING:
   {
 
+    // Get continuous data
     sensors_event_t a, g, temp;
     mpu.getEvent(&a, &g, &temp);
+
+    // Is the rocket upright?
     rocket_curr_upright = (abs(a.acceleration.y) > UPRIGHT_ACCEL_THRESH);
 
+    // Upon motion detection
     if (mpu.getMotionInterruptStatus())
     {
-
+      
+      // Get data again
       mpu.getEvent(&a, &g, &temp);
 
+      // Compute total accel via squaring
       float totalAccel = sqrt(a.acceleration.x * a.acceleration.x +
                               a.acceleration.y * a.acceleration.y +
                               a.acceleration.z * a.acceleration.z);
 
-      // Detect launch event (significant acceleration spike)
+
+      // If no previous launch and significant accel
+      // Set launch
       if (!launch_detected && totalAccel > LAUNCH_DETECT_ACCEL_THRESH) // Adjust threshold
       {
         launch_detected = true;
-        // quiet_start_time = millis();
 #if DEBUG
         Serial.println("Launch Detected!");
 #endif
       }
 
-      // Reset quiet timer if we detected launch and there's still motion
+      // If motion detected and rocket already launched
+      // Restart quiet timer
+      // This will keep setting during flight
       if (launch_detected)
       {
         quiet_start_time = millis();
@@ -102,12 +111,12 @@ void loop()
       }
     }
 
-    // Only enter data collection if: launch detected AND quiet period elapsed AND we are upright
+    // If launch detected and its been quiet
     if (launch_detected && (millis() - quiet_start_time > QUIET_TIME_THRESH_SEC))
     {
 
-      // If rocket is still upright, still on pad
-      // Reset timer
+      // If rocket is still upright
+      // Reset timer and reset launch detected because we are on pad
       if (rocket_curr_upright)
       {
         launch_detected = false;
@@ -117,9 +126,9 @@ void loop()
 #endif
       }
 
+      // Rocket is NOT upright
       else
       {
-
         // Stop logging
         digitalWrite(LOG_TRIGGER_GPIO, HIGH);
 
