@@ -197,7 +197,7 @@ void read_HDC302()
 }
 
 // == central function ==
-void readSensor(SensorType sensorType)
+void readSensor(SensorType sensorType, bool circular)
 {
     // Give buffer time between new sensor reading
     unsigned long currentMillis = millis();
@@ -245,6 +245,6 @@ void readSensor(SensorType sensorType)
             return;
         }
         // Write to flash in same rate as reading from sensor
-        writeToFlash(sensorType);
+        writeToFlash(sensorType, circular);
     }
 }

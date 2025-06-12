@@ -23,12 +23,9 @@ SensorType detectedSensor = SENSOR_UNKNOWN;
 Adafruit_FlashTransport_SPI adafruit_flash_spi(FLASH_CS, FLASH_SPI);
 Adafruit_SPIFlash flash_memory(&adafruit_flash_spi);
 FatVolume fatfs;
-File32 lsm6dsFile;
-File32 dps310File;
-File32 bmi088File;
-File32 bmp390File;
-File32 lis2mdlFile;
-File32 hdc302File;
+File32 regularFile;
+File32 circularFile;
+bool circular;
 
 // Sensor readings
 float accel_x_read;
@@ -44,3 +41,5 @@ float mag_x_read;
 float mag_y_read;
 float mag_z_read;
 float hum_read;
+
+bool reachedEOF = false;
