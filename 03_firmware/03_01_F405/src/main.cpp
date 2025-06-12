@@ -81,7 +81,7 @@ void loop()
     {
       
       // Get data again
-      mpu.getEvent(&a, &g, &temp);
+      // mpu.getEvent(&a, &g, &temp);
 
       // Compute total accel via squaring
       float totalAccel = sqrt(a.acceleration.x * a.acceleration.x +
