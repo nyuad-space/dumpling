@@ -7,7 +7,7 @@
 // Function declarations
 
 // Initialize flash storage system
-bool initFlashWrite();
+bool initFlashWrite(bool clear);
 
 // Create CSV file headers if files don't exist
 void createCSVHeaders(SensorType sensorType);

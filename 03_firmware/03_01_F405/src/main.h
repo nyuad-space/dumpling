@@ -87,7 +87,7 @@ unsigned long led_blink_time = 0;
 bool led_blink_state = false;
 
 // Flight ready variables
-bool rocket_curr_upright = false; 
+bool rocket_curr_upright = false;
 bool rocket_prev_upright = false;
 unsigned long upright_start_time = 0;
 
@@ -96,14 +96,14 @@ bool launch_detected = false;
 bool first_entry = true;
 unsigned long quiet_start_time = 0;
 
-// SPI communication 
+// SPI communication
 uint8_t rx_buffer[MAX_PACKET_SIZE];
 
 uint8_t command_buffer[MAX_PACKET_SIZE];
-uint8_t command_packet_size=0;
+uint8_t command_packet_size = 0;
 
 uint8_t dummy_buffer[MAX_PACKET_SIZE];
-uint8_t dummy_packet_size=0;
+uint8_t dummy_packet_size = 0;
 
 // Function declarations
 void initialize_interboard_spi();
@@ -112,4 +112,4 @@ bool detect_flight_ready();
 
 bool make_data_request(uint8_t);
 bool check_end_sequence(uint8_t *);
-void _print_buffer(const char*, uint8_t*, uint8_t);
+void _print_buffer(const char *, uint8_t *, uint8_t);
