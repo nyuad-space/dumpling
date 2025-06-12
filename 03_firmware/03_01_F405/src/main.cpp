@@ -3,7 +3,7 @@
 void setup()
 {
 
-#if DEBUG
+#if F405_DEBUG_MODE
   Serial.begin(115200);
   delay(100);
 #endif
@@ -23,7 +23,7 @@ void setup()
   pinMode(LOG_TRIGGER_GPIO, OUTPUT);
   digitalWrite(LOG_TRIGGER_GPIO, HIGH);
 
-#if DEBUG
+#if F405_DEBUG_MODE
   Serial.println("Logging disabled.");
 #endif
 
@@ -56,7 +56,7 @@ void loop()
       neopixel.setPixelColor(0, color_green);
       neopixel.show();
 
-#if DEBUG
+#if F405_DEBUG_MODE
       Serial.println("Logging enabled!");
 #endif
     }
@@ -86,7 +86,7 @@ void loop()
 
 // If no previous launch and significant accel
 // Set launch
-#if DEBUG
+#if F405_DEBUG_MODE
       if (!launch_detected && totalAccel > DEBUG_LAUNCH_DETECT_ACCEL_THRESH)
 #else
       if (!launch_detected && totalAccel > LAUNCH_DETECT_ACCEL_THRESH)
@@ -96,7 +96,7 @@ void loop()
 
         // Trigger GPIO low, write to main file
         digitalWrite(LOG_TRIGGER_GPIO, LOW);
-#if DEBUG
+#if F405_DEBUG_MODE
         Serial.println("Launch Detected! Wrote low to GPIO");
         Serial.print("Total accel: ");
         Serial.println(totalAccel);
@@ -109,7 +109,7 @@ void loop()
       if (launch_detected)
       {
         quiet_start_time = millis();
-#if DEBUG
+#if F405_DEBUG_MODE
         Serial.println("~~Flying~~");
         Serial.print("Total accel: ");
         Serial.println(totalAccel);
@@ -127,7 +127,7 @@ void loop()
       {
         launch_detected = false;
         quiet_start_time = millis();
-#if DEBUG
+#if F405_DEBUG_MODE
         Serial.println("Still upright - resetting timer");
 #endif
       }
@@ -141,7 +141,7 @@ void loop()
         // Indicate
         neopixel.setPixelColor(0, color_blue);
         neopixel.show();
-#if DEBUG
+#if F405_DEBUG_MODE
         Serial.println("Flight ended. Logging disabled. Collecting logs now.");
 #endif
       }
@@ -153,11 +153,11 @@ void loop()
   {
     // Collect data from all coprocessors
     make_data_request(INTERBOARD_SPI_CO1_CS);
-    make_data_request(INTERBOARD_SPI_CO2_CS);
+    // make_data_request(INTERBOARD_SPI_CO2_CS);
     // store_to_sd(data);
 
     // Switch to new state
-#if DEBUG
+#if F405_DEBUG_MODE
     Serial.println();
     Serial.println("Data collection complete. Standing by.");
 #endif
@@ -223,7 +223,7 @@ bool detect_flight_ready()
     // If not upright anymore on new motion, reset upright tracker
     if (!rocket_curr_upright && rocket_prev_upright)
     {
-#if DEBUG
+#if F405_DEBUG_MODE
       Serial.println("Rocket no longer upright, resetting timer.");
 #endif
       rocket_prev_upright = false;
@@ -234,7 +234,7 @@ bool detect_flight_ready()
     {
       upright_start_time = millis();
       rocket_prev_upright = true;
-#if DEBUG
+#if F405_DEBUG_MODE
       Serial.println("Rocket became upright, starting timer.");
 #endif
     }
@@ -244,7 +244,7 @@ bool detect_flight_ready()
   // Switch state past threshold
   if (rocket_prev_upright && (millis() - upright_start_time > UPRIGHT_TIME_THRESH_SEC))
   {
-#if DEBUG
+#if F405_DEBUG_MODE
     Serial.println("Rocket upright threshold met, switching to flight monitoring.");
 #endif
     return true;
@@ -285,7 +285,7 @@ bool make_data_request(uint8_t CS_PIN)
   INTERBOARD_SPI.transfer(command_buffer, rx_buffer, command_packet_size, SPI_LAST);
   digitalWrite(CS_PIN, HIGH);
 
-#if DEBUG
+#if F405_DEBUG_MODE
   _print_buffer("TX", command_buffer, command_packet_size);
   _print_buffer("RX", rx_buffer, command_packet_size);
 #endif
@@ -298,11 +298,11 @@ bool make_data_request(uint8_t CS_PIN)
   while (millis() - start_time < POLLING_TIMEOUT_MS)
   {
     digitalWrite(CS_PIN, LOW);
-    delay(10);
+    delay(5);
     INTERBOARD_SPI.transfer(dummy_buffer, rx_buffer, dummy_packet_size, SPI_LAST);
     digitalWrite(CS_PIN, HIGH);
 
-#if DEBUG
+#if F405_DEBUG_MODE
     _print_buffer("TX", dummy_buffer, 5);
     _print_buffer("RX", rx_buffer, MAX_PACKET_SIZE);
 #endif
@@ -314,7 +314,7 @@ bool make_data_request(uint8_t CS_PIN)
     }
 
     // Delay before next poll
-    delay(100);
+    delay(1000);
   }
 
   return false; // Timeout

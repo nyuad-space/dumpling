@@ -1,14 +1,19 @@
 #include "main.h"
+#define F411_DEBUG_MODE 1
 
 void setup()
 {
-#if DEBUG
+#if F411_DEBUG_MODE
+    delay(100);
     Serial.begin(115200);
 #endif
 
     // Setup logging interrupts pins
     pinMode(LOG_TRIGGER_GPIO, INPUT);
     attachInterrupt(digitalPinToInterrupt(LOG_TRIGGER_GPIO), LOG_TRIGGER_ISR, CHANGE);
+
+    logging_allowed = false;
+    logging_circular = true;
 
     // Clear LED
     neopixel.begin();
@@ -20,7 +25,7 @@ void setup()
     INTERBOARD_SPI.attachSlaveInterrupt(INTERBOARD_CS, INTERBOARD_SPI_ISR);
 
     // Discover and configure sensor
-#if DEBUG
+#if F411_DEBUG_MODE
     Serial.print("Connected to: ");
     Serial.println(detectSensor());
 #else
@@ -31,15 +36,15 @@ void setup()
     success_flag = initSensorComm(detectedSensor);
     configSensor(detectedSensor);
 
-#if DEBUG
+#if F411_DEBUG_MODE
     Serial.println("Sensor configured.");
 #endif
 
     // Setup flash
-    success_flag= flash_memory.begin();
+    success_flag = flash_memory.begin();
     success_flag = initFlashWrite();
 
-#if DEBUG
+#if F411_DEBUG_MODE
     uint32_t jedec_id = flash_memory.getJEDECID();
     Serial.print("JEDEC ID: 0x");
     Serial.println(jedec_id, HEX);
@@ -60,7 +65,6 @@ void setup()
             _blink_red();
         }
     }
-
 }
 
 void loop()
@@ -79,20 +83,22 @@ void LOG_TRIGGER_ISR()
     if (pinState == LOW)
     {
         // Falling edge detected, start logging
-#if DEBUG
-        Serial.println("Logging enabled.");
+#if F411_DEBUG_MODE
+        Serial.println("Low pin. Logging in main flash.");
 #endif
         logging_allowed = true;
+        logging_circular = false;
         neopixel.setPixelColor(0, color_green);
         neopixel.show();
     }
-    else
+    else if (pinState == HIGH)
     {
         // Rising edge detected, stop logging
-#if DEBUG
-        Serial.println("Logging disabled.");
+#if F411_DEBUG_MODE
+        Serial.println("High pin. Logging in circular buffer.");
 #endif
-        logging_allowed = false;
+        logging_allowed = true;
+        logging_circular = true;
         neopixel.setPixelColor(0, color_amber);
         neopixel.show();
     }
@@ -112,7 +118,7 @@ void INTERBOARD_SPI_PROCESS_MSG()
     if (first_packet_from_master)
     {
         // Receive real data, send dummy response
-        HAL_SPI_Receive(hspi, INTERBOARD_RX_BUFFER, MAX_PACKET_SIZE, 100);
+        HAL_SPI_Receive(hspi, INTERBOARD_RX_BUFFER, MAX_PACKET_SIZE, 300);
 
         master_data_size = INTERBOARD_RX_BUFFER[1];
         master_message_size = PACKET_HEADER_SIZE + master_data_size + PACKET_CHECKSUM_SIZE;
@@ -120,10 +126,10 @@ void INTERBOARD_SPI_PROCESS_MSG()
         SPIPacket packet;
         packet.deserialize(INTERBOARD_RX_BUFFER, master_message_size);
 
-#if DEBUG
+#if F411_DEBUG_MODE
+        Serial.println("Received first packet. Preparing response.");
         packet.printPacket();
 #endif
-
         prepareResponse();
         first_packet_from_master = false;
     }
@@ -136,24 +142,26 @@ void INTERBOARD_SPI_PROCESS_MSG()
         counter--;
         if (counter)
         {
-            memcpy(INTERBOARD_TX_BUFFER, response_msg, 5);
             HAL_SPI_TransmitReceive(hspi, response_msg, dummy_rx, 5, 100);
+#if F411_DEBUG_MODE
+            _print_buffer("TX", response_msg, 5);
+            _print_buffer("RX", dummy_rx, MAX_PACKET_SIZE);
+#endif
         }
         else
         {
-            memcpy(INTERBOARD_TX_BUFFER, end_msg, 5);
             HAL_SPI_TransmitReceive(hspi, end_msg, dummy_rx, 5, 100);
             counter = 5;
             first_packet_from_master = true;
+#if F411_DEBUG_MODE
+            _print_buffer("TX", end_msg, 5);
+            _print_buffer("RX", dummy_rx, MAX_PACKET_SIZE);
+#endif
 
             // Set blue to indicate end of transmission
             neopixel.setPixelColor(0, color_blue);
             neopixel.show();
         }
-#if DEBUG
-        _print_buffer("TX", INTERBOARD_TX_BUFFER, 5);
-        _print_buffer("RX", dummy_rx, MAX_PACKET_SIZE);
-#endif
     }
 
     INTERBOARD_RCVD = false;

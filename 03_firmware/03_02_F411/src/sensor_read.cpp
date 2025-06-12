@@ -32,7 +32,7 @@ void read_LSM6DS()
     lsm6ds_accel_gyro.getEvent(NULL, NULL, &temp_event);
     temp_read = roundf(temp_event.temperature * 1000) / 1000.0f;
 
-#if DEBUG
+#if F411_DEBUG_MODE
     // Timestamp
     Serial.print(millis());
     Serial.print("ms, T: ");
@@ -66,7 +66,7 @@ void read_DPS310()
     temp_read = roundf(temp_event.temperature * 1000) / 1000.0f;
     press_read = roundf(pressure_event.pressure * 1000) / 1000.0f;
 
-#if DEBUG
+#if F411_DEBUG_MODE
     // Timestamp
     Serial.print(millis());
     Serial.print("ms, T: ");
@@ -94,7 +94,7 @@ void read_BMI088()
     gyro_z_read = roundf(bmi088_gyro.getGyroZ_rads() * 1000) / 1000.0f;
     temp_read = roundf(bmi088_accel.getTemperature_C() * 1000) / 1000.0f;
 
-#if DEBUG
+#if F411_DEBUG_MODE
     // Timestamp
     Serial.print(millis());
     Serial.print("ms, T: ");
@@ -126,7 +126,7 @@ void read_BMP390()
     press_read = roundf(bmp390_baro.pressure * 1000) / 1000.0f;
     bmp390_alt_read = roundf(bmp390_baro.readAltitude(SEALEVELPRESSURE_HPA) * 1000) / 1000.0f;
 
-#if DEBUG
+#if F411_DEBUG_MODE
     // Timestamp
     Serial.print(millis());
     Serial.print("ms, T: ");
@@ -152,7 +152,7 @@ void read_LIS2MDL()
     mag_y_read = roundf(mag_event.magnetic.y * 1000) / 1000.0f;
     mag_z_read = roundf(mag_event.magnetic.z * 1000) / 1000.0f;
 
-#if DEBUG
+#if F411_DEBUG_MODE
     // Timestamp
     Serial.print(millis());
     Serial.print("ms, T: ");
@@ -182,7 +182,7 @@ void read_HDC302()
     hum_read = roundf(readT * 1000) / 1000.0f;
     temp_read = roundf(readRH * 1000) / 1000.0f;
 
-#if DEBUG
+#if F411_DEBUG_MODE
     // Timestamp
     Serial.print(millis());
     Serial.print("ms,");
