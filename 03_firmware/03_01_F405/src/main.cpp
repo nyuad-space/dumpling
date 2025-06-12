@@ -5,7 +5,7 @@ void setup()
 
 #if DEBUG
   Serial.begin(115200);
-  delay(1000);
+  delay(100);
 #endif
 
   // Initialize RGB LED
@@ -57,7 +57,7 @@ void loop()
       neopixel.show();
 
 #if DEBUG
-        Serial.println("Logging enabled!");
+      Serial.println("Logging enabled!");
 #endif
     }
     break;
@@ -76,7 +76,6 @@ void loop()
     // Upon motion detection
     if (mpu.getMotionInterruptStatus())
     {
-      
       // Get data again
       // mpu.getEvent(&a, &g, &temp);
 
@@ -85,10 +84,13 @@ void loop()
                               a.acceleration.y * a.acceleration.y +
                               a.acceleration.z * a.acceleration.z);
 
-
-      // If no previous launch and significant accel
-      // Set launch
-      if (!launch_detected && totalAccel > LAUNCH_DETECT_ACCEL_THRESH) // Adjust threshold
+// If no previous launch and significant accel
+// Set launch
+#if DEBUG
+      if (!launch_detected && totalAccel > DEBUG_LAUNCH_DETECT_ACCEL_THRESH)
+#else
+      if (!launch_detected && totalAccel > LAUNCH_DETECT_ACCEL_THRESH)
+#endif
       {
         launch_detected = true;
 
@@ -150,6 +152,7 @@ void loop()
   case DATA_COLLECTION:
   {
     // Collect data from all coprocessors
+    make_data_request(INTERBOARD_SPI_CO1_CS);
     make_data_request(INTERBOARD_SPI_CO2_CS);
     // store_to_sd(data);
 

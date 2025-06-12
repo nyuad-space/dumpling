@@ -23,10 +23,11 @@
 
 // Flight end detection
 #define QUIET_TIME_THRESH_SEC 5000
-#define LAUNCH_DETECT_ACCEL_THRESH 40
+#define LAUNCH_DETECT_ACCEL_THRESH 30
+#define DEBUG_LAUNCH_DETECT_ACCEL_THRESH 15
 
 // Data collection
-#define PACKET_PREP_TIME 5000
+#define PACKET_PREP_TIME 10000
 #define POLLING_TIMEOUT_MS 60000
 
 /*******************************/
