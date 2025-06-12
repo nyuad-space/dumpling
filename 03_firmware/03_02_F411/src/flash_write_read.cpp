@@ -24,14 +24,14 @@ bool initFlashWrite(bool clear)
         Serial.println("Filesystem not found. Please run formatter first.");
         return false;
     }
-#if DEBUG
+#if F411_DEBUG_MODE
     Serial.println("Filesystem mounted.");
 #endif
-    // Clear flash if requested (launched state)
-    if (clear)
+    // In DEBUG MODE: CLEAR FLASH for both circular and regular files
     {
-        clearFlash(detectedSensor);
-#if DEBUG
+        clearFlash(detectedSensor, 1);
+        clearFlash(detectedSensor, 0);
+#if F411_DEBUG_MODE
         Serial.println("Flash cleared due to launched state");
 #endif
     }
@@ -103,7 +103,7 @@ void createCSVHeaders(SensorType sensorType)
             circularFile.println(headers);
             circularWritePos = circularFile.position(); // save starting writing position as after header
             circularFile.close();
-#if DEBUG
+#if F411_DEBUG_MODE
             Serial.print("Created circular buffer: ");
             Serial.println(circularName);
 #endif
@@ -128,7 +128,7 @@ void createCSVHeaders(SensorType sensorType)
         {
             regularFile.println(headers);
             regularFile.close();
-#if DEBUG
+#if F411_DEBUG_MODE
             Serial.print("Created ");
             Serial.println(regularName);
 #endif
@@ -153,11 +153,13 @@ void writeCircular(File &file, uint32_t &writePos, const String &data)
     // Write data
     file.seek(writePos);
     file.print(data);
-#if DEBUG
+#if F411_DEBUG_MODE
     Serial.println(data);
 #endif
     writePos = file.position();
 }
+
+// TODO: add logic for after running out of storage for regular logging
 
 // Write sensor data to appropriate CSV file
 void writeToFlash(SensorType sensorType, bool circular)
@@ -183,13 +185,13 @@ void writeToFlash(SensorType sensorType, bool circular)
 
                 writeCircular(circularFile, circularWritePos, dataLine);
                 circularFile.close();
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("LSM6DS data written to circular");
 #endif
             }
             else
             {
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("Failed to open lsm6ds_circular.csv");
 #endif
             }
@@ -215,7 +217,7 @@ void writeToFlash(SensorType sensorType, bool circular)
                 regularFile.print(",");
                 regularFile.println(temp_read);
                 regularFile.close();
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.print(timestamp);
                 Serial.print(",");
                 Serial.print(accel_x_read);
@@ -236,7 +238,7 @@ void writeToFlash(SensorType sensorType, bool circular)
             }
             else
             {
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("Failed to open lsm6ds_data.csv");
 #endif
             }
@@ -257,13 +259,13 @@ void writeToFlash(SensorType sensorType, bool circular)
 
                 writeCircular(circularFile, circularWritePos, dataLine);
                 circularFile.close();
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("DPS310 data written to circular");
 #endif
             }
             else
             {
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("Failed to open dps310_circular.csv");
 #endif
             }
@@ -279,13 +281,13 @@ void writeToFlash(SensorType sensorType, bool circular)
                 regularFile.print(",");
                 regularFile.println(press_read);
                 regularFile.close();
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("DPS310 data written");
 #endif
             }
             else
             {
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("Failed to open dps310_data.csv");
 #endif
             }
@@ -311,13 +313,13 @@ void writeToFlash(SensorType sensorType, bool circular)
 
                 writeCircular(circularFile, circularWritePos, dataLine);
                 circularFile.close();
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("BMI088 data written to circular");
 #endif
             }
             else
             {
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("Failed to open bmi088_circular.csv");
 #endif
             }
@@ -343,13 +345,13 @@ void writeToFlash(SensorType sensorType, bool circular)
                 regularFile.print(",");
                 regularFile.println(temp_read);
                 regularFile.close();
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("BMI088 data written");
 #endif
             }
             else
             {
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("Failed to open bmi088_data.csv");
 #endif
             }
@@ -371,13 +373,13 @@ void writeToFlash(SensorType sensorType, bool circular)
 
                 writeCircular(circularFile, circularWritePos, dataLine);
                 circularFile.close();
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("BMP390 data written to circular");
 #endif
             }
             else
             {
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("Failed to open bmp390_circular.csv");
 #endif
             }
@@ -395,13 +397,13 @@ void writeToFlash(SensorType sensorType, bool circular)
                 regularFile.print(",");
                 regularFile.println(bmp390_alt_read);
                 regularFile.close();
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("BMP390 data written");
 #endif
             }
             else
             {
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("Failed to open bmp390_data.csv");
 #endif
             }
@@ -423,13 +425,13 @@ void writeToFlash(SensorType sensorType, bool circular)
 
                 writeCircular(circularFile, circularWritePos, dataLine);
                 circularFile.close();
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("LIS2MDL data written to circular");
 #endif
             }
             else
             {
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("Failed to open lis2mdl_circular.csv");
 #endif
             }
@@ -447,13 +449,13 @@ void writeToFlash(SensorType sensorType, bool circular)
                 regularFile.print(",");
                 regularFile.println(mag_z_read);
                 regularFile.close();
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("LIS2MDL data written");
 #endif
             }
             else
             {
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("Failed to open lis2mdl_data.csv");
 #endif
             }
@@ -474,13 +476,13 @@ void writeToFlash(SensorType sensorType, bool circular)
 
                 writeCircular(circularFile, circularWritePos, dataLine);
                 circularFile.close();
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("HDC302 data written to circular");
 #endif
             }
             else
             {
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("Failed to open hdc302_circular.csv");
 #endif
             }
@@ -496,13 +498,13 @@ void writeToFlash(SensorType sensorType, bool circular)
                 regularFile.print(",");
                 regularFile.println(temp_read);
                 regularFile.close();
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("HDC302 data written");
 #endif
             }
             else
             {
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println("Failed to open hdc302_data.csv");
 #endif
             }
@@ -601,7 +603,7 @@ bool readFromFlash(SensorType sensorType, uint8_t *buffer, size_t buffer_size, b
 
     // Check if buffer is full (read exactly the requested amount)
     bool bufferFull = (bytesRead == buffer_size);
-#if DEBUG
+#if F411_DEBUG_MODE
     if (bufferFull)
     {
         Serial.println("Buffer completely filled");
@@ -726,8 +728,9 @@ size_t read_by_chunk(File &fileHandle, uint8_t *buffer, size_t buffer_size, bool
 }
 
 // Clear/delete the CSV file for the specified sensor type
-bool clearFlash(SensorType sensorType)
+bool clearFlash(SensorType sensorType, bool circular)
 {
+    // Clear both circular and regular files
     const char *fileName = getSensorFilename(sensorType, circular);
 
     if (fileName == nullptr)
