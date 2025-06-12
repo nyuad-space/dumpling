@@ -95,7 +95,9 @@ void loop()
         // Trigger GPIO low, write to main file
         digitalWrite(LOG_TRIGGER_GPIO, LOW);
 #if DEBUG
-        Serial.println("Launch Detected!");
+        Serial.println("Launch Detected! Wrote low to GPIO");
+        Serial.print("Total accel: ");
+        Serial.println(totalAccel);
 #endif
       }
 
@@ -107,6 +109,8 @@ void loop()
         quiet_start_time = millis();
 #if DEBUG
         Serial.println("~~Flying~~");
+        Serial.print("Total accel: ");
+        Serial.println(totalAccel);
 #endif
       }
     }
