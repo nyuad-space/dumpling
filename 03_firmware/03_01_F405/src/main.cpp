@@ -18,8 +18,8 @@ void setup()
   initialize_interboard_spi();
   initialize_mpu();
 
-
-  // Initialize trigger
+  // Trigger HIGH
+  // Start logging data in circular buffer
   pinMode(LOG_TRIGGER_GPIO, OUTPUT);
   digitalWrite(LOG_TRIGGER_GPIO, HIGH);
 
@@ -49,9 +49,6 @@ void loop()
     // Change state on detect ready
     if (flight_ready)
     {
-      // Start logging
-      digitalWrite(LOG_TRIGGER_GPIO, LOW);
-
       // Change state
       current_state = FLIGHT_MONITORING;
 
@@ -94,6 +91,9 @@ void loop()
       if (!launch_detected && totalAccel > LAUNCH_DETECT_ACCEL_THRESH) // Adjust threshold
       {
         launch_detected = true;
+
+        // Trigger GPIO low, write to main file
+        digitalWrite(LOG_TRIGGER_GPIO, LOW);
 #if DEBUG
         Serial.println("Launch Detected!");
 #endif
@@ -129,9 +129,6 @@ void loop()
       // Rocket is NOT upright
       else
       {
-        // Stop logging
-        digitalWrite(LOG_TRIGGER_GPIO, HIGH);
-
         // Change state
         current_state = DATA_COLLECTION;
 
