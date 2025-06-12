@@ -2,7 +2,7 @@
 
 // File configuration
 #define CIRCULAR_FILE_SIZE (2 * 1024 * 1024)   // 2MB circular buffer
-#define REGULAR_FILE_SIZE (13.5 * 1024 * 1024) // 14MB regular buffer
+#define REGULAR_FILE_SIZE (13.5 * 1024 * 1024) // regular logging buffer
 
 // Tracking file state for reading
 File currentFile;
@@ -16,7 +16,7 @@ uint32_t circularWritePos = 0;
 // ==== Functions ====
 
 // Initialize filesystem for flash writing
-bool initFlashWrite()
+bool initFlashWrite(bool clear = false)
 {
     // Initialize the flash file system (assuming fatfs is already initialized in globals)
     if (!fatfs.begin(&flash_memory))
@@ -27,6 +27,14 @@ bool initFlashWrite()
 #if DEBUG
     Serial.println("Filesystem mounted.");
 #endif
+    // Clear flash if requested (launched state)
+    if (clear)
+    {
+        clearFlash(detectedSensor);
+#if DEBUG
+        Serial.println("Flash cleared due to launched state");
+#endif
+    }
 
     // Create headers for CSV files if they don't exist
     createCSVHeaders(detectedSensor);
@@ -93,7 +101,7 @@ void createCSVHeaders(SensorType sensorType)
             circularFile.truncate(CIRCULAR_FILE_SIZE);
             circularFile.seek(0); // go to beginning
             circularFile.println(headers);
-            circularWritePos = circularFile.position(); // save starting writing position
+            circularWritePos = circularFile.position(); // save starting writing position as after header
             circularFile.close();
 #if DEBUG
             Serial.print("Created circular buffer: ");
