@@ -288,7 +288,7 @@ bool make_data_request(uint8_t CS_PIN)
 #endif
 
   // Delay to allow coprocessor to prepare data.
-  delay(3000);
+  delay(PACKET_PREP_TIME);
 
   // Poll for response data with a timeout
   unsigned long start_time = millis();
