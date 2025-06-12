@@ -30,18 +30,18 @@
 #include "sensor_read.h"
 #include "SPIPacket.h"
 
-#define DEBUG 1
-
-// LED
+// Indication
 Adafruit_NeoPixel neopixel(1, RGB_LED, NEO_GRB + NEO_KHZ800);
 uint32_t color_red = neopixel.Color(200, 0, 0);
 uint32_t color_amber = neopixel.Color(220, 160, 0);
 uint32_t color_green = neopixel.Color(0, 160, 0);
 uint32_t color_light_green = neopixel.Color(0, 50, 0);
 uint32_t color_blue = neopixel.Color(0, 0, 100);
+bool success_flag = true;
 
 // Logging
 bool logging_allowed = false;
+bool logging_circular = false;
 
 // SPI Related
 SPI_HandleTypeDef *hspi = INTERBOARD_SPI.getHandle();
@@ -61,3 +61,4 @@ void INTERBOARD_SPI_ISR();
 void INTERBOARD_SPI_PROCESS_MSG();
 void prepareResponse();
 void _print_buffer(const char *label, uint8_t *buffer, uint8_t size);
+void _blink_red();

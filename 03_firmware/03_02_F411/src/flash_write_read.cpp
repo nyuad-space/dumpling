@@ -13,8 +13,7 @@ bool initFlashWrite()
     if (!fatfs.begin(&flash_memory))
     {
         Serial.println("Filesystem not found. Please run formatter first.");
-        while (1)
-            yield();
+        return false;
     }
     Serial.println("Filesystem mounted.");
 
@@ -392,14 +391,14 @@ uint8_t *read_by_chunk(File &fileHandle, size_t request_size, uint8_t *buffer, s
                     memcpy(buffer + buffer_pos, currentChunk.c_str(), line_len);
                     buffer_pos += line_len;
                     buffer[buffer_pos++] = '\n';
-#if DEBUG
+#if F411_DEBUG_MODE
                     Serial.println(currentChunk);
 #endif
                 }
                 else
                 {
                     bufferFull = true;
-#if DEBUG
+#if F411_DEBUG_MODE
                     Serial.println(currentChunk);
 #endif
                     break;
@@ -431,14 +430,14 @@ uint8_t *read_by_chunk(File &fileHandle, size_t request_size, uint8_t *buffer, s
                 memcpy(buffer + buffer_pos, currentChunk.c_str(), line_len);
                 buffer_pos += line_len;
                 buffer[buffer_pos++] = '\n';
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println(currentChunk);
 #endif
             }
             else
             {
                 bufferFull = true;
-#if DEBUG
+#if F411_DEBUG_MODE
                 Serial.println(currentChunk);
 #endif
             }
@@ -453,7 +452,7 @@ uint8_t *read_by_chunk(File &fileHandle, size_t request_size, uint8_t *buffer, s
         buffer[buffer_pos] = '\0';
     }
 
-#if DEBUG
+#if F411_DEBUG_MODE
     Serial.print("Read ");
     Serial.print(fetched_size);
     Serial.println(" bytes");
@@ -478,7 +477,7 @@ bool clearFlash(SensorType sensorType)
     
     if (fileName == nullptr)
     {
-        #if DEBUG
+        #if F411_DEBUG_MODE
         Serial.println("Unknown sensor type - cannot clear file");
         #endif
         return false;
@@ -498,7 +497,7 @@ bool clearFlash(SensorType sensorType)
     {
         if (fatfs.remove(fileName))
         {
-            #if DEBUG
+            #if F411_DEBUG_MODE
             Serial.print("Successfully deleted: ");
             Serial.println(fileName);
             #endif
@@ -507,7 +506,7 @@ bool clearFlash(SensorType sensorType)
         }
         else
         {
-            #if DEBUG
+            #if F411_DEBUG_MODE
             Serial.print("Failed to delete: ");
             Serial.println(fileName);
             #endif
@@ -516,7 +515,7 @@ bool clearFlash(SensorType sensorType)
     }
     else
     {
-        #if DEBUG
+        #if F411_DEBUG_MODE
         Serial.print("File does not exist: ");
         Serial.println(fileName);
         #endif

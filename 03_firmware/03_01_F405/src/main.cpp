@@ -3,9 +3,9 @@
 void setup()
 {
 
-#if DEBUG
+#if F405_DEBUG_MODE
   Serial.begin(115200);
-  delay(1000);
+  delay(100);
 #endif
 
   // Initialize RGB LED
@@ -18,12 +18,12 @@ void setup()
   initialize_interboard_spi();
   initialize_mpu();
 
-
-  // Initialize trigger
+  // Trigger HIGH
+  // Start logging data in circular buffer
   pinMode(LOG_TRIGGER_GPIO, OUTPUT);
   digitalWrite(LOG_TRIGGER_GPIO, HIGH);
 
-#if DEBUG
+#if F405_DEBUG_MODE
   Serial.println("Logging disabled.");
 #endif
 
@@ -49,9 +49,6 @@ void loop()
     // Change state on detect ready
     if (flight_ready)
     {
-      // Start logging
-      digitalWrite(LOG_TRIGGER_GPIO, LOW);
-
       // Change state
       current_state = FLIGHT_MONITORING;
 
@@ -59,8 +56,8 @@ void loop()
       neopixel.setPixelColor(0, color_green);
       neopixel.show();
 
-#if DEBUG
-        Serial.println("Logging enabled!");
+#if F405_DEBUG_MODE
+      Serial.println("Logging enabled!");
 #endif
     }
     break;
@@ -68,74 +65,83 @@ void loop()
 
   case FLIGHT_MONITORING:
   {
-    if (first_entry)
-    {
-      launch_detected = false;
-      first_entry = false;
-    }
 
+    // Get continuous data
     sensors_event_t a, g, temp;
     mpu.getEvent(&a, &g, &temp);
+
+    // Is the rocket upright?
     rocket_curr_upright = (abs(a.acceleration.y) > UPRIGHT_ACCEL_THRESH);
 
+    // Upon motion detection
     if (mpu.getMotionInterruptStatus())
     {
+      // Get data again
+      // mpu.getEvent(&a, &g, &temp);
 
-      mpu.getEvent(&a, &g, &temp);
-
+      // Compute total accel via squaring
       float totalAccel = sqrt(a.acceleration.x * a.acceleration.x +
                               a.acceleration.y * a.acceleration.y +
                               a.acceleration.z * a.acceleration.z);
 
-      // Detect launch event (significant acceleration spike)
-      if (!launch_detected && totalAccel > LAUNCH_DETECT_ACCEL_THRESH) // Adjust threshold
+// If no previous launch and significant accel
+// Set launch
+#if F405_DEBUG_MODE
+      if (!launch_detected && totalAccel > DEBUG_LAUNCH_DETECT_ACCEL_THRESH)
+#else
+      if (!launch_detected && totalAccel > LAUNCH_DETECT_ACCEL_THRESH)
+#endif
       {
         launch_detected = true;
-        // quiet_start_time = millis();
-#if DEBUG
-        Serial.println("Launch Detected!");
+
+        // Trigger GPIO low, write to main file
+        digitalWrite(LOG_TRIGGER_GPIO, LOW);
+#if F405_DEBUG_MODE
+        Serial.println("Launch Detected! Wrote low to GPIO");
+        Serial.print("Total accel: ");
+        Serial.println(totalAccel);
 #endif
       }
 
-      // Reset quiet timer if we detected launch and there's still motion
+      // If motion detected and rocket already launched
+      // Restart quiet timer
+      // This will keep setting during flight
       if (launch_detected)
       {
         quiet_start_time = millis();
-#if DEBUG
+#if F405_DEBUG_MODE
         Serial.println("~~Flying~~");
+        Serial.print("Total accel: ");
+        Serial.println(totalAccel);
 #endif
       }
     }
 
-    // Only enter data collection if: launch detected AND quiet period elapsed AND we are upright
+    // If launch detected and its been quiet
     if (launch_detected && (millis() - quiet_start_time > QUIET_TIME_THRESH_SEC))
     {
 
-      // If rocket is still upright, still on pad
-      // Reset timer
+      // If rocket is still upright
+      // Reset timer and reset launch detected because we are on pad
       if (rocket_curr_upright)
       {
         launch_detected = false;
         quiet_start_time = millis();
-#if DEBUG
+#if F405_DEBUG_MODE
         Serial.println("Still upright - resetting timer");
 #endif
       }
 
+      // Rocket is NOT upright
       else
       {
-
-        // Stop logging
-        digitalWrite(LOG_TRIGGER_GPIO, HIGH);
-
         // Change state
         current_state = DATA_COLLECTION;
-        first_entry = true;
 
         // Indicate
         neopixel.setPixelColor(0, color_blue);
         neopixel.show();
-#if DEBUG
+#if F405_DEBUG_MODE
         Serial.println("Flight ended. Logging disabled. Collecting logs now.");
 #endif
       }
@@ -146,11 +152,12 @@ void loop()
   case DATA_COLLECTION:
   {
     // Collect data from all coprocessors
-    make_data_request(INTERBOARD_SPI_CO2_CS);
+    make_data_request(INTERBOARD_SPI_CO1_CS);
+    // make_data_request(INTERBOARD_SPI_CO2_CS);
     // store_to_sd(data);
 
     // Switch to new state
-#if DEBUG
+#if F405_DEBUG_MODE
     Serial.println();
     Serial.println("Data collection complete. Standing by.");
 #endif
@@ -216,7 +223,7 @@ bool detect_flight_ready()
     // If not upright anymore on new motion, reset upright tracker
     if (!rocket_curr_upright && rocket_prev_upright)
     {
-#if DEBUG
+#if F405_DEBUG_MODE
       Serial.println("Rocket no longer upright, resetting timer.");
 #endif
       rocket_prev_upright = false;
@@ -227,7 +234,7 @@ bool detect_flight_ready()
     {
       upright_start_time = millis();
       rocket_prev_upright = true;
-#if DEBUG
+#if F405_DEBUG_MODE
       Serial.println("Rocket became upright, starting timer.");
 #endif
     }
@@ -237,7 +244,7 @@ bool detect_flight_ready()
   // Switch state past threshold
   if (rocket_prev_upright && (millis() - upright_start_time > UPRIGHT_TIME_THRESH_SEC))
   {
-#if DEBUG
+#if F405_DEBUG_MODE
     Serial.println("Rocket upright threshold met, switching to flight monitoring.");
 #endif
     return true;
@@ -278,24 +285,24 @@ bool make_data_request(uint8_t CS_PIN)
   INTERBOARD_SPI.transfer(command_buffer, rx_buffer, command_packet_size, SPI_LAST);
   digitalWrite(CS_PIN, HIGH);
 
-#if DEBUG
+#if F405_DEBUG_MODE
   _print_buffer("TX", command_buffer, command_packet_size);
   _print_buffer("RX", rx_buffer, command_packet_size);
 #endif
 
   // Delay to allow coprocessor to prepare data.
-  delay(3000);
+  delay(PACKET_PREP_TIME);
 
   // Poll for response data with a timeout
   unsigned long start_time = millis();
   while (millis() - start_time < POLLING_TIMEOUT_MS)
   {
     digitalWrite(CS_PIN, LOW);
-    delay(10);
+    delay(5);
     INTERBOARD_SPI.transfer(dummy_buffer, rx_buffer, dummy_packet_size, SPI_LAST);
     digitalWrite(CS_PIN, HIGH);
 
-#if DEBUG
+#if F405_DEBUG_MODE
     _print_buffer("TX", dummy_buffer, 5);
     _print_buffer("RX", rx_buffer, MAX_PACKET_SIZE);
 #endif
@@ -307,7 +314,7 @@ bool make_data_request(uint8_t CS_PIN)
     }
 
     // Delay before next poll
-    delay(100);
+    delay(1000);
   }
 
   return false; // Timeout
