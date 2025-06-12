@@ -47,7 +47,7 @@ bool logging_circular = false;
 SPI_HandleTypeDef *hspi = INTERBOARD_SPI.getHandle();
 uint8_t INTERBOARD_TX_BUFFER[MAX_PACKET_SIZE];
 uint8_t INTERBOARD_RX_BUFFER[MAX_PACKET_SIZE];
-volatile bool INTERBOARD_RCVD = false;
+volatile bool INTERBOARD_RCVD_FLAG = false;
 
 uint8_t counter = 20; // TODO: remove dummy logic
 uint8_t master_data_size;

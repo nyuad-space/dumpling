@@ -151,6 +151,7 @@ void loop()
 
   case DATA_COLLECTION:
   {
+    // TODO: put into for loop
     // Collect data from all coprocessors
     make_data_request(INTERBOARD_SPI_CO1_CS);
     // make_data_request(INTERBOARD_SPI_CO2_CS);
