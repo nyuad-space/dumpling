@@ -69,6 +69,22 @@ void setup()
 
 void loop()
 {
+    // Only log when allowed
+    if (logging_allowed) {
+        
+        if (logging_circular){
+            // Read sensor
+            // Write to flash in circular buffer
+        }
+
+        else{
+            // Read sensor
+            // Write to flash in main flash
+        }
+
+    }
+
+    // Repurpose this for stop logging?
     if (INTERBOARD_RCVD)
     {
         INTERBOARD_SPI_PROCESS_MSG();
@@ -82,7 +98,7 @@ void LOG_TRIGGER_ISR()
 
     if (pinState == LOW)
     {
-        // Falling edge detected, start logging
+        // Falling edge detected, start logging in circular
 #if F411_DEBUG_MODE
         Serial.println("Low pin. Logging in main flash.");
 #endif
@@ -93,7 +109,7 @@ void LOG_TRIGGER_ISR()
     }
     else if (pinState == HIGH)
     {
-        // Rising edge detected, stop logging
+        // Rising edge detected, start logging in main
 #if F411_DEBUG_MODE
         Serial.println("High pin. Logging in circular buffer.");
 #endif
