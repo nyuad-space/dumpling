@@ -4,7 +4,7 @@
 
 // Time buffer
 unsigned long previousMillis = 0; // store last updated time
-const long interval = 1000;       // interval at which to delay (milliseconds)
+const long interval = 10;         // interval at which to delay (milliseconds)
 
 // == readings for each sensors ==
 

@@ -3,8 +3,9 @@
 
 void setup()
 {
+    // **IN DEBUG MODE, FLASH IS AUTO-CLEARED**
+
 #if F411_DEBUG_MODE
-    delay(100);
     Serial.begin(115200);
 #endif
 
@@ -34,15 +35,17 @@ void setup()
 
     // Catch bad initialization
     success_flag = initSensorComm(detectedSensor);
+
     configSensor(detectedSensor);
 
 #if F411_DEBUG_MODE
     Serial.println("Sensor configured.");
+    bool clear = false;
 #endif
 
     // Setup flash
     success_flag = flash_memory.begin();
-    success_flag = initFlashWrite();
+    success_flag = initFlashWrite(clear);
 
 #if F411_DEBUG_MODE
     uint32_t jedec_id = flash_memory.getJEDECID();
@@ -65,29 +68,24 @@ void setup()
             _blink_red();
         }
     }
+    // uint8_t buffer[100];
+    // readFromFlash(detectedSensor, buffer, 100, logging_circular);
+    // readFromFlash(detectedSensor, buffer, 100, logging_circular);
+    // readFromFlash(detectedSensor, buffer, 100, logging_circular);
 }
 
 void loop()
 {
+
     // Only log when allowed
     if (logging_allowed)
     {
-
-        if (logging_circular)
-        {
-            // Read sensor
-            // Write to flash in circular buffer
-        }
-
-        else
-        {
-            // Read sensor
-            // Write to flash in main flash
-        }
+        // Read sensor + Write to flash in circular/regular buffer
+        readSensor(detectedSensor, logging_circular);
     }
 
     // Repurpose this for stop logging?
-    if (INTERBOARD_RCVD)
+    if (INTERBOARD_RCVD_FLAG)
     {
         INTERBOARD_SPI_PROCESS_MSG();
     }

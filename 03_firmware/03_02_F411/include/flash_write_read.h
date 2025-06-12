@@ -24,6 +24,6 @@ const char *getSensorFilename(SensorType sensorType, bool circular);
 // Read current flash recordings
 bool readFromFlash(SensorType sensorType, uint8_t *buffer, size_t buffer_size, bool circular);
 size_t read_by_chunk(File &fileHandle, uint8_t *buffer, size_t buffer_size, bool circular);
-bool clearFlash(SensorType sensorType);
+bool clearFlash(SensorType sensorType, bool circular);
 
 #endif // FLASHWRITE_H
