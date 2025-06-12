@@ -152,14 +152,14 @@ void loop()
   case DATA_COLLECTION:
   {
     // Collect data from all coprocessors
-    make_data_request(INTERBOARD_SPI_CO1_CS);
+    // make_data_request(INTERBOARD_SPI_CO1_CS);
     // make_data_request(INTERBOARD_SPI_CO2_CS);
     // store_to_sd(data);
 
     // Switch to new state
 #if F405_DEBUG_MODE
     Serial.println();
-    Serial.println("Data collection complete. Standing by.");
+    Serial.println("Data collection dummy. Standing by.");
 #endif
     neopixel.setPixelColor(0, color_red);
     neopixel.show();
