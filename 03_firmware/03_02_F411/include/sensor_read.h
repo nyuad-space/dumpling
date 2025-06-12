@@ -7,7 +7,7 @@
 #define SENSOR_READ_H
 
 // Central function
-void readSensor(SensorType sensorType);
+void readSensor(SensorType sensorType, bool circular);
 
 // Sensor reading functions
 void read_LSM6DS();

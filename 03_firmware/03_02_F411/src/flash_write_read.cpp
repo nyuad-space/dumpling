@@ -16,7 +16,7 @@ uint32_t circularWritePos = 0;
 // ==== Functions ====
 
 // Initialize filesystem for flash writing
-bool initFlashWrite(bool clear = false)
+bool initFlashWrite(bool clear)
 {
     // Initialize the flash file system (assuming fatfs is already initialized in globals)
     if (!fatfs.begin(&flash_memory))
@@ -153,6 +153,9 @@ void writeCircular(File &file, uint32_t &writePos, const String &data)
     // Write data
     file.seek(writePos);
     file.print(data);
+#if DEBUG
+    Serial.println(data);
+#endif
     writePos = file.position();
 }
 
@@ -180,11 +183,15 @@ void writeToFlash(SensorType sensorType, bool circular)
 
                 writeCircular(circularFile, circularWritePos, dataLine);
                 circularFile.close();
+#if DEBUG
                 Serial.println("LSM6DS data written to circular");
+#endif
             }
             else
             {
+#if DEBUG
                 Serial.println("Failed to open lsm6ds_circular.csv");
+#endif
             }
         }
         else
@@ -208,11 +215,30 @@ void writeToFlash(SensorType sensorType, bool circular)
                 regularFile.print(",");
                 regularFile.println(temp_read);
                 regularFile.close();
+#if DEBUG
+                Serial.print(timestamp);
+                Serial.print(",");
+                Serial.print(accel_x_read);
+                Serial.print(",");
+                Serial.print(accel_y_read);
+                Serial.print(",");
+                Serial.print(accel_z_read);
+                Serial.print(",");
+                Serial.print(gyro_x_read);
+                Serial.print(",");
+                Serial.print(gyro_y_read);
+                Serial.print(",");
+                Serial.print(gyro_z_read);
+                Serial.print(",");
+                Serial.println(temp_read);
                 Serial.println("LSM6DS data written");
+#endif
             }
             else
             {
+#if DEBUG
                 Serial.println("Failed to open lsm6ds_data.csv");
+#endif
             }
         }
         break;
@@ -231,11 +257,15 @@ void writeToFlash(SensorType sensorType, bool circular)
 
                 writeCircular(circularFile, circularWritePos, dataLine);
                 circularFile.close();
+#if DEBUG
                 Serial.println("DPS310 data written to circular");
+#endif
             }
             else
             {
+#if DEBUG
                 Serial.println("Failed to open dps310_circular.csv");
+#endif
             }
         }
         else
@@ -249,11 +279,15 @@ void writeToFlash(SensorType sensorType, bool circular)
                 regularFile.print(",");
                 regularFile.println(press_read);
                 regularFile.close();
+#if DEBUG
                 Serial.println("DPS310 data written");
+#endif
             }
             else
             {
+#if DEBUG
                 Serial.println("Failed to open dps310_data.csv");
+#endif
             }
         }
         break;
@@ -277,11 +311,15 @@ void writeToFlash(SensorType sensorType, bool circular)
 
                 writeCircular(circularFile, circularWritePos, dataLine);
                 circularFile.close();
+#if DEBUG
                 Serial.println("BMI088 data written to circular");
+#endif
             }
             else
             {
+#if DEBUG
                 Serial.println("Failed to open bmi088_circular.csv");
+#endif
             }
         }
         else
@@ -305,11 +343,15 @@ void writeToFlash(SensorType sensorType, bool circular)
                 regularFile.print(",");
                 regularFile.println(temp_read);
                 regularFile.close();
+#if DEBUG
                 Serial.println("BMI088 data written");
+#endif
             }
             else
             {
+#if DEBUG
                 Serial.println("Failed to open bmi088_data.csv");
+#endif
             }
         }
         break;
@@ -329,11 +371,15 @@ void writeToFlash(SensorType sensorType, bool circular)
 
                 writeCircular(circularFile, circularWritePos, dataLine);
                 circularFile.close();
+#if DEBUG
                 Serial.println("BMP390 data written to circular");
+#endif
             }
             else
             {
+#if DEBUG
                 Serial.println("Failed to open bmp390_circular.csv");
+#endif
             }
         }
         else
@@ -349,11 +395,15 @@ void writeToFlash(SensorType sensorType, bool circular)
                 regularFile.print(",");
                 regularFile.println(bmp390_alt_read);
                 regularFile.close();
+#if DEBUG
                 Serial.println("BMP390 data written");
+#endif
             }
             else
             {
+#if DEBUG
                 Serial.println("Failed to open bmp390_data.csv");
+#endif
             }
         }
         break;
@@ -373,11 +423,15 @@ void writeToFlash(SensorType sensorType, bool circular)
 
                 writeCircular(circularFile, circularWritePos, dataLine);
                 circularFile.close();
+#if DEBUG
                 Serial.println("LIS2MDL data written to circular");
+#endif
             }
             else
             {
+#if DEBUG
                 Serial.println("Failed to open lis2mdl_circular.csv");
+#endif
             }
         }
         else
@@ -393,11 +447,15 @@ void writeToFlash(SensorType sensorType, bool circular)
                 regularFile.print(",");
                 regularFile.println(mag_z_read);
                 regularFile.close();
+#if DEBUG
                 Serial.println("LIS2MDL data written");
+#endif
             }
             else
             {
+#if DEBUG
                 Serial.println("Failed to open lis2mdl_data.csv");
+#endif
             }
         }
         break;
@@ -416,11 +474,15 @@ void writeToFlash(SensorType sensorType, bool circular)
 
                 writeCircular(circularFile, circularWritePos, dataLine);
                 circularFile.close();
+#if DEBUG
                 Serial.println("HDC302 data written to circular");
+#endif
             }
             else
             {
+#if DEBUG
                 Serial.println("Failed to open hdc302_circular.csv");
+#endif
             }
         }
         else
@@ -434,11 +496,15 @@ void writeToFlash(SensorType sensorType, bool circular)
                 regularFile.print(",");
                 regularFile.println(temp_read);
                 regularFile.close();
+#if DEBUG
                 Serial.println("HDC302 data written");
+#endif
             }
             else
             {
+#if DEBUG
                 Serial.println("Failed to open hdc302_data.csv");
+#endif
             }
         }
         break;
@@ -502,19 +568,17 @@ bool readFromFlash(SensorType sensorType, uint8_t *buffer, size_t buffer_size, b
         {
             currentFile.close();
             fileIsOpen = false;
-            partialLine = ""; // Reset when switching files
+            partialLine = "";   // Reset when switching files
+            reachedEOF = false; // Reset EOF flag when switching files
         }
 
         // Open the new file into currentFile
-        if (fileName != nullptr)
-        {
-            currentFile = fatfs.open(fileName);
-        }
-        else
+        if (fileName == nullptr)
         {
             Serial.println("Unknown sensor type");
-            return 0;
+            return false;
         }
+
         currentFile = fatfs.open(fileName);
 
         // Check if file opened successfully
@@ -523,21 +587,31 @@ bool readFromFlash(SensorType sensorType, uint8_t *buffer, size_t buffer_size, b
             Serial.print("Failed to open csv file: ");
             Serial.println(fileName);
             fileIsOpen = false;
-            return 0;
+            return false;
         }
 
         // Update state for successful open
         currentFileName = fileName;
         fileIsOpen = true;
+        reachedEOF = false;
     }
 
     // Read chunk from the current file
-    read_by_chunk(currentFile, buffer, buffer_size, circular);
-    return reachedEOF;
+    size_t bytesRead = read_by_chunk(currentFile, buffer, buffer_size, circular);
+
+    // Check if buffer is full (read exactly the requested amount)
+    bool bufferFull = (bytesRead == buffer_size);
+#if DEBUG
+    if (bufferFull)
+    {
+        Serial.println("Buffer completely filled");
+    }
+#endif
+    return (bytesRead > 0); // return true if successfully read data, false if EOF or error
 }
 
 // Read sensor data recordings from flash with size limit
-uint8_t *read_by_chunk(File &fileHandle, uint8_t *buffer, size_t buffer_size, bool circular)
+size_t read_by_chunk(File &fileHandle, uint8_t *buffer, size_t buffer_size, bool circular)
 {
     // partialLine = done reading in terms of chunk, but didn't hit new line
     // currentChunk = working variable within chunk, reading char by char
@@ -577,9 +651,9 @@ uint8_t *read_by_chunk(File &fileHandle, uint8_t *buffer, size_t buffer_size, bo
                 }
                 else
                 {
-                    bufferFull = true;
+                    partialLine = currentChunk; // can't fit this line in buffer, save it for next time
 #if F411_DEBUG_MODE
-                    Serial.println(currentChunk);
+                    Serial.println("Buffer full, saving line for next read");
 #endif
                     break;
                 }
@@ -594,16 +668,16 @@ uint8_t *read_by_chunk(File &fileHandle, uint8_t *buffer, size_t buffer_size, bo
     }
 
     // Handle any remaining data in currentChunk
-    if (currentChunk.length() > 0)
+    if (currentChunk.length() > 0 && buffer_pos < buffer_size)
     {
-        if (currentChunk.length() > 0)
+        if (fileHandle.available() > 0)
         {
             // More data exists, save partial line for next chunk
             partialLine = currentChunk;
         }
         else
         {
-            // At EOF, write the last line
+            // At EOF, write the last line if it fits
             size_t line_len = currentChunk.length();
             if (buffer_pos + line_len + 1 < buffer_size)
             {
@@ -616,18 +690,16 @@ uint8_t *read_by_chunk(File &fileHandle, uint8_t *buffer, size_t buffer_size, bo
             }
             else
             {
-                bufferFull = true;
+                partialLine = currentChunk; // can't fit this line in buffer, save it for next time
 #if F411_DEBUG_MODE
-                Serial.println(currentChunk);
+                Serial.println("Buffer full, saving line for next read");
 #endif
             }
         }
     }
-    // Store bufferFull flag in the first byte of buffer
-    buffer[0] = bufferFull ? 1 : 0;
 
     // Null terminate the buffer
-    if (buffer_pos < buffer_size && !bufferFull)
+    if (buffer_pos < buffer_size)
     {
         buffer[buffer_pos] = '\0';
     }
@@ -635,11 +707,13 @@ uint8_t *read_by_chunk(File &fileHandle, uint8_t *buffer, size_t buffer_size, bo
 #if F411_DEBUG_MODE
     Serial.print("Read ");
     Serial.print(fetched_size);
-    Serial.println(" bytes");
+    Serial.println(" bytes from file, wrote ");
+    Serial.println(buffer_pos);
+    Serial.println(" bytes to buffer");
 #endif
 
     // Only close file if we've reached EOF
-    if (!fileHandle.available())
+    if (!fileHandle.available() && partialLine.length() == 0)
     {
         Serial.println("End of file reached");
         fileHandle.close();
@@ -648,22 +722,22 @@ uint8_t *read_by_chunk(File &fileHandle, uint8_t *buffer, size_t buffer_size, bo
         partialLine = "";
         reachedEOF = true;
     }
-    return buffer;
+    return buffer_pos; // return number of bytes actually written to buffer
 }
 
 // Clear/delete the CSV file for the specified sensor type
 bool clearFlash(SensorType sensorType)
 {
-    const char *fileName = getSensorFilename(sensorType);
-    
+    const char *fileName = getSensorFilename(sensorType, circular);
+
     if (fileName == nullptr)
     {
-        #if F411_DEBUG_MODE
+#if F411_DEBUG_MODE
         Serial.println("Unknown sensor type - cannot clear file");
-        #endif
+#endif
         return false;
     }
-    
+
     // Close the file if it's currently open for reading
     if (fileIsOpen && currentFileName == fileName)
     {
@@ -672,34 +746,34 @@ bool clearFlash(SensorType sensorType)
         currentFileName = nullptr;
         partialLine = "";
     }
-    
+
     // Check if file exists before attempting to delete
     if (fatfs.exists(fileName))
     {
         if (fatfs.remove(fileName))
         {
-            #if F411_DEBUG_MODE
+#if F411_DEBUG_MODE
             Serial.print("Successfully deleted: ");
             Serial.println(fileName);
-            #endif
-            
+#endif
+
             return true;
         }
         else
         {
-            #if F411_DEBUG_MODE
+#if F411_DEBUG_MODE
             Serial.print("Failed to delete: ");
             Serial.println(fileName);
-            #endif
+#endif
             return false;
         }
     }
     else
     {
-        #if F411_DEBUG_MODE
+#if F411_DEBUG_MODE
         Serial.print("File does not exist: ");
         Serial.println(fileName);
-        #endif
+#endif
         return true; // Consider this successful since file is already gone
     }
 }

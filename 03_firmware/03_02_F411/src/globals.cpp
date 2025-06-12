@@ -42,4 +42,4 @@ float mag_y_read;
 float mag_z_read;
 float hum_read;
 
-bool reachedEOF = false;
+bool reachedEOF;
