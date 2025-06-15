@@ -5,6 +5,11 @@
 #define REGULAR_FILE_SIZE (13.5 * 1024 * 1024) // regular logging buffer
 
 // Tracking file state for reading
+// File configuration
+#define CIRCULAR_FILE_SIZE (2 * 1024 * 1024)   // 2MB circular buffer
+#define REGULAR_FILE_SIZE (13.5 * 1024 * 1024) // regular logging buffer
+
+// Tracking file state for reading
 File currentFile;
 const char *currentFileName = nullptr;
 bool fileIsOpen = false;
@@ -12,6 +17,13 @@ String partialLine = ""; // buffer for incomplete lines
 
 // Tracking circular buffer
 uint32_t circularWritePos = 0;
+
+// ==== Functions ====
+
+// Initialize filesystem for flash writing
+bool initFlashWrite(bool clear)
+    // Tracking circular buffer
+    uint32_t circularWritePos = 0;
 
 // ==== Functions ====
 
@@ -28,14 +40,14 @@ bool initFlashWrite(bool clear)
     Serial.println("Filesystem mounted.");
 #endif
     // In DEBUG MODE: CLEAR FLASH for both circular and regular files
-//     if (clear)
-//     {
-//         clearFlash(detectedSensor, 1);
-//         clearFlash(detectedSensor, 0);
-// #if F411_DEBUG_MODE
-//         Serial.println("Flash cleared due to launched state");
-// #endif
-//     }
+    //     if (clear)
+    //     {
+    //         clearFlash(detectedSensor, 1);
+    //         clearFlash(detectedSensor, 0);
+    // #if F411_DEBUG_MODE
+    //         Serial.println("Flash cleared due to launched state");
+    // #endif
+    //     }
 
     return true;
 }
