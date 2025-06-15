@@ -28,16 +28,14 @@ bool initFlashWrite(bool clear)
     Serial.println("Filesystem mounted.");
 #endif
     // In DEBUG MODE: CLEAR FLASH for both circular and regular files
-    {
-        clearFlash(detectedSensor, 1);
-        clearFlash(detectedSensor, 0);
-#if F411_DEBUG_MODE
-        Serial.println("Flash cleared due to launched state");
-#endif
-    }
-
-    // Create headers for CSV files if they don't exist
-    createCSVHeaders(detectedSensor);
+//     if (clear)
+//     {
+//         clearFlash(detectedSensor, 1);
+//         clearFlash(detectedSensor, 0);
+// #if F411_DEBUG_MODE
+//         Serial.println("Flash cleared due to launched state");
+// #endif
+//     }
 
     return true;
 }
@@ -165,6 +163,12 @@ void writeCircular(File &file, uint32_t &writePos, const String &data)
 void writeToFlash(SensorType sensorType, bool circular)
 {
     unsigned long timestamp = millis();
+
+    // If regular storage is full
+    if (!circular && regularStorageFull)
+    {
+        Serial.println("Regular storage full");
+    }
     switch (sensorType)
     {
     case SENSOR_LSM6DS_ACCEL_GYRO:
@@ -201,6 +205,16 @@ void writeToFlash(SensorType sensorType, bool circular)
             regularFile = fatfs.open("lsm6ds_data.csv", FILE_WRITE);
             if (regularFile)
             {
+                // Check if we're approaching file size limit
+                if (regularFile.size() >= REGULAR_FILE_SIZE)
+                {
+                    regularFile.close();
+                    regularStorageFull = true;
+#if F411_DEBUG_MODE
+                    Serial.println("Regular file size limit reached");
+#endif
+                    return;
+                }
                 regularFile.print(timestamp);
                 regularFile.print(",");
                 regularFile.print(accel_x_read);
@@ -275,6 +289,16 @@ void writeToFlash(SensorType sensorType, bool circular)
             regularFile = fatfs.open("dps310_data.csv", FILE_WRITE);
             if (regularFile)
             {
+                // Check if we're approaching file size limit
+                if (regularFile.size() >= REGULAR_FILE_SIZE)
+                {
+                    regularFile.close();
+                    regularStorageFull = true;
+#if F411_DEBUG_MODE
+                    Serial.println("Regular file size limit reached");
+#endif
+                    return;
+                }
                 regularFile.print(timestamp);
                 regularFile.print(",");
                 regularFile.print(temp_read);
@@ -329,6 +353,16 @@ void writeToFlash(SensorType sensorType, bool circular)
             regularFile = fatfs.open("bmi088_data.csv", FILE_WRITE);
             if (regularFile)
             {
+                // Check if we're approaching file size limit
+                if (regularFile.size() >= REGULAR_FILE_SIZE)
+                {
+                    regularFile.close();
+                    regularStorageFull = true;
+#if F411_DEBUG_MODE
+                    Serial.println("Regular file size limit reached");
+#endif
+                    return;
+                }
                 regularFile.print(timestamp);
                 regularFile.print(",");
                 regularFile.print(accel_x_read);
@@ -389,6 +423,16 @@ void writeToFlash(SensorType sensorType, bool circular)
             regularFile = fatfs.open("bmp390_data.csv", FILE_WRITE);
             if (regularFile)
             {
+                // Check if we're approaching file size limit
+                if (regularFile.size() >= REGULAR_FILE_SIZE)
+                {
+                    regularFile.close();
+                    regularStorageFull = true;
+#if F411_DEBUG_MODE
+                    Serial.println("Regular file size limit reached");
+#endif
+                    return;
+                }
                 regularFile.print(timestamp);
                 regularFile.print(",");
                 regularFile.print(temp_read);
@@ -441,6 +485,16 @@ void writeToFlash(SensorType sensorType, bool circular)
             regularFile = fatfs.open("lis2mdl_data.csv", FILE_WRITE);
             if (regularFile)
             {
+                // Check if we're approaching file size limit
+                if (regularFile.size() >= REGULAR_FILE_SIZE)
+                {
+                    regularFile.close();
+                    regularStorageFull = true;
+#if F411_DEBUG_MODE
+                    Serial.println("Regular file size limit reached");
+#endif
+                    return;
+                }
                 regularFile.print(timestamp);
                 regularFile.print(",");
                 regularFile.print(mag_x_read);
@@ -492,6 +546,16 @@ void writeToFlash(SensorType sensorType, bool circular)
             regularFile = fatfs.open("hdc302_data.csv", FILE_WRITE);
             if (regularFile)
             {
+                // Check if we're approaching file size limit
+                if (regularFile.size() >= REGULAR_FILE_SIZE)
+                {
+                    regularFile.close();
+                    regularStorageFull = true;
+#if F411_DEBUG_MODE
+                    Serial.println("Regular file size limit reached");
+#endif
+                    return;
+                }
                 regularFile.print(timestamp);
                 regularFile.print(",");
                 regularFile.print(hum_read);
@@ -759,7 +823,8 @@ bool clearFlash(SensorType sensorType, bool circular)
             Serial.print("Successfully deleted: ");
             Serial.println(fileName);
 #endif
-
+            // Reset storage full flag
+            regularStorageFull = false;
             return true;
         }
         else

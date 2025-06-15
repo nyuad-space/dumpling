@@ -14,15 +14,15 @@
 /*******************************/
 
 // F405_DEBUG_MODE
-#define F405_DEBUG_MODE 1
+#define F405_DEBUG_MODE 0
 
 // Flight ready detection
 #define UPRIGHT_ACCEL_THRESH 7.5
-#define UPRIGHT_TIME_THRESH_SEC 5000
+#define UPRIGHT_TIME_THRESH_SEC 60000
 #define MPU_MOT_DET_DUR 5
 
 // Flight end detection
-#define QUIET_TIME_THRESH_SEC 5000
+#define QUIET_TIME_THRESH_SEC 60000
 #define LAUNCH_DETECT_ACCEL_THRESH 30
 #define DEBUG_LAUNCH_DETECT_ACCEL_THRESH 15
 

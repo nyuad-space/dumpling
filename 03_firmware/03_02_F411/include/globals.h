@@ -14,7 +14,7 @@
 #include "SdFat_Adafruit_Fork.h"
 #include <Adafruit_SPIFlash.h>
 
-#define F411_DEBUG_MODE 1
+#define F411_DEBUG_MODE 0
 
 // Bus
 extern SPIClass INTERBOARD_SPI;
@@ -57,5 +57,6 @@ extern float mag_z_read;
 extern float hum_read;
 
 extern bool reachedEOF;
+extern bool regularStorageFull;
 
 #endif

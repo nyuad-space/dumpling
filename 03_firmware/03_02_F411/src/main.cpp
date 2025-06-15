@@ -13,7 +13,7 @@ void setup()
     pinMode(LOG_TRIGGER_GPIO, INPUT);
     attachInterrupt(digitalPinToInterrupt(LOG_TRIGGER_GPIO), LOG_TRIGGER_ISR, CHANGE);
 
-    logging_allowed = false;
+    logging_allowed = true;
     logging_circular = true;
 
     // Clear LED
@@ -40,12 +40,17 @@ void setup()
 
 #if F411_DEBUG_MODE
     Serial.println("Sensor configured.");
-    bool clear = false;
+    // bool clear = F411_DEBUG_MODE;
+    // clearFlash(detectedSensor, 1);
+    // clearFlash(detectedSensor, 0);
 #endif
 
     // Setup flash
+    regularStorageFull = false; // Storage status tracking
     success_flag = flash_memory.begin();
-    success_flag = initFlashWrite(clear);
+    success_flag = initFlashWrite(1);
+    // Create headers for CSV files if they don't exist
+    createCSVHeaders(detectedSensor);
 
 #if F411_DEBUG_MODE
     uint32_t jedec_id = flash_memory.getJEDECID();
@@ -77,9 +82,10 @@ void setup()
 void loop()
 {
 
-    // Only log when allowed
-    if (logging_allowed)
+    // Only log when allowed and regular storage has space
+    if (logging_allowed && !regularStorageFull)
     {
+        Serial.println("entered reading mode");
         // Read sensor + Write to flash in circular/regular buffer
         readSensor(detectedSensor, logging_circular);
     }
@@ -221,7 +227,7 @@ void _blink_red()
 
         if (ledState)
         {
-            neopixel.setPixelColor(0, color_red);
+            neopixel.setPixelColor(0, color_amber);
         }
         else
         {

@@ -42,3 +42,4 @@ float mag_z_read;
 float hum_read;
 
 bool reachedEOF;
+bool regularStorageFull; // Storage status tracking
