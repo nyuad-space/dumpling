@@ -14,7 +14,7 @@
 #include "SdFat_Adafruit_Fork.h"
 #include <Adafruit_SPIFlash.h>
 
-#define F411_DEBUG_MODE 1
+#define F411_DEBUG_MODE 0
 
 // Bus
 extern SPIClass INTERBOARD_SPI;
@@ -38,12 +38,8 @@ extern SensorType detectedSensor;
 extern Adafruit_FlashTransport_SPI adafruit_flash_spi;
 extern Adafruit_SPIFlash flash_memory;
 extern FatVolume fatfs;
-extern File32 lsm6dsFile;
-extern File32 dps310File;
-extern File32 bmi088File;
-extern File32 bmp390File;
-extern File32 lis2mdlFile;
-extern File32 hdc302File;
+extern File32 regularFile;
+extern File32 circularFile;
 
 // Sensor readings
 extern float accel_x_read;
@@ -59,5 +55,8 @@ extern float mag_x_read;
 extern float mag_y_read;
 extern float mag_z_read;
 extern float hum_read;
+
+extern bool reachedEOF;
+extern bool regularStorageFull;
 
 #endif

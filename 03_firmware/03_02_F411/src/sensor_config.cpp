@@ -36,16 +36,16 @@ void configSensor(SensorType sensorType)
         lsm6ds_accel_gyro.setGyroRange(LSM6DS_GYRO_RANGE_250_DPS);
         Serial.println("Gyro range set to: 250 degrees/s");
         // Output Data Range (ODR)= 16MB/(data size*600sec)
-        lsm6ds_accel_gyro.setAccelDataRate(LSM6DS_RATE_6_66K_HZ);
-        Serial.println("Accelerometer data rate set to: 104 Hz");
-        lsm6ds_accel_gyro.setGyroDataRate(LSM6DS_RATE_6_66K_HZ);
-        Serial.println("Gyro data rate set to: 104 Hz");
+        lsm6ds_accel_gyro.setAccelDataRate(LSM6DS_RATE_416_HZ);
+        Serial.println("Accelerometer data rate set to: 416 Hz");
+        lsm6ds_accel_gyro.setGyroDataRate(LSM6DS_RATE_416_HZ);
+        Serial.println("Gyro data rate set to: 416 Hz");
         break;
     case SENSOR_DPS310_BARO_TEMP:
-        dps310_baro_temp.configurePressure(DPS310_64HZ, DPS310_8SAMPLES);
-        Serial.println("Pressure data rate / oversampling set to: 64 Hz / 8x");
-        dps310_baro_temp.configureTemperature(DPS310_64HZ, DPS310_8SAMPLES);
-        Serial.println("Temperature data rate / oversampling set to: 64 Hz / 8x");
+        dps310_baro_temp.configurePressure(DPS310_128HZ, DPS310_4SAMPLES);
+        Serial.println("Pressure data rate / oversampling set to: 128 Hz / 4x");
+        dps310_baro_temp.configureTemperature(DPS310_128HZ, DPS310_4SAMPLES);
+        Serial.println("Temperature data rate / oversampling set to: 128 Hz / 4x");
         break;
     case SENSOR_BMI088_ACCEL:
         bmi088_accel.begin(); // Activate sensor

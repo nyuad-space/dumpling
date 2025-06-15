@@ -3,8 +3,9 @@
 
 void setup()
 {
+    // **IN DEBUG MODE, FLASH IS AUTO-CLEARED**
+
 #if F411_DEBUG_MODE
-    delay(100);
     Serial.begin(115200);
 #endif
 
@@ -12,7 +13,7 @@ void setup()
     pinMode(LOG_TRIGGER_GPIO, INPUT);
     attachInterrupt(digitalPinToInterrupt(LOG_TRIGGER_GPIO), LOG_TRIGGER_ISR, CHANGE);
 
-    logging_allowed = false;
+    logging_allowed = true;
     logging_circular = true;
 
     // Clear LED
@@ -34,15 +35,22 @@ void setup()
 
     // Catch bad initialization
     success_flag = initSensorComm(detectedSensor);
+
     configSensor(detectedSensor);
 
 #if F411_DEBUG_MODE
     Serial.println("Sensor configured.");
+    // bool clear = F411_DEBUG_MODE;
+    // clearFlash(detectedSensor, 1);
+    // clearFlash(detectedSensor, 0);
 #endif
 
     // Setup flash
+    regularStorageFull = false; // Storage status tracking
     success_flag = flash_memory.begin();
-    success_flag = initFlashWrite();
+    success_flag = initFlashWrite(1);
+    // Create headers for CSV files if they don't exist
+    createCSVHeaders(detectedSensor);
 
 #if F411_DEBUG_MODE
     uint32_t jedec_id = flash_memory.getJEDECID();
@@ -51,9 +59,9 @@ void setup()
     Serial.print("Flash size (usable): ");
     Serial.print(flash_memory.size() / 1024);
     Serial.println(" KB");
-    Serial.println(getSensorFilename(detectedSensor));
+    Serial.println(getSensorFilename(detectedSensor, true)); // bool circular
     Serial.print("File size: ");
-    getFileSize(getSensorFilename(detectedSensor));
+    getFileSize(getSensorFilename(detectedSensor, true)); // bool circular
     Serial.print("\n");
 #endif
 
@@ -65,27 +73,25 @@ void setup()
             _blink_red();
         }
     }
+    // uint8_t buffer[100];
+    // readFromFlash(detectedSensor, buffer, 100, logging_circular);
+    // readFromFlash(detectedSensor, buffer, 100, logging_circular);
+    // readFromFlash(detectedSensor, buffer, 100, logging_circular);
 }
 
 void loop()
 {
-    // Only log when allowed
-    if (logging_allowed) {
-        
-        if (logging_circular){
-            // Read sensor
-            // Write to flash in circular buffer
-        }
 
-        else{
-            // Read sensor
-            // Write to flash in main flash
-        }
-
+    // Only log when allowed and regular storage has space
+    if (logging_allowed && !regularStorageFull)
+    {
+        Serial.println("entered reading mode");
+        // Read sensor + Write to flash in circular/regular buffer
+        readSensor(detectedSensor, logging_circular);
     }
 
     // Repurpose this for stop logging?
-    if (INTERBOARD_RCVD)
+    if (INTERBOARD_RCVD_FLAG)
     {
         INTERBOARD_SPI_PROCESS_MSG();
     }
@@ -180,12 +186,12 @@ void INTERBOARD_SPI_PROCESS_MSG()
         }
     }
 
-    INTERBOARD_RCVD = false;
+    INTERBOARD_RCVD_FLAG = false;
 }
 
 void INTERBOARD_SPI_ISR()
 {
-    INTERBOARD_RCVD = true;
+    INTERBOARD_RCVD_FLAG = true;
 }
 
 void _print_buffer(const char *label, uint8_t *buffer, uint8_t size)
@@ -221,7 +227,7 @@ void _blink_red()
 
         if (ledState)
         {
-            neopixel.setPixelColor(0, color_red);
+            neopixel.setPixelColor(0, color_amber);
         }
         else
         {
