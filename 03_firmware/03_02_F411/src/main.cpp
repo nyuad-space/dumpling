@@ -7,6 +7,8 @@ void setup()
 
 #if F411_DEBUG_MODE
     Serial.begin(115200);
+    delay(2000);
+
 #endif
 
     // Setup logging interrupts pins
@@ -77,10 +79,14 @@ void loop()
     if (logging_allowed && !regularStorageFull)
     {
 #if F411_DEBUG_MODE
-        Serial.println("entered logging mode");
+        // Serial.println("entered logging mode");
 #endif
         // Read sensor + Write to flash in circular/regular buffer
         readSensor(detectedSensor, logging_circular);
+
+        // TODO: LED indication for circular/ regular logging etc.
+        // TODO: clean up code & consider edge cases
+        // TODO: separate project for reading from flash
     }
 }
 
@@ -89,7 +95,7 @@ void LOG_TRIGGER_ISR()
     // Read current pin state to determine edge direction
     int pinState = digitalRead(LOG_TRIGGER_GPIO);
 
-    if (pinState == LOW)
+    if (pinState == HIGH)
     {
         // Falling edge detected, start logging in circular
 #if F411_DEBUG_MODE
@@ -100,7 +106,7 @@ void LOG_TRIGGER_ISR()
         neopixel.setPixelColor(0, color_green);
         neopixel.show();
     }
-    else if (pinState == HIGH)
+    else if (pinState == LOW)
     {
         // Rising edge detected, start logging in main
 #if F411_DEBUG_MODE

@@ -102,7 +102,7 @@ bool initFilesForSensor(SensorType sensorType)
         return false;
     }
     // Close any previously open files
-    closeFiles();
+    // closeFiles();
 
     // == CIRCULAR FILE SETUP ==
     circularFile = fatfs.open(info.circularName, FILE_WRITE);
@@ -386,107 +386,4 @@ const char *getSensorFilename(SensorType sensorType, bool circular)
         fileName = nullptr;
     }
     return fileName;
-}
-
-// bool readFromFlash(SensorType sensorType, uint8_t *buffer, size_t buffer_size, bool circular)
-// {
-//     // TODO: read flash without by chunk & indication if buffer is full
-
-//     const char *fileName = getSensorFilename(sensorType, circular);
-
-//     // Check if we need to switch files
-//     if (!fileIsOpen || currentFileName != fileName)
-//     {
-//         // Close current file if open
-//         if (fileIsOpen && currentFile)
-//         {
-//             currentFile.close();
-//             fileIsOpen = false;
-//             partialLine = "";   // Reset when switching files
-//             reachedEOF = false; // Reset EOF flag when switching files
-//         }
-
-//         // Open the new file into currentFile
-//         if (fileName == nullptr)
-//         {
-//             Serial.println("Unknown sensor type");
-//             return false;
-//         }
-
-//         currentFile = fatfs.open(fileName, FILE_READ);
-
-//         // Check if file opened successfully
-//         if (!currentFile)
-//         {
-//             Serial.print("Failed to open csv file: ");
-//             Serial.println(fileName);
-//             fileIsOpen = false;
-//             return false;
-//         }
-
-//         // Update state for successful open
-//         currentFileName = fileName;
-//         fileIsOpen = true;
-//         reachedEOF = false;
-//     }
-//     // Check if we've already reached EOF
-//     if (reachedEOF)
-//     {
-//         return false;
-//     }
-// }
-
-// Clear/delete the CSV file for the specified sensor type
-bool clearFlash(SensorType sensorType, bool circular)
-{
-    // Clear both circular and regular files
-    const char *fileName = getSensorFilename(sensorType, circular);
-
-    if (fileName == nullptr)
-    {
-#if F411_DEBUG_MODE
-        Serial.println("Unknown sensor type - cannot clear file");
-#endif
-        return false;
-    }
-
-    // Close the file if it's currently open for reading
-    if (fileIsOpen && currentFileName == fileName)
-    {
-        currentFile.close();
-        fileIsOpen = false;
-        currentFileName = nullptr;
-        partialLine = "";
-    }
-
-    // Check if file exists before attempting to delete
-    if (fatfs.exists(fileName))
-    {
-        if (fatfs.remove(fileName))
-        {
-#if F411_DEBUG_MODE
-            Serial.print("Successfully deleted: ");
-            Serial.println(fileName);
-#endif
-            // Reset storage full flag
-            regularStorageFull = false;
-            return true;
-        }
-        else
-        {
-#if F411_DEBUG_MODE
-            Serial.print("Failed to delete: ");
-            Serial.println(fileName);
-#endif
-            return false;
-        }
-    }
-    else
-    {
-#if F411_DEBUG_MODE
-        Serial.print("File does not exist: ");
-        Serial.println(fileName);
-#endif
-        return true; // Consider this successful since file is already gone
-    }
 }
