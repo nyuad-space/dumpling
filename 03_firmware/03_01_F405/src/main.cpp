@@ -5,31 +5,25 @@ void setup()
 
 #if F405_DEBUG_MODE
   Serial.begin(115200);
-  delay(100);
+  delay(1000);
 #endif
 
   // Initialize RGB LED
   neopixel.begin();
   neopixel.clear();
   neopixel.show();
+  neopixel.setBrightness(30);  // Set brightness (0–255)
 
-  // Chip selects high
-  // Must select chips manually!
-  initialize_interboard_spi();
   initialize_mpu();
 
-  // Trigger HIGH
+  // Trigger LOW
   // Start logging data in circular buffer
   pinMode(LOG_TRIGGER_GPIO, OUTPUT);
-  digitalWrite(LOG_TRIGGER_GPIO, HIGH);
+  digitalWrite(LOG_TRIGGER_GPIO, LOW);
 
 #if F405_DEBUG_MODE
-  Serial.println("Logging disabled.");
+  Serial.println("Logging Disabled.");
 #endif
-
-  // Build TX buffers
-  dummy_packet_size = buildDummyRequest(dummy_buffer);
-  command_packet_size = buildDataRequest(command_buffer);
 
   // Set initial color
   neopixel.setPixelColor(0, color_amber);
@@ -52,12 +46,11 @@ void loop()
       // Change state
       current_state = FLIGHT_MONITORING;
 
-      // Indicate
-      neopixel.setPixelColor(0, color_green);
-      neopixel.show();
+      // Reset LED timing for purple heartbeat
+      led_blink_time = millis();
 
 #if F405_DEBUG_MODE
-      Serial.println("Logging enabled!");
+      Serial.println("Logging Enabled!");
 #endif
     }
     break;
@@ -72,6 +65,35 @@ void loop()
 
     // Is the rocket upright?
     rocket_curr_upright = (abs(a.acceleration.y) > UPRIGHT_ACCEL_THRESH);
+
+    // Handle LED heartbeat for logging enabled state (purple heartbeat)
+    if (!launch_detected)
+    {
+      unsigned long current_time = millis();
+      unsigned long elapsed = current_time - led_blink_time;
+      
+      // Purple heartbeat pattern: 150ms on, 150ms off, 150ms on, 850ms off (total 1300ms cycle)
+      if (elapsed < 150) {
+        // First pulse
+        neopixel.setPixelColor(0, color_purple);
+        neopixel.show();
+      } else if (elapsed < 300) {
+        // Gap between pulses
+        neopixel.clear();
+        neopixel.show();
+      } else if (elapsed < 450) {
+        // Second pulse
+        neopixel.setPixelColor(0, color_purple);
+        neopixel.show();
+      } else if (elapsed < 1300) {
+        // Long gap
+        neopixel.clear();
+        neopixel.show();
+      } else {
+        // Reset cycle
+        led_blink_time = current_time;
+      }
+    }
 
     // Upon motion detection
     if (mpu.getMotionInterruptStatus())
@@ -95,10 +117,15 @@ void loop()
         launch_detected = true;
 
         // Trigger GPIO low, write to main file
-        digitalWrite(LOG_TRIGGER_GPIO, LOW);
+        digitalWrite(LOG_TRIGGER_GPIO, HIGH);
+        
+        // Change to solid green when launch detected
+        neopixel.setPixelColor(0, color_green);
+        neopixel.show();
+        
 #if F405_DEBUG_MODE
         Serial.println("Launch Detected! Wrote low to GPIO");
-        Serial.print("Total accel: ");
+        Serial.print("Total Accel: ");
         Serial.println(totalAccel);
 #endif
       }
@@ -111,7 +138,7 @@ void loop()
         quiet_start_time = millis();
 #if F405_DEBUG_MODE
         Serial.println("~~Flying~~");
-        Serial.print("Total accel: ");
+        Serial.print("Total Accel: ");
         Serial.println(totalAccel);
 #endif
       }
@@ -127,8 +154,12 @@ void loop()
       {
         launch_detected = false;
         quiet_start_time = millis();
+        
+        // Return to purple heartbeat since we're back to monitoring
+        led_blink_time = millis();
+        
 #if F405_DEBUG_MODE
-        Serial.println("Still upright - resetting timer");
+        Serial.println("Still Upright - Resetting Timer");
 #endif
       }
 
@@ -141,8 +172,9 @@ void loop()
         // Indicate
         neopixel.setPixelColor(0, color_blue);
         neopixel.show();
+        delay(100);
 #if F405_DEBUG_MODE
-        Serial.println("Flight ended. Logging disabled. Collecting logs now.");
+        Serial.println("Flight Ended. Logging Disabled.");
 #endif
       }
     }
@@ -151,16 +183,10 @@ void loop()
 
   case DATA_COLLECTION:
   {
-    // TODO: put into for loop
-    // Collect data from all coprocessors
-    // make_data_request(INTERBOARD_SPI_CO1_CS);
-    // make_data_request(INTERBOARD_SPI_CO2_CS);
-    // store_to_sd(data);
-
     // Switch to new state
 #if F405_DEBUG_MODE
     Serial.println();
-    Serial.println("Data collection dummy. Standing by.");
+    Serial.println("Standing by.");
 #endif
     neopixel.setPixelColor(0, color_red);
     neopixel.show();
@@ -176,20 +202,6 @@ void loop()
     break;
   }
   }
-}
-
-void initialize_interboard_spi()
-{
-  // Initialize all CS pins as outputs (HIGH = inactive, safe default)
-  for (size_t i = 0; i < InterboardSPI_CS::COUNT; i++)
-  {
-    pinMode(InterboardSPI_CS::PINS_LIST[i], OUTPUT);
-    digitalWrite(InterboardSPI_CS::PINS_LIST[i], HIGH);
-    Serial.print(InterboardSPI_CS::PINS_LIST[i]);
-  }
-
-  // Initialize SPI bus
-  INTERBOARD_SPI.begin();
 }
 
 void initialize_mpu()
@@ -277,69 +289,4 @@ bool detect_flight_ready()
   }
 
   return false;
-}
-
-bool make_data_request(uint8_t CS_PIN)
-{
-  // Send initial command packet
-  digitalWrite(CS_PIN, LOW);
-  INTERBOARD_SPI.transfer(command_buffer, rx_buffer, command_packet_size, SPI_LAST);
-  digitalWrite(CS_PIN, HIGH);
-
-#if F405_DEBUG_MODE
-  _print_buffer("TX", command_buffer, command_packet_size);
-  _print_buffer("RX", rx_buffer, command_packet_size);
-#endif
-
-  // Delay to allow coprocessor to prepare data.
-  delay(PACKET_PREP_TIME);
-
-  // Poll for response data with a timeout
-  unsigned long start_time = millis();
-  while (millis() - start_time < POLLING_TIMEOUT_MS)
-  {
-    digitalWrite(CS_PIN, LOW);
-    delay(5);
-    INTERBOARD_SPI.transfer(dummy_buffer, rx_buffer, dummy_packet_size, SPI_LAST);
-    digitalWrite(CS_PIN, HIGH);
-
-#if F405_DEBUG_MODE
-    _print_buffer("TX", dummy_buffer, 5);
-    _print_buffer("RX", rx_buffer, MAX_PACKET_SIZE);
-#endif
-
-    if (check_end_sequence(rx_buffer))
-    {
-      Serial.println("Got end sequence!");
-      return true;
-    }
-
-    // Delay before next poll
-    delay(1000);
-  }
-
-  return false; // Timeout
-}
-
-bool check_end_sequence(uint8_t *buffer)
-{
-  return (buffer[0] == 0xBE && buffer[1] == 0xEF);
-}
-
-void _print_buffer(const char *label, uint8_t *buffer, uint8_t size)
-{
-  Serial.print("Packet size: ");
-  Serial.print(size);
-  Serial.print(" | ");
-  Serial.print(label);
-  Serial.print(" Buffer: ");
-  for (int i = 0; i < size; i++)
-  {
-    Serial.print("0x");
-    if (buffer[i] < 16)
-      Serial.print("0");
-    Serial.print(buffer[i], HEX);
-    Serial.print(" ");
-  }
-  Serial.println();
 }
