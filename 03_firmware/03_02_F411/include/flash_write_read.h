@@ -4,16 +4,29 @@
 #include "globals.h"
 #include "pinout.h"
 
-// Function declarations
+// Get sensor-specific information
+struct SensorFileInfo
+{
+    const char *headers;
+    const char *regularName;
+    const char *circularName;
+};
 
 // Initialize flash storage system
 bool initFlashWrite(bool clear);
 
-// Create CSV file headers if files don't exist
-void createCSVHeaders(SensorType sensorType);
+SensorFileInfo getSensorFileInfo(SensorType sensorType);
+
+bool initFilesForSensor(SensorType sensorType);
+
+void closeFiles();
+
+void writeCircular(File &file, uint32_t &writePos, const String &data, SensorType sensorType);
 
 // Write current sensor reading to flash
 void writeToFlash(SensorType sensorType, bool circular);
+
+String createDataString(SensorType sensorType, unsigned long timestamp);
 
 // Get file size in bytes
 unsigned long getFileSize(const char *filename);
@@ -23,7 +36,7 @@ const char *getSensorFilename(SensorType sensorType, bool circular);
 
 // Read current flash recordings
 bool readFromFlash(SensorType sensorType, uint8_t *buffer, size_t buffer_size, bool circular);
-size_t read_by_chunk(File &fileHandle, uint8_t *buffer, size_t buffer_size, bool circular);
+
 bool clearFlash(SensorType sensorType, bool circular);
 
 #endif // FLASHWRITE_H
