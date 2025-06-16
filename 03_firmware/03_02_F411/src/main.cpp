@@ -14,6 +14,7 @@ void setup()
     // Setup logging interrupts pins
     pinMode(LOG_TRIGGER_GPIO, INPUT);
     attachInterrupt(digitalPinToInterrupt(LOG_TRIGGER_GPIO), LOG_TRIGGER_ISR, CHANGE);
+    // TODO: instead of CHANGE, stick to either falling/rising edge
 
     logging_allowed = true;
     logging_circular = true;
@@ -22,6 +23,7 @@ void setup()
     neopixel.begin();
     neopixel.clear();
     neopixel.show();
+    neopixel.setBrightness(30); // Dim it down!
 
     // Discover and configure sensor
 #if F411_DEBUG_MODE
@@ -46,8 +48,36 @@ void setup()
     regularStorageFull = false; // Storage status tracking
     success_flag = flash_memory.begin();
     success_flag = initFlashWrite(1);
+
     // Create headers and open file
     initFilesForSensor(detectedSensor);
+
+    // TODO: display what is inside files (if header is in there)
+    // TODO: circular is only writing header and not data. check write to circular logic again
+
+#if F411_DEBUG_MODE
+    // re-open the file for reading:
+    File32 testFile = fatfs.open(getSensorFilename(detectedSensor, 0));
+    if (testFile)
+    {
+        Serial.println("Reading content of file:");
+
+        // read from the file until there's nothing else in it:
+        while (testFile.available())
+        {
+            Serial.write(testFile.read());
+        }
+        // close the file:
+        testFile.close();
+    }
+    else
+    {
+        // if the file didn't open, print an error:
+        Serial.println("error opening selected file");
+    }
+#endif
+
+    // TODO: make circular to be bool variable, plug that in instead of hardcoded values
 
 #if F411_DEBUG_MODE
     uint32_t jedec_id = flash_memory.getJEDECID();
@@ -81,8 +111,8 @@ void loop()
 #if F411_DEBUG_MODE
         // Serial.println("entered logging mode");
 #endif
-        // Read sensor + Write to flash in circular/regular buffer
-        readSensor(detectedSensor, logging_circular);
+        // // Read sensor + Write to flash in circular/regular buffer
+        // readSensor(detectedSensor, logging_circular);
 
         // TODO: LED indication for circular/ regular logging etc.
         // TODO: clean up code & consider edge cases

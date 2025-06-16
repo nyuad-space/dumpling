@@ -47,6 +47,8 @@ bool initFlashWrite(bool clear)
     return true;
 }
 
+// Question: can i merge getSensorFilename into here? Also, why is that function not used anywhere?
+
 SensorFileInfo getSensorFileInfo(SensorType sensorType)
 {
     SensorFileInfo info = {nullptr, nullptr, nullptr};
@@ -216,7 +218,7 @@ void writeCircular(File &file, uint32_t &writePos, const String &data, SensorTyp
     String header = String(info.headers);
     uint32_t headerSize = header.length() + 1; // +1 for newline
 
-    // Check if we need to wrap
+        // Check if we need to wrap
     if (writePos + data.length() >= CIRCULAR_FILE_SIZE)
     {
         writePos = headerSize;
