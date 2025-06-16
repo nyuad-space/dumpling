@@ -388,53 +388,53 @@ const char *getSensorFilename(SensorType sensorType, bool circular)
     return fileName;
 }
 
-bool readFromFlash(SensorType sensorType, uint8_t *buffer, size_t buffer_size, bool circular)
-{
-    // TODO: read flash without by chunk & indication if buffer is full
+// bool readFromFlash(SensorType sensorType, uint8_t *buffer, size_t buffer_size, bool circular)
+// {
+//     // TODO: read flash without by chunk & indication if buffer is full
 
-    const char *fileName = getSensorFilename(sensorType, circular);
+//     const char *fileName = getSensorFilename(sensorType, circular);
 
-    // Check if we need to switch files
-    if (!fileIsOpen || currentFileName != fileName)
-    {
-        // Close current file if open
-        if (fileIsOpen && currentFile)
-        {
-            currentFile.close();
-            fileIsOpen = false;
-            partialLine = "";   // Reset when switching files
-            reachedEOF = false; // Reset EOF flag when switching files
-        }
+//     // Check if we need to switch files
+//     if (!fileIsOpen || currentFileName != fileName)
+//     {
+//         // Close current file if open
+//         if (fileIsOpen && currentFile)
+//         {
+//             currentFile.close();
+//             fileIsOpen = false;
+//             partialLine = "";   // Reset when switching files
+//             reachedEOF = false; // Reset EOF flag when switching files
+//         }
 
-        // Open the new file into currentFile
-        if (fileName == nullptr)
-        {
-            Serial.println("Unknown sensor type");
-            return false;
-        }
+//         // Open the new file into currentFile
+//         if (fileName == nullptr)
+//         {
+//             Serial.println("Unknown sensor type");
+//             return false;
+//         }
 
-        currentFile = fatfs.open(fileName, FILE_READ);
+//         currentFile = fatfs.open(fileName, FILE_READ);
 
-        // Check if file opened successfully
-        if (!currentFile)
-        {
-            Serial.print("Failed to open csv file: ");
-            Serial.println(fileName);
-            fileIsOpen = false;
-            return false;
-        }
+//         // Check if file opened successfully
+//         if (!currentFile)
+//         {
+//             Serial.print("Failed to open csv file: ");
+//             Serial.println(fileName);
+//             fileIsOpen = false;
+//             return false;
+//         }
 
-        // Update state for successful open
-        currentFileName = fileName;
-        fileIsOpen = true;
-        reachedEOF = false;
-    }
-    // Check if we've already reached EOF
-    if (reachedEOF)
-    {
-        return false;
-    }
-}
+//         // Update state for successful open
+//         currentFileName = fileName;
+//         fileIsOpen = true;
+//         reachedEOF = false;
+//     }
+//     // Check if we've already reached EOF
+//     if (reachedEOF)
+//     {
+//         return false;
+//     }
+// }
 
 // Clear/delete the CSV file for the specified sensor type
 bool clearFlash(SensorType sensorType, bool circular)

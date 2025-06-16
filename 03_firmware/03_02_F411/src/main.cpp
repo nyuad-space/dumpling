@@ -36,7 +36,6 @@ void setup()
 
 #if F411_DEBUG_MODE
     Serial.println("Sensor configured.");
-    // bool clear = F411_DEBUG_MODE;
     // clearFlash(detectedSensor, 1);
     // clearFlash(detectedSensor, 0);
 #endif
@@ -45,7 +44,7 @@ void setup()
     regularStorageFull = false; // Storage status tracking
     success_flag = flash_memory.begin();
     success_flag = initFlashWrite(1);
-    // Create headers for CSV files if they don't exist
+    // Create headers and open file
     initFilesForSensor(detectedSensor);
 
 #if F411_DEBUG_MODE
@@ -69,10 +68,6 @@ void setup()
             _blink_red();
         }
     }
-    // uint8_t buffer[100];
-    // readFromFlash(detectedSensor, buffer, 100, logging_circular);
-    // readFromFlash(detectedSensor, buffer, 100, logging_circular);
-    // readFromFlash(detectedSensor, buffer, 100, logging_circular);
 }
 
 void loop()
@@ -81,7 +76,9 @@ void loop()
     // Only log when allowed and regular storage has space
     if (logging_allowed && !regularStorageFull)
     {
-        Serial.println("entered reading mode");
+#if F411_DEBUG_MODE
+        Serial.println("entered logging mode");
+#endif
         // Read sensor + Write to flash in circular/regular buffer
         readSensor(detectedSensor, logging_circular);
     }
