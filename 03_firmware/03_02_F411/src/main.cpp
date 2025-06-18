@@ -13,8 +13,7 @@ void setup()
 
     // Setup logging interrupts pins
     pinMode(LOG_TRIGGER_GPIO, INPUT);
-    attachInterrupt(digitalPinToInterrupt(LOG_TRIGGER_GPIO), LOG_TRIGGER_ISR, CHANGE);
-    // TODO: instead of CHANGE, stick to either falling/rising edge
+    attachInterrupt(digitalPinToInterrupt(LOG_TRIGGER_GPIO), LOG_TRIGGER_ISR, RISING);
 
     logging_allowed = true;
     logging_circular = true;
@@ -47,33 +46,60 @@ void setup()
     // Setup flash
     regularStorageFull = false; // Storage status tracking
     success_flag = flash_memory.begin();
-    success_flag = initFlashWrite(1);
+    success_flag = initFlashWrite(0);
+    // TODO: get rid of bool clear argument?
 
     // Create headers and open file
     initFilesForSensor(detectedSensor);
 
-    // TODO: display what is inside files (if header is in there)
     // TODO: circular is only writing header and not data. check write to circular logic again
 
+    // Access all file info with this object
+    SensorFileInfo info = getSensorFileInfo(detectedSensor);
+
+    // Check if header is in
 #if F411_DEBUG_MODE
-    // re-open the file for reading:
-    File32 testFile = fatfs.open(getSensorFilename(detectedSensor, 0));
-    if (testFile)
+    // Re-open the file for reading
+    File32 circFile;
+    File32 regFile;
+    circFile = fatfs.open(info.circularName);
+
+    // Display what is inside files
+    if (circFile)
     {
         Serial.println("Reading content of file:");
 
         // read from the file until there's nothing else in it:
-        while (testFile.available())
+        while (circFile.available())
         {
-            Serial.write(testFile.read());
+            Serial.write(circFile.read());
         }
-        // close the file:
-        testFile.close();
+        // close the file
+        circFile.close();
     }
     else
     {
         // if the file didn't open, print an error:
-        Serial.println("error opening selected file");
+        Serial.println("error opening circular file");
+    }
+
+    regFile = fatfs.open(info.regularName);
+    if (regFile)
+    {
+        Serial.println("Reading content of file:");
+
+        // read from the file until there's nothing else in it:
+        while (regFile.available())
+        {
+            Serial.write(regFile.read());
+        }
+        // close the file
+        regFile.close();
+    }
+    else
+    {
+        // if the file didn't open, print an error:
+        Serial.println("error opening regular file");
     }
 #endif
 
@@ -86,15 +112,22 @@ void setup()
     Serial.print("Flash size (usable): ");
     Serial.print(flash_memory.size() / 1024);
     Serial.println(" KB");
-    Serial.println(getSensorFilename(detectedSensor, true)); // bool circular
-    Serial.print("File size: ");
-    getFileSize(getSensorFilename(detectedSensor, true)); // bool circular
+    Serial.print("Circular file: ");
+    Serial.println(info.circularName);
+    Serial.print("Circular file size: ");
+    getFileSize(info.circularName);
+    Serial.print("Regular file: ");
+    Serial.println(info.regularName);
+    Serial.print("Regular file size: ");
+    getFileSize(info.regularName);
     Serial.print("\n");
 #endif
 
     if (!success_flag || detectedSensor == SENSOR_UNKNOWN)
     {
+#if F411_DEBUG_MODE
         Serial.println("Sensor init failed!");
+#endif
         while (1)
         {
             _blink_red();

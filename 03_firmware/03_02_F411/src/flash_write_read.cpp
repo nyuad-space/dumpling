@@ -5,8 +5,9 @@
 #define REGULAR_FILE_SIZE (13.5 * 1024 * 1024) // regular logging buffer
 
 // Track file status for writing
-bool regularFileOpen = false;
-bool circularFileOpen = false;
+// TODO: removed below variables
+// bool regularFileOpen = false;
+// bool circularFileOpen = false;
 bool headersCreated = false;
 
 // Tracking circular buffer
@@ -46,8 +47,6 @@ bool initFlashWrite(bool clear)
 
     return true;
 }
-
-// Question: can i merge getSensorFilename into here? Also, why is that function not used anywhere?
 
 SensorFileInfo getSensorFileInfo(SensorType sensorType)
 {
@@ -103,8 +102,9 @@ bool initFilesForSensor(SensorType sensorType)
         Serial.println("Invalid sensor type");
         return false;
     }
-    // Close any previously open files
-    // closeFiles();
+    // // Close any previously open files
+    // circularFile.close();
+    // regularFile.close();
 
     // == CIRCULAR FILE SETUP ==
     circularFile = fatfs.open(info.circularName, FILE_WRITE);
@@ -140,7 +140,8 @@ bool initFilesForSensor(SensorType sensorType)
         Serial.println(info.circularName);
 #endif
     }
-    circularFileOpen = true;
+    // Only one file can be open at a time so close this one before opening another.
+    circularFile.close();
 
     // === REGULAR FILE SETUP ===
     regularFile = fatfs.open(info.regularName, FILE_WRITE);
@@ -148,9 +149,6 @@ bool initFilesForSensor(SensorType sensorType)
     {
         Serial.print("Failed to open regular file: ");
         Serial.println(info.regularName);
-        // Close circular file since we failed
-        circularFile.close();
-        circularFileOpen = false;
         return false;
     }
 
@@ -165,22 +163,27 @@ bool initFilesForSensor(SensorType sensorType)
 #endif
     }
     else
-    { // Existing file: append new data at the end of file
-        regularFile.seek(regularFile.size());
-        // Check if storage is already full
+    { // Check if storage is already full
         if (regularFile.size() >= REGULAR_FILE_SIZE)
         {
             regularStorageFull = true;
+            regularFile.close();
 #if F411_DEBUG_MODE
             Serial.print("Regular file is full");
 #endif
         }
-#if F411_DEBUG_MODE
-        Serial.print("Opened existing regular file: ");
-        Serial.println(info.regularName);
-#endif
+        else
+        {
+            // Existing file: append new data at the end of file
+            regularFile.seek(regularFile.size());
+        }
     }
-    regularFileOpen = true;
+#if F411_DEBUG_MODE
+    Serial.print("Opened existing regular file: ");
+    Serial.println(info.regularName);
+#endif
+    // Only one file can be open at a time so close this one before opening another.
+    regularFile.close();
 
 #if F411_DEBUG_MODE
     Serial.println("Both files successfully initialized");
@@ -189,58 +192,64 @@ bool initFilesForSensor(SensorType sensorType)
     return true;
 }
 
-void closeFiles()
-{
-    if (regularFileOpen && regularFile)
-    {
-        regularFile.close();
-        regularFileOpen = false;
-#if F411_DEBUG_MODE
-        Serial.println("Closed regular file");
-#endif
-    }
-
-    if (circularFileOpen && circularFile)
-    {
-        circularFile.close();
-        circularFileOpen = false;
-#if F411_DEBUG_MODE
-        Serial.println("Closed circular file");
-#endif
-    }
-}
-
 // Write to circular buffer
-void writeCircular(File &file, uint32_t &writePos, const String &data, SensorType sensorType)
+// TODO: if argument File &file needed?
+void writeCircular(const String &data, SensorType sensorType)
 {
-    // Get header size
     SensorFileInfo info = getSensorFileInfo(sensorType);
+
+    // Open circular file for writing
+    circularFile = fatfs.open(info.circularName, FILE_WRITE);
+    if (!circularFile)
+    {
+#if F411_DEBUG_MODE
+        Serial.print("Failed to open circular file for writing: ");
+        Serial.println(info.circularName);
+#endif
+        return;
+    }
+
+    // Get header size
     String header = String(info.headers);
     uint32_t headerSize = header.length() + 1; // +1 for newline
 
-        // Check if we need to wrap
-    if (writePos + data.length() >= CIRCULAR_FILE_SIZE)
+    // Check if we need to wrap
+    if (circularWritePos + data.length() >= CIRCULAR_FILE_SIZE)
     {
-        writePos = headerSize;
+        circularWritePos = headerSize;
     }
 
     // Write data
-    file.seek(writePos);
-    file.print(data);
+    circularFile.seek(circularWritePos);
+    circularFile.print(data);
+    circularFile.flush();
 #if F411_DEBUG_MODE
     Serial.println(data);
 #endif
-    writePos = file.position();
+    circularWritePos = circularFile.position();
+    circularFile.close();
 }
 
 // TODO: add logic for after running out of storage for regular logging
+
+// TODO: is it better to keep one "SensorFileInfo info = getSensorFileInfo(sensorType);" as a global? or keep it local to each file?
 
 // Write sensor data to appropriate CSV file
 void writeToFlash(SensorType sensorType, bool circular)
 {
     unsigned long timestamp = millis();
+    SensorFileInfo info = getSensorFileInfo(sensorType);
+
+    // TODO: if initFilesForSensor is called in main before writeToFlash is called in main, is it still necessary to check if they exist
+
     // Ensure files are initialized for this sensor
-    if (!regularFileOpen || !circularFileOpen)
+    // TODO: why is the following step necessary if i already closed it from above?
+    regularFile = fatfs.open(info.regularName, FILE_READ);
+    if (regularFile)
+    {
+        regularFile.close();
+    }
+    if (!regularFile)
     {
         if (!initFilesForSensor(sensorType))
         {
@@ -250,6 +259,7 @@ void writeToFlash(SensorType sensorType, bool circular)
             return;
         }
     }
+
     // If regular storage is full
     if (!circular && regularStorageFull)
     {
@@ -267,27 +277,40 @@ void writeToFlash(SensorType sensorType, bool circular)
     }
 
     // Write to appropriate file
-    if (circular && circularFileOpen)
+    if (circular)
     {
-        writeCircular(circularFile, circularWritePos, dataLine + "\n", sensorType);
+        writeCircular(dataLine + "\n", sensorType);
 #if F411_DEBUG_MODE
         Serial.println("Written to circular buffer");
 #endif
     }
-
-    if (!circular && regularFileOpen)
+    else
     {
+        // Open circular file for writing
+        regularFile = fatfs.open(info.regularName, FILE_WRITE);
+        if (!regularFile)
+        {
+#if F411_DEBUG_MODE
+            Serial.print("Failed to open regular file for writing: ");
+            Serial.println(info.regularName);
+#endif
+            return;
+        }
         // Check file size limit
         if (regularFile.size() >= REGULAR_FILE_SIZE)
         {
             regularStorageFull = true;
+            regularFile.close();
 #if F411_DEBUG_MODE
             Serial.println("Regular file size limit reached");
 #endif
             return;
         }
+        // Seek to end of file for appending
+        regularFile.seek(regularFile.size());
         regularFile.println(dataLine);
         regularFile.flush(); // Force immediate write to flash
+        regularFile.close();
 #if F411_DEBUG_MODE
         Serial.println("Written to regular file");
 #endif
@@ -358,34 +381,4 @@ unsigned long getFileSize(const char *filename)
         return size;
     }
     return 0;
-}
-
-// Get the appropriate filename for a sensor type
-const char *getSensorFilename(SensorType sensorType, bool circular)
-{
-    const char *fileName;
-    switch (sensorType)
-    {
-    case SENSOR_LSM6DS_ACCEL_GYRO:
-        fileName = circular ? "lsm6ds_circular.csv" : "lsm6ds_data.csv";
-        break;
-    case SENSOR_DPS310_BARO_TEMP:
-        fileName = circular ? "dps310_circular.csv" : "dps310_data.csv";
-        break;
-    case SENSOR_BMI088_ACCEL:
-        fileName = circular ? "bmi088_circular.csv" : "bmi088_data.csv";
-        break;
-    case SENSOR_BMP390_BARO:
-        fileName = circular ? "bmp390_circular.csv" : "bmp390_data.csv";
-        break;
-    case SENSOR_LIS2MDL_MAG:
-        fileName = circular ? "lis2mdl_circular.csv" : "lis2mdl_data.csv";
-        break;
-    case SENSOR_HDC302_TEMP_HUM:
-        fileName = circular ? "hdc302_circular.csv" : "hdc302_data.csv";
-        break;
-    default:
-        fileName = nullptr;
-    }
-    return fileName;
 }
