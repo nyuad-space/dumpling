@@ -3,6 +3,9 @@
 
 void setup()
 {
+
+    // ** Run SdFat_format to reset flash to clearn state when actual flight **
+
 #if F411_DEBUG_MODE
     Serial.begin(115200);
     delay(2000);
