@@ -5,12 +5,7 @@
 #define REGULAR_FILE_SIZE (13.5 * 1024 * 1024) // regular logging buffer
 
 // Track file status for writing
-// TODO: removed below variables
-// bool regularFileOpen = false;
-// bool circularFileOpen = false;
 bool headersCreated = false;
-
-// Tracking circular buffer
 uint32_t circularWritePos = 0;
 
 // Track file state for reading
@@ -22,7 +17,7 @@ String partialLine = ""; // buffer for incomplete lines
 // ==== Functions ====
 
 // Initialize filesystem for flash writing
-bool initFlashWrite(bool clear)
+bool initFlashWrite()
 {
     // Initialize the flash file system (assuming fatfs is already initialized in globals)
     if (!fatfs.begin(&flash_memory))
@@ -35,15 +30,6 @@ bool initFlashWrite(bool clear)
 #if F411_DEBUG_MODE
     Serial.println("Filesystem mounted.");
 #endif
-    // In DEBUG MODE: CLEAR FLASH for both circular and regular files
-    //     if (clear)
-    //     {
-    //         clearFlash(detectedSensor, 1);
-    //         clearFlash(detectedSensor, 0);
-    // #if F411_DEBUG_MODE
-    //         Serial.println("Flash cleared due to launched state");
-    // #endif
-    //     }
 
     return true;
 }
@@ -193,7 +179,6 @@ bool initFilesForSensor(SensorType sensorType)
 }
 
 // Write to circular buffer
-// TODO: if argument File &file needed?
 void writeCircular(const String &data, SensorType sensorType)
 {
     SensorFileInfo info = getSensorFileInfo(sensorType);
@@ -230,40 +215,19 @@ void writeCircular(const String &data, SensorType sensorType)
     circularFile.close();
 }
 
-// TODO: add logic for after running out of storage for regular logging
-
-// TODO: is it better to keep one "SensorFileInfo info = getSensorFileInfo(sensorType);" as a global? or keep it local to each file?
-
 // Write sensor data to appropriate CSV file
 void writeToFlash(SensorType sensorType, bool circular)
 {
     unsigned long timestamp = millis();
     SensorFileInfo info = getSensorFileInfo(sensorType);
 
-    // TODO: if initFilesForSensor is called in main before writeToFlash is called in main, is it still necessary to check if they exist
-
-    // Ensure files are initialized for this sensor
-    // TODO: why is the following step necessary if i already closed it from above?
-    regularFile = fatfs.open(info.regularName, FILE_READ);
-    if (regularFile)
-    {
-        regularFile.close();
-    }
-    if (!regularFile)
-    {
-        if (!initFilesForSensor(sensorType))
-        {
-#if F411_DEBUG_MODE
-            Serial.println("Failed to initialize files for logging");
-#endif
-            return;
-        }
-    }
-
     // If regular storage is full
     if (!circular && regularStorageFull)
     {
+#if F411_DEBUG_MODE
         Serial.println("Regular storage full");
+#endif
+        return;
     }
 
     // Create data string based on sensor type

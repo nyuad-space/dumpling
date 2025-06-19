@@ -3,8 +3,6 @@
 
 void setup()
 {
-    // **IN DEBUG MODE, FLASH IS AUTO-CLEARED**
-
 #if F411_DEBUG_MODE
     Serial.begin(115200);
     delay(2000);
@@ -39,20 +37,17 @@ void setup()
 
 #if F411_DEBUG_MODE
     Serial.println("Sensor configured.");
-    // clearFlash(detectedSensor, 1);
-    // clearFlash(detectedSensor, 0);
 #endif
 
     // Setup flash
     regularStorageFull = false; // Storage status tracking
     success_flag = flash_memory.begin();
-    success_flag = initFlashWrite(0);
-    // TODO: get rid of bool clear argument?
+    success_flag = initFlashWrite();
 
     // Create headers and open file
     initFilesForSensor(detectedSensor);
 
-    // TODO: circular is only writing header and not data. check write to circular logic again
+    // TODO: earlier, circular is only writing header and not data. check write to circular logic again
 
     // Access all file info with this object
     SensorFileInfo info = getSensorFileInfo(detectedSensor);
@@ -69,7 +64,7 @@ void setup()
     {
         Serial.println("Reading content of file:");
 
-        // read from the file until there's nothing else in it:
+        // read from the file until there's nothing else in it
         while (circFile.available())
         {
             Serial.write(circFile.read());
@@ -79,7 +74,6 @@ void setup()
     }
     else
     {
-        // if the file didn't open, print an error:
         Serial.println("error opening circular file");
     }
 
@@ -88,7 +82,7 @@ void setup()
     {
         Serial.println("Reading content of file:");
 
-        // read from the file until there's nothing else in it:
+        // read from the file until there's nothing else in it
         while (regFile.available())
         {
             Serial.write(regFile.read());
@@ -98,12 +92,9 @@ void setup()
     }
     else
     {
-        // if the file didn't open, print an error:
         Serial.println("error opening regular file");
     }
 #endif
-
-    // TODO: make circular to be bool variable, plug that in instead of hardcoded values
 
 #if F411_DEBUG_MODE
     uint32_t jedec_id = flash_memory.getJEDECID();
@@ -137,7 +128,6 @@ void setup()
 
 void loop()
 {
-
     // Only log when allowed and regular storage has space
     if (logging_allowed && !regularStorageFull)
     {

@@ -13,7 +13,7 @@ struct SensorFileInfo
 };
 
 // Initialize flash storage system
-bool initFlashWrite(bool clear);
+bool initFlashWrite();
 
 SensorFileInfo getSensorFileInfo(SensorType sensorType);
 
@@ -30,7 +30,5 @@ String createDataString(SensorType sensorType, unsigned long timestamp);
 
 // Get file size in bytes
 unsigned long getFileSize(const char *filename);
-
-// bool clearFlash(SensorType sensorType, bool circular);
 
 #endif // FLASHWRITE_H
