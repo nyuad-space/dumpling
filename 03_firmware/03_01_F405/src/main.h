@@ -18,17 +18,13 @@
 
 // Flight ready detection
 #define UPRIGHT_ACCEL_THRESH 7.5
-#define UPRIGHT_TIME_THRESH_SEC 60000
+#define UPRIGHT_TIME_THRESH_SEC 10000
 #define MPU_MOT_DET_DUR 5
 
 // Flight end detection
-#define QUIET_TIME_THRESH_SEC 60000
+#define QUIET_TIME_THRESH_SEC 10000
 #define LAUNCH_DETECT_ACCEL_THRESH 30
-#define DEBUG_LAUNCH_DETECT_ACCEL_THRESH 15
-
-// Data collection
-#define PACKET_PREP_TIME 10000
-#define POLLING_TIMEOUT_MS 60000
+#define DEBUG_LAUNCH_DETECT_ACCEL_THRESH 10
 
 /*******************************/
 /*******************************/
@@ -82,6 +78,8 @@ uint32_t color_red = neopixel.Color(200, 0, 0);
 uint32_t color_amber = neopixel.Color(220, 160, 0);
 uint32_t color_green = neopixel.Color(0, 160, 0);
 uint32_t color_blue = neopixel.Color(0, 0, 100);
+uint32_t color_purple = neopixel.Color(87, 6, 140);
+
 
 unsigned long led_blink_time = 0;
 bool led_blink_state = false;
@@ -96,20 +94,6 @@ bool launch_detected = false;
 bool first_entry = true;
 unsigned long quiet_start_time = 0;
 
-// SPI communication
-uint8_t rx_buffer[MAX_PACKET_SIZE];
-
-uint8_t command_buffer[MAX_PACKET_SIZE];
-uint8_t command_packet_size = 0;
-
-uint8_t dummy_buffer[MAX_PACKET_SIZE];
-uint8_t dummy_packet_size = 0;
-
 // Function declarations
-void initialize_interboard_spi();
 void initialize_mpu();
 bool detect_flight_ready();
-
-bool make_data_request(uint8_t);
-bool check_end_sequence(uint8_t *);
-void _print_buffer(const char *, uint8_t *, uint8_t);
