@@ -15,7 +15,7 @@
 #include <Adafruit_SPIFlash.h>
 
 #define F411_DEBUG_MODE 1
-#define WRITE_TO_FLASH 0
+#define WRITE_TO_FLASH 1
 
 // Automatically set the opposite
 #if WRITE_TO_FLASH

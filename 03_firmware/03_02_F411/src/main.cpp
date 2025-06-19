@@ -33,7 +33,10 @@ void setup()
 #endif
 
     // Catch bad initialization
-    success_flag = initSensorComm(detectedSensor);
+    success_flag_1 = initSensorComm(detectedSensor);
+#if F411_DEBUG_MODE
+    Serial.println("Sensor communication set.");
+#endif
 
     configSensor(detectedSensor);
 
@@ -43,13 +46,11 @@ void setup()
 
     // Setup flash
     regularStorageFull = false; // Storage status tracking
-    success_flag = flash_memory.begin();
-    success_flag = initFlashWrite();
+    success_flag_2 = flash_memory.begin();
+    success_flag_3 = initFlashWrite();
 
-        // Create headers and open file
+    // Create headers and open file
     initFilesForSensor(detectedSensor);
-
-    // TODO: earlier, circular is only writing header and not data. check write to circular logic again
 
     // Access all file info with this object
     SensorFileInfo info = getSensorFileInfo(detectedSensor);
@@ -72,7 +73,7 @@ void setup()
     Serial.print("\n");
 #endif
 
-    if (!success_flag || detectedSensor == SENSOR_UNKNOWN)
+    if (!success_flag_1 || !success_flag_2 || !success_flag_2 || detectedSensor == SENSOR_UNKNOWN)
     {
 #if F411_DEBUG_MODE
         Serial.println("Sensor init failed!");
@@ -94,7 +95,7 @@ void setup()
 #if F411_DEBUG_MODE
         Serial.print("Circular file size: ");
         Serial.println(circFile.size());
-        Serial.println("Reading content of file:");
+        Serial.println("Reading content of circular file:");
 #endif
 
         // read from the file until there's nothing else in it
@@ -116,7 +117,7 @@ void setup()
     if (regFile)
     {
 #if F411_DEBUG_MODE
-        Serial.println("Reading content of file:");
+        Serial.println("\nReading content of regular file:");
 #endif
 
         // read from the file until there's nothing else in it
@@ -124,6 +125,9 @@ void setup()
         {
             Serial.write(regFile.read());
         }
+#if F411_DEBUG_MODE
+        Serial.println("--- End of regular file reached ---");
+#endif
         // close the file
         regFile.close();
     }

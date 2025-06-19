@@ -12,3 +12,8 @@ v- // TODO: for attachInterrupt, instead of CHANGE, stick to either falling/risi
 // TODO: circular is only writing header and not data. check write to circular logic again
 
 // TODO: how to make sure flash is clean state before logging data
+
+<new>
+// third status log file
+// F411 LED for circular/regular 
+// fix HDC302 reading zeros

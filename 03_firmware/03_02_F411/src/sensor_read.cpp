@@ -179,8 +179,8 @@ void read_HDC302()
 
     // Read sensor data (Relative humidity: %, Temperature: *C) to three decimals
     hdc302_temp_hum.readOffsets(readT, readRH);
-    hum_read = roundf(readT * 1000) / 1000.0f;
-    temp_read = roundf(readRH * 1000) / 1000.0f;
+    temp_read = roundf(readT * 1000) / 1000.0f;
+    hum_read = roundf(readRH * 1000) / 1000.0f;
 
 #if F411_DEBUG_MODE
     // Timestamp

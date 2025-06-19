@@ -37,7 +37,9 @@ uint32_t color_amber = neopixel.Color(220, 160, 0);
 uint32_t color_green = neopixel.Color(0, 160, 0);
 uint32_t color_light_green = neopixel.Color(0, 50, 0);
 uint32_t color_blue = neopixel.Color(0, 0, 100);
-bool success_flag = true;
+bool success_flag_1 = true;
+bool success_flag_2 = true;
+bool success_flag_3 = true;
 
 // Logging
 bool logging_allowed = false;
