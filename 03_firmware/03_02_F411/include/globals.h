@@ -15,6 +15,14 @@
 #include <Adafruit_SPIFlash.h>
 
 #define F411_DEBUG_MODE 1
+#define WRITE_TO_FLASH 0
+
+// Automatically set the opposite
+#if WRITE_TO_FLASH
+#define READ_FROM_FLASH 0
+#else
+#define READ_FROM_FLASH 1
+#endif
 
 // Bus
 extern SPIClass INTERBOARD_SPI;

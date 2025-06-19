@@ -128,6 +128,7 @@ bool initFilesForSensor(SensorType sensorType)
     }
     // Only one file can be open at a time so close this one before opening another.
     circularFile.close();
+    delay(10);
 
     // === REGULAR FILE SETUP ===
     regularFile = fatfs.open(info.regularName, FILE_WRITE);

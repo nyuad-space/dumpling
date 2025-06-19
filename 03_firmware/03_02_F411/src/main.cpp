@@ -1,5 +1,4 @@
 #include "main.h"
-#define F411_DEBUG_MODE 1
 
 void setup()
 {
@@ -47,57 +46,13 @@ void setup()
     success_flag = flash_memory.begin();
     success_flag = initFlashWrite();
 
-    // Create headers and open file
+        // Create headers and open file
     initFilesForSensor(detectedSensor);
 
     // TODO: earlier, circular is only writing header and not data. check write to circular logic again
 
     // Access all file info with this object
     SensorFileInfo info = getSensorFileInfo(detectedSensor);
-
-    // Check if header is in
-#if F411_DEBUG_MODE
-    // Re-open the file for reading
-    File32 circFile;
-    File32 regFile;
-    circFile = fatfs.open(info.circularName);
-
-    // Display what is inside files
-    if (circFile)
-    {
-        Serial.println("Reading content of file:");
-
-        // read from the file until there's nothing else in it
-        while (circFile.available())
-        {
-            Serial.write(circFile.read());
-        }
-        // close the file
-        circFile.close();
-    }
-    else
-    {
-        Serial.println("error opening circular file");
-    }
-
-    regFile = fatfs.open(info.regularName);
-    if (regFile)
-    {
-        Serial.println("Reading content of file:");
-
-        // read from the file until there's nothing else in it
-        while (regFile.available())
-        {
-            Serial.write(regFile.read());
-        }
-        // close the file
-        regFile.close();
-    }
-    else
-    {
-        Serial.println("error opening regular file");
-    }
-#endif
 
 #if F411_DEBUG_MODE
     uint32_t jedec_id = flash_memory.getJEDECID();
@@ -127,10 +82,64 @@ void setup()
             _blink_red();
         }
     }
+
+// READ FROM FLASH MODE
+#if READ_FROM_FLASH
+    // Re-open the file for reading
+    File32 circFile = fatfs.open(info.circularName, FILE_READ);
+
+    // Display what is inside files
+    if (circFile)
+    {
+#if F411_DEBUG_MODE
+        Serial.print("Circular file size: ");
+        Serial.println(circFile.size());
+        Serial.println("Reading content of file:");
+#endif
+
+        // read from the file until there's nothing else in it
+        while (circFile.available())
+        {
+            Serial.write(circFile.read());
+        }
+        // close the file
+        circFile.close();
+    }
+    else
+    {
+#if F411_DEBUG_MODE
+        Serial.println("error opening circular file");
+#endif
+    }
+
+    File32 regFile = fatfs.open(info.regularName, FILE_READ);
+    if (regFile)
+    {
+#if F411_DEBUG_MODE
+        Serial.println("Reading content of file:");
+#endif
+
+        // read from the file until there's nothing else in it
+        while (regFile.available())
+        {
+            Serial.write(regFile.read());
+        }
+        // close the file
+        regFile.close();
+    }
+    else
+    {
+#if F411_DEBUG_MODE
+        Serial.println("error opening regular file");
+#endif
+    }
+#endif
 }
 
 void loop()
 {
+    // WRITE TO FLASH MODE
+#if WRITE_TO_FLASH
     // Only log when allowed and regular storage has space
     if (logging_allowed && !regularStorageFull)
     {
@@ -139,11 +148,10 @@ void loop()
 #endif
         // Read sensor + Write to flash in circular/regular buffer
         readSensor(detectedSensor, logging_circular);
-
+        delay(50);
         // TODO: LED indication for circular/ regular logging etc.
-        // TODO: clean up code & consider edge cases
-        // TODO: separate project for reading from flash
     }
+#endif
 }
 
 void LOG_TRIGGER_ISR()
