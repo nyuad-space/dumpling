@@ -132,10 +132,10 @@ void loop()
     if (logging_allowed && !regularStorageFull)
     {
 #if F411_DEBUG_MODE
-        // Serial.println("entered logging mode");
+        Serial.println("entered logging mode");
 #endif
-        // // Read sensor + Write to flash in circular/regular buffer
-        // readSensor(detectedSensor, logging_circular);
+        // Read sensor + Write to flash in circular/regular buffer
+        readSensor(detectedSensor, logging_circular);
 
         // TODO: LED indication for circular/ regular logging etc.
         // TODO: clean up code & consider edge cases

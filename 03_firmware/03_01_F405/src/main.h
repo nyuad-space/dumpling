@@ -14,7 +14,7 @@
 /*******************************/
 
 // F405_DEBUG_MODE
-#define F405_DEBUG_MODE 0
+#define F405_DEBUG_MODE 1
 
 // Flight ready detection
 #define UPRIGHT_ACCEL_THRESH 7.5
