@@ -48,6 +48,8 @@ extern Adafruit_SPIFlash flash_memory;
 extern FatVolume fatfs;
 extern File32 regularFile;
 extern File32 circularFile;
+// Status logging
+extern File32 statusFile;
 
 // Sensor readings
 extern float accel_x_read;

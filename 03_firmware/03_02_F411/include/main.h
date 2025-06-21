@@ -25,9 +25,9 @@
 #include "pinout.h"
 #include "sensor_detect.h"
 #include "sensor_config.h"
-#include "flash_write_read.h"
-#include "pinout.h"
 #include "sensor_read.h"
+#include "flash_write_read.h"
+#include "flash_status.h"
 #include "SPIPacket.h"
 
 // Indication

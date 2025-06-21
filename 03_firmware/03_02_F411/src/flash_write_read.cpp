@@ -2,7 +2,7 @@
 
 // File configuration
 #define CIRCULAR_FILE_SIZE (2 * 1024 * 1024)   // 2MB circular buffer
-#define REGULAR_FILE_SIZE (13.5 * 1024 * 1024) // regular logging buffer
+#define REGULAR_FILE_SIZE (13.5 * 1024 * 1024) // 1.5MB regular logging buffer
 
 // Track file status for writing
 bool headersCreated = false;
@@ -336,6 +336,7 @@ String createDataString(SensorType sensorType, unsigned long timestamp)
 
 // Get file size for monitoring storage usage
 unsigned long getFileSize(const char *filename)
+
 {
     File file = fatfs.open(filename, FILE_READ);
     if (file)

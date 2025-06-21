@@ -25,6 +25,8 @@ Adafruit_SPIFlash flash_memory(&adafruit_flash_spi);
 FatVolume fatfs;
 File32 regularFile;
 File32 circularFile;
+// Status logging
+File32 statusFile;
 
 // Sensor readings
 float accel_x_read;

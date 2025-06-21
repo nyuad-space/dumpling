@@ -25,20 +25,22 @@ void setup()
     neopixel.setBrightness(30); // Dim it down!
 
     // Discover and configure sensor
+    String s = detectSensor();
+    logStatus("Connected to: %s", s);
 #if F411_DEBUG_MODE
     Serial.print("Connected to: ");
-    Serial.println(detectSensor());
-#else
-    detectSensor();
+    Serial.println(s);
 #endif
 
     // Catch bad initialization
     success_flag_1 = initSensorComm(detectedSensor);
+    logStatus("Sensor communication set.");
 #if F411_DEBUG_MODE
     Serial.println("Sensor communication set.");
 #endif
 
     configSensor(detectedSensor);
+    logStatus("Sensor configured.");
 
 #if F411_DEBUG_MODE
     Serial.println("Sensor configured.");
@@ -62,13 +64,13 @@ void setup()
     Serial.print("Flash size (usable): ");
     Serial.print(flash_memory.size() / 1024);
     Serial.println(" KB");
-    Serial.print("Circular file: ");
+    Serial.print("Circular file name: ");
     Serial.println(info.circularName);
-    Serial.print("Circular file size: ");
+    Serial.print("Circular file size (bytes): ");
     getFileSize(info.circularName);
-    Serial.print("Regular file: ");
+    Serial.print("Regular file name: ");
     Serial.println(info.regularName);
-    Serial.print("Regular file size: ");
+    Serial.print("Regular file size (bytes): ");
     getFileSize(info.regularName);
     Serial.print("\n");
 #endif
@@ -165,7 +167,7 @@ void LOG_TRIGGER_ISR()
 
     if (pinState == HIGH)
     {
-        // Falling edge detected, start logging in circular
+        // Falling edge detected, start logging in main
 #if F411_DEBUG_MODE
         Serial.println("Low pin. Logging in main flash.");
 #endif
@@ -176,7 +178,7 @@ void LOG_TRIGGER_ISR()
     }
     else if (pinState == LOW)
     {
-        // Rising edge detected, start logging in main
+        // Rising edge detected, start logging in true
 #if F411_DEBUG_MODE
         Serial.println("High pin. Logging in circular buffer.");
 #endif
