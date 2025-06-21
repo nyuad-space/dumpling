@@ -8,12 +8,6 @@
 bool headersCreated = false;
 uint32_t circularWritePos = 0;
 
-// Track file state for reading
-File currentFile;
-const char *currentFileName = nullptr;
-bool fileIsOpen = false;
-String partialLine = ""; // buffer for incomplete lines
-
 // ==== Functions ====
 
 // Initialize filesystem for flash writing
@@ -27,6 +21,7 @@ bool initFlashWrite()
 #endif
         return false;
     }
+    logStatus("Filesystem mounted.");
 #if F411_DEBUG_MODE
     Serial.println("Filesystem mounted.");
 #endif
@@ -110,6 +105,7 @@ bool initFilesForSensor(SensorType sensorType)
         circularFile.println(info.headers);
         circularFile.flush();                       // Ensure header is written
         circularWritePos = circularFile.position(); // save starting writing position as after header
+        logStatus("Created circular file with header: %s", info.circularName);
 #if F411_DEBUG_MODE
         Serial.print("Created circular file with header: ");
         Serial.println(info.circularName);
@@ -121,6 +117,7 @@ bool initFilesForSensor(SensorType sensorType)
         circularFile.seek(0);
         circularFile.readStringUntil('\n'); // write from after header
         circularWritePos = circularFile.position();
+        logStatus("Opened existing circular file: %s", info.circularName);
 #if F411_DEBUG_MODE
         Serial.print("Opened existing circular file: ");
         Serial.println(info.circularName);
@@ -144,6 +141,7 @@ bool initFilesForSensor(SensorType sensorType)
         // New/Empty file: create header
         regularFile.println(info.headers);
         regularFile.flush(); // Ensure header is written
+        logStatus("Created regular file with header: %s", info.regularName);
 #if F411_DEBUG_MODE
         Serial.print("Created regular file with header: ");
         Serial.println(info.regularName);
@@ -165,6 +163,7 @@ bool initFilesForSensor(SensorType sensorType)
             regularFile.seek(regularFile.size());
         }
     }
+    logStatus("Opened existing regular file: %s", info.regularName);
 #if F411_DEBUG_MODE
     Serial.print("Opened existing regular file: ");
     Serial.println(info.regularName);
@@ -172,6 +171,7 @@ bool initFilesForSensor(SensorType sensorType)
     // Only one file can be open at a time so close this one before opening another.
     regularFile.close();
 
+    logStatus("Both files successfully initialized");
 #if F411_DEBUG_MODE
     Serial.println("Both files successfully initialized");
 #endif
@@ -343,7 +343,6 @@ unsigned long getFileSize(const char *filename)
     {
         unsigned long size = file.size();
         file.close();
-        Serial.println(size);
         return size;
     }
     return 0;

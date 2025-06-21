@@ -3,6 +3,7 @@
 
 #include "globals.h"
 #include "pinout.h"
+#include "flash_status.h"
 
 // Get sensor-specific information
 struct SensorFileInfo

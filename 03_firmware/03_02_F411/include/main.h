@@ -44,6 +44,7 @@ bool success_flag_3 = true;
 // Logging
 bool logging_allowed = false;
 bool logging_circular = false;
+volatile bool log_mode_changed = false;
 
 uint8_t counter = 20; // TODO: remove dummy logic
 uint8_t master_data_size;

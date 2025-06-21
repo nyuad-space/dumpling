@@ -55,7 +55,26 @@ void logStatusTimed(unsigned long timestamp, const char *format, ...)
     }
 }
 
-// // write logStatus to flash
-// void logStatusToFlash()
-// {
-// }
+// === TO FLASH ===
+// Initialize filesystem for flash writing
+bool initFileForStatus()
+{
+    statusFile = fatfs.open("status.txt", FILE_WRITE);
+    if (!statusFile)
+    {
+#if F411_DEBUG_MODE
+        Serial.println("Failed to open status file.");
+#endif
+        return false;
+    }
+#if F411_DEBUG_MODE
+    Serial.println("Created status file.");
+#endif
+    statusFile.close();
+    return true;
+}
+
+// write logStatus to flash
+void logStatusToFlash()
+{
+}

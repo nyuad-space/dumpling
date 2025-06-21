@@ -17,6 +17,7 @@ void setup()
 
     logging_allowed = true;
     logging_circular = true;
+    log_mode_changed = false;
 
     // Clear LED
     neopixel.begin();
@@ -53,6 +54,8 @@ void setup()
 
     // Create headers and open file
     initFilesForSensor(detectedSensor);
+    // Create file for logging
+    initFileForStatus();
 
     // Access all file info with this object
     SensorFileInfo info = getSensorFileInfo(detectedSensor);
@@ -74,6 +77,12 @@ void setup()
     getFileSize(info.regularName);
     Serial.print("\n");
 #endif
+    logStatus("JEDEC ID: 0x%X", jedec_id);
+    logStatus("Flash size (usable): %u KB", flash_memory.size() / 1024);
+    logStatus("Circular file name: %s", info.circularName);
+    logStatus("Circular file size (bytes): %u", getFileSize(info.circularName));
+    logStatus("Regular file name: %s", info.regularName);
+    logStatus("Regular file size (bytes): %u", getFileSize(info.regularName));
 
     if (!success_flag_1 || !success_flag_2 || !success_flag_2 || detectedSensor == SENSOR_UNKNOWN)
     {
@@ -88,6 +97,7 @@ void setup()
 
 // READ FROM FLASH MODE
 #if READ_FROM_FLASH
+    // CIRCUALAR
     // Re-open the file for reading
     File32 circFile = fatfs.open(info.circularName, FILE_READ);
 
@@ -115,6 +125,7 @@ void setup()
 #endif
     }
 
+    // REGULAR
     File32 regFile = fatfs.open(info.regularName, FILE_READ);
     if (regFile)
     {
@@ -139,18 +150,59 @@ void setup()
         Serial.println("error opening regular file");
 #endif
     }
+    // STATUS
+    File32 statFile = fatfs.open("status.txt", FILE_READ);
+    if (statFile)
+    {
+#if F411_DEBUG_MODE
+        Serial.println("\nReading content of status file:");
+#endif
+
+        // read from the file until there's nothing else in it
+        while (statFile.available())
+        {
+            Serial.write(statFile.read());
+        }
+#if F411_DEBUG_MODE
+        Serial.println("--- End of status file reached ---");
+#endif
+        // close the file
+        statFile.close();
+    }
+    else
+    {
+#if F411_DEBUG_MODE
+        Serial.println("error opening status file");
+#endif
+    }
+
 #endif
 }
 
 void loop()
 {
+    // Check if logging mode changed and log the event
+    if (log_mode_changed)
+    {
+        log_mode_changed = false; // Clear the flag
+
+        if (logging_circular)
+        {
+            logStatusTimed(millis(), "High pin. Logging in circular buffer.");
+        }
+        else
+        {
+            logStatusTimed(millis(), "Low pin. Logging in main flash.");
+        }
+    }
+
     // WRITE TO FLASH MODE
 #if WRITE_TO_FLASH
     // Only log when allowed and regular storage has space
     if (logging_allowed && !regularStorageFull)
     {
 #if F411_DEBUG_MODE
-        Serial.println("entered logging mode");
+        Serial.println("Entered logging mode");
 #endif
         // Read sensor + Write to flash in circular/regular buffer
         readSensor(detectedSensor, logging_circular);
@@ -168,22 +220,18 @@ void LOG_TRIGGER_ISR()
     if (pinState == HIGH)
     {
         // Falling edge detected, start logging in main
-#if F411_DEBUG_MODE
-        Serial.println("Low pin. Logging in main flash.");
-#endif
         logging_allowed = true;
         logging_circular = false;
+        log_mode_changed = true;
         neopixel.setPixelColor(0, color_green);
         neopixel.show();
     }
     else if (pinState == LOW)
     {
         // Rising edge detected, start logging in true
-#if F411_DEBUG_MODE
-        Serial.println("High pin. Logging in circular buffer.");
-#endif
         logging_allowed = true;
         logging_circular = true;
+        log_mode_changed = true;
         neopixel.setPixelColor(0, color_amber);
         neopixel.show();
     }

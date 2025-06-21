@@ -15,7 +15,7 @@
 #include <Adafruit_SPIFlash.h>
 
 #define F411_DEBUG_MODE 1
-#define WRITE_TO_FLASH 1
+#define WRITE_TO_FLASH 0
 
 // Automatically set the opposite
 #if WRITE_TO_FLASH
@@ -66,7 +66,7 @@ extern float mag_y_read;
 extern float mag_z_read;
 extern float hum_read;
 
-extern bool reachedEOF;
+// Storage status tracking
 extern bool regularStorageFull;
 
 #endif
