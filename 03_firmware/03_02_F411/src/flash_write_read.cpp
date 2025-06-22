@@ -153,6 +153,7 @@ bool initFilesForSensor(SensorType sensorType)
         {
             regularStorageFull = true;
             regularFile.close();
+            logStatus("Reached max storage of regular file. Stopping logging.");
 #if F411_DEBUG_MODE
             Serial.print("Regular file is full");
 #endif

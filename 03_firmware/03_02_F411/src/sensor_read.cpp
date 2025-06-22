@@ -172,15 +172,33 @@ void read_LIS2MDL()
 }
 void read_HDC302()
 {
-    double readT = 0.0;
-    double readRH = 0.0;
+    double temp = 0.0;
+    double RH = 0.0;
 
     // availability checker not supported
 
+    // perform a 'forced' reading every second if not in automatic mode
+    if (hdc302_temp_hum.getAutoMode() == EXIT_AUTO_MODE)
+    {
+        if (!hdc302_temp_hum.readTemperatureHumidityOnDemand(temp, RH, TRIGGERMODE_LP0))
+        {
+            Serial.println("Failed to read temperature and humidity.");
+            return;
+        }
+        delay(1000);
+    }
+    else
+    {
+        if (!hdc302_temp_hum.readAutoTempRH(temp, RH))
+        {
+            // Data not ready for reading, silently retry later
+            return;
+        }
+    }
+
     // Read sensor data (Relative humidity: %, Temperature: *C) to three decimals
-    hdc302_temp_hum.readOffsets(readT, readRH);
-    temp_read = roundf(readT * 1000) / 1000.0f;
-    hum_read = roundf(readRH * 1000) / 1000.0f;
+    temp_read = roundf(temp * 1000) / 1000.0f;
+    hum_read = roundf(RH * 1000) / 1000.0f;
 
 #if F411_DEBUG_MODE
     // Timestamp
@@ -188,9 +206,9 @@ void read_HDC302()
     Serial.print("ms,");
 
     // Display on Serial
-    Serial.print(" RH Offset: ");
+    Serial.print(" RH: ");
     Serial.print(hum_read);
-    Serial.print(", T Offset: ");
+    Serial.print(", T: ");
     Serial.print(temp_read);
     Serial.print("\n");
 #endif
