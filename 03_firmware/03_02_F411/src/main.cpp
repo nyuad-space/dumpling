@@ -71,11 +71,11 @@ void setup()
     Serial.print("Circular file name: ");
     Serial.println(info.circularName);
     Serial.print("Circular file size (bytes): ");
-    getFileSize(info.circularName);
+    Serial.println(getFileSize(info.circularName));
     Serial.print("Regular file name: ");
     Serial.println(info.regularName);
     Serial.print("Regular file size (bytes): ");
-    getFileSize(info.regularName);
+    Serial.println(getFileSize(info.regularName));
     Serial.print("\n");
 #endif
     logStatus("JEDEC ID: 0x%X", jedec_id);
