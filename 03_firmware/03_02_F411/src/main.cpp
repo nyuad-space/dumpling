@@ -95,6 +95,8 @@ void setup()
             _blink_red();
         }
     }
+    neopixel.setPixelColor(0, color_amber);
+    neopixel.show();
 
 // READ FROM FLASH MODE
 #if READ_FROM_FLASH
@@ -266,8 +268,6 @@ void LOG_TRIGGER_ISR()
         logging_allowed = true;
         logging_circular = true;
         entered_circular_mode = true;
-        neopixel.setPixelColor(0, color_amber);
-        neopixel.show();
     }
 }
 
