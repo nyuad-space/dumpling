@@ -75,6 +75,22 @@ bool initFileForStatus()
 }
 
 // write logStatus to flash
-void logStatusToFlash()
+void flushStatusToFile()
 {
+    // if there is data to write
+    if (statusBufferIndex > 0)
+    {
+        statusFile = fatfs.open("status.txt", FILE_WRITE);
+        if (statusFile)
+        {
+            size_t written = statusFile.write((uint8_t *)statusBuffer, statusBufferIndex);
+            statusFile.close();
+
+            if (written == statusBufferIndex)
+            {
+                statusBufferIndex = 0; // reset index
+                statusBuffer[0] = '\0';
+            }
+        }
+    }
 }

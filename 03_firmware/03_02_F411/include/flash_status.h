@@ -9,5 +9,7 @@ void logStatusTimed(unsigned long timestamp, const char *format, ...);
 
 // Initialize filesystem for flash writing
 bool initFileForStatus();
+// 
+void flushStatusToFile();
 
 #endif // FLASHSTATUS_H

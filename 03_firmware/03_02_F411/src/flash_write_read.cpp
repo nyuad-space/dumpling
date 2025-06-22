@@ -246,7 +246,7 @@ void writeToFlash(SensorType sensorType, bool circular)
     {
         writeCircular(dataLine + "\n", sensorType);
 #if F411_DEBUG_MODE
-        Serial.println("Written to circular buffer");
+        Serial.println("Written to circular file");
 #endif
     }
     else

@@ -17,7 +17,8 @@ void setup()
 
     logging_allowed = true;
     logging_circular = true;
-    log_mode_changed = false;
+    entered_circular_mode = false;
+    entered_regular_mode = false;
 
     // Clear LED
     neopixel.begin();
@@ -27,7 +28,7 @@ void setup()
 
     // Discover and configure sensor
     String s = detectSensor();
-    logStatus("Connected to: %s", s);
+    logStatus("Connected to: %s", s.c_str());
 #if F411_DEBUG_MODE
     Serial.print("Connected to: ");
     Serial.println(s);
@@ -155,7 +156,7 @@ void setup()
     if (statFile)
     {
 #if F411_DEBUG_MODE
-        Serial.println("\nReading content of status file:");
+        Serial.println("\n== Reading content of status file == \n");
 #endif
 
         // read from the file until there's nothing else in it
@@ -181,32 +182,65 @@ void setup()
 
 void loop()
 {
-    // Check if logging mode changed and log the event
-    if (log_mode_changed)
-    {
-        log_mode_changed = false; // Clear the flag
+    // Tracking status flush
+    static unsigned long lastStatusFlush = 0;
+    static int flushCounter = 0;
+    static bool final_status_logged = false;
+    static bool was_circular = false;
 
-        if (logging_circular)
-        {
-            logStatusTimed(millis(), "High pin. Logging in circular buffer.");
-        }
-        else
-        {
-            logStatusTimed(millis(), "Low pin. Logging in main flash.");
-        }
+    // Handle circular mode entry
+    if (entered_circular_mode)
+    {
+        entered_circular_mode = false; // Clear flag
+        // logStatusTimed(millis(), "High pin. Logging in circular file.");
     }
 
-    // WRITE TO FLASH MODE
+    // Handle regular mode entry (final message)
+    if (entered_regular_mode)
+    {
+        entered_regular_mode = false; // Clear flag
+        logStatusTimed(millis(), "Low pin. Logging in main file.");
+        flushStatusToFile();
+        final_status_logged = true;
+    }
+
+// WRITE TO FLASH MODE
 #if WRITE_TO_FLASH
     // Only log when allowed and regular storage has space
     if (logging_allowed && !regularStorageFull)
     {
-#if F411_DEBUG_MODE
-        Serial.println("Entered logging mode");
-#endif
         // Read sensor + Write to flash in circular/regular buffer
         readSensor(detectedSensor, logging_circular);
-        delay(50);
+
+        // Periodic flushes until final message
+        if (!final_status_logged && logging_circular)
+        {
+            // Use the delay period for occasional status flushing (circular mode only)
+            flushCounter++;
+            if (flushCounter >= 1200) // Every ~1 minute
+            {
+                unsigned long flushStart = millis();
+                flushStatusToFile();
+                unsigned long flushTime = millis() - flushStart;
+
+                // Adjust remaining delay to maintain timing
+                int remainingDelay = 50 - flushTime;
+                if (remainingDelay > 0)
+                {
+                    delay(remainingDelay);
+                }
+
+                flushCounter = 0;
+            }
+            else
+            {
+                delay(50); // Normal delay
+            }
+        }
+        else
+        {
+            delay(50); // Normal delay, no more status logging
+        }
         // TODO: LED indication for circular/ regular logging etc.
     }
 #endif
@@ -219,19 +253,19 @@ void LOG_TRIGGER_ISR()
 
     if (pinState == HIGH)
     {
-        // Falling edge detected, start logging in main
+        // Rising edge detected, start logging in main
         logging_allowed = true;
         logging_circular = false;
-        log_mode_changed = true;
+        entered_regular_mode = true;
         neopixel.setPixelColor(0, color_green);
         neopixel.show();
     }
     else if (pinState == LOW)
     {
-        // Rising edge detected, start logging in true
+        // Logging in circular
         logging_allowed = true;
         logging_circular = true;
-        log_mode_changed = true;
+        entered_circular_mode = true;
         neopixel.setPixelColor(0, color_amber);
         neopixel.show();
     }
