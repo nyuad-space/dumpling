@@ -44,7 +44,7 @@ Data Dumpling is a modular, high-speed data logger for MEMS sensors, designed as
 
 ---
 
-## Components
+## Mainboard Components
 
 | Type        | Components                                    |
 |-------------|-----------------------------------------------|
@@ -54,8 +54,6 @@ Data Dumpling is a modular, high-speed data logger for MEMS sensors, designed as
 | Barometers  | DPS310XTSA1, BMP390L                           |
 | Magnetometer| LIS2MDLTR                                      |
 | Temperature | HDC3022DEJR                                    |
-| Flight MCU  | STM32F405                                      |
-| Sensor MCU  | STM32F411 (per board)                          |
 | Flash       | 16MB SPI NOR Flash per sensor board           |
 | Recovery    | SD card slot for post-flight data offload     |
 
