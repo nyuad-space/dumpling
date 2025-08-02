@@ -44,7 +44,7 @@ Data Dumpling is a modular, high-speed data logger for MEMS sensors, designed as
 
 ---
 
-## Payload Subsystems (Stage Fright 2025)
+## Components
 
 | Type        | Components                                    |
 |-------------|-----------------------------------------------|
