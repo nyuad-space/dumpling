@@ -1,26 +1,129 @@
-## Errata v1 (2025)
-
-### Hardware
+## Hardware Errata v1 (2025)
 
 - Pull down Boot1 instead of floating. For booting F405 with DFU, hold down the 3rd reset button.
 - SWD TagConnect: Layout is too close to XT30 or M.2 sockets and connector is difficult to source.
-- Check and recheck DRC.
+- DRC check (recheck unconnected items).
 - Look out for "x"ed POS in the BOM file. May have been accidentally toggled off.
 - Reset button is too small & hard to reach
 - Vertical USB is less stress-tolerant (pulls on solder)
-- Arbitrary STM32F411 DFU bootloading error
-- Check forward current rating for Schottky diodes. Generally 1A would work
-- Consider using more current sensors i.e. measure current draw from each board, from VIN total etc.
+- STM32F411 DFU bootloading error
+- Check forward current rating for Schottky diodes.
+- Consider using more current sensors i.e. Measure current draw from each board, from VIN total etc.
 - Add in extra LEDs, buttons, etc. for extra functions/debugging in the future
 - Unless saving space is a priority, consider using 0603 instead of 0402 for easier potential fixes
+- Misc. Consider a more impact-tolerant casing to protect board upon landing
 
+# Data Dumpling: Modular High-Speed Sensor Logger
 
-### Firmware
-- Erraneous logic for moving from circular buffer to regular buffer
-- Add flash file for logging launch status
+**Data Dumpling** is a modular, high-speed data logger for MEMS sensors, designed as a payload for our experimental sounding rocket **Stage Fright (2025)**. It enables real-time characterization and benchmarking of commercial sensors in demanding flight environments. The project aims to support sensor research and promote scalable, plug-and-play architectures for future space missions.
+
+---
+
+## Features
+
+- **Modular Architecture**: Hot-swappable M.2 sensor ports with dedicated coprocessors  
+- **Sensor Compatibility**: Supports I2C/SPI sensors with auto-detection via WHO_AM_I or equivalent registers  
+- **Dedicated Flash Memory**: Each sensor board logs to onboard 16MB non-volatile memory  
+- **Universal Firmware**: One firmware for all sensor types—detects, initializes, logs, and stores automatically  
+- **Flight-Triggered Logging**: Dual-buffered flash logging triggered by flight detection events  
+- **Core MCU**: STM32F405 manages flight readiness and triggers; STM32F411 handles individual sensor boards  
+- **Post-Flight Retrieval**: Optionally offloads sensor data to SD card after recovery  
+- **Scalable Platform**: Designed for use in custom avionics, research payloads, and mission-specific instrumentation  
+
+---
+
+## Applications
+
+- Benchmarking MEMS sensors in realistic aerospace environments  
+- Development of sensor fusion algorithms and accurate sensor models  
+- Modular data collection for experimental payloads  
+- Plug-and-play architecture for custom flight computers and high-speed telemetry systems  
+
+---
+
+## Payload Subsystems (Stage Fright 2025)
+
+| Type        | Components                                    |
+|-------------|-----------------------------------------------|
+| IMUs        | LSM6DSO32, BMI088                              |
+| Barometers  | DPS310XTSA1, BMP390L                           |
+| Magnetometer| LIS2MDLTR                                      |
+| Temperature | HDC3022DEJR                                    |
+| Flight MCU  | STM32F405                                      |
+| Sensor MCU  | STM32F411 (per board)                          |
+| Flash       | 16MB SPI NOR Flash per sensor board           |
+| Recovery    | SD card slot for post-flight data offload     |
+
+---
+
+## Firmware Overview
+
+### Main Processor (STM32F405)
+- Communicates with MPU6050 to determine upright position
+- Triggers flight monitoring upon launch detection
+- Manages three flash files:
+  - **Circular Buffer**: Logs during flight-ready state with overwrite on overflow  
+  - **Main Buffer**: Logs during flight, no wrap-around  
+  - **Status File**: Logs sensor configuration, buffer states, memory info, etc.  
+
+### Sensor Coprocessors (STM32F411)
+Each sensor board follows this universal sequence:
+
+1. Detect sensor using WHO_AM_I (or equivalent)  
+2. Initialize I2C or SPI communication  
+3. Configure sensor parameters (range, ODR, oversampling, filters)  
+4. Initialize filesystem and create sensor-specific files  
+5. Log sensor data at configured rate to flash memory  
+
+---
+
+## Core Design Elements
+
+- **Rigid Assembly**: Sturdy stack-up for rocketry and aerospace testing without external wires 
+- **M.2 Connectivity**: High-speed modular interface for swappable sensor boards  
+- **Universal Coprocessor Firmware**: Enables sensor flexibility with minimal changes  
+- **Mission Reusability**: Designed for multi-mission compatibility and iterative development  
+- **Prototyping & Deployment**: Suits both early-stage sensor evaluation and final payload integration  
+
+---
+
+## Future Improvements
+
+- Integrate RTOS for multitasking, task prioritization, and modular firmware structure
+- Add wireless/CAN telemetry  
+- Increase flash capacity and add compression  
+- Expand to include GNSS, radiation, and vibration sensors  
+- Enable real-time in-flight filtering and basic analytics
 - Use UART for master-slave communication in Arduino framework (SPI doesn't support it by default)
-=======
-- Pull down Boot1 instead of floating. For booting F405 with DFU, hold down the 3rd reset button (may still work arbitrarily).
-- SWD TagConnect: Layout is too close to XT30 or M.2 sockets and connector is difficult to source.
-- Check and recheck DRC.
-- Look out for "x"ed POS in the BOM file. May have been accidentally toggled off.
+
+---
+
+## Programming
+
+Each STM32 microcontroller is programmed using an ST-Link via SWD.
+
+- **Main MCU**: STM32F405 (via STM32CubeIDE or custom Makefile)
+- **Sensor Boards**: STM32F411CEU6
+- **Boot Modes**: DFU boot supported for future update integration
+
+> **Note**: Ensure unique flash IDs and file headers per sensor for proper data parsing.
+
+---
+
+## Notes
+
+- Designed for SRAD rocketry — ensure proper mechanical and EMI shielding  
+- Verify sensor electrical compatibility before connecting new boards  
+- Maintain synchronized firmware versions across all sensor modules  
+- Follow proper ESD precautions during handling and flashing  
+
+---
+
+## Disclaimer
+
+Use the files, hardware, and software in this repository at your own risk.  
+We assume no liability for hardware damage, software malfunction, or unexpected behavior, particularly during live flight testing.  
+Always validate your configuration through extensive ground testing.
+
+---
+
