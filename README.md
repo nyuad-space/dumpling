@@ -14,9 +14,10 @@
 - Misc. Consider a more impact-tolerant casing to protect board upon landing
 
 # Data Dumpling
-
-![Data Dumpling Board - Front](dumpling/mainboard_rendering.png)
-![Data Dumpling Board - Back](dumpling/mainboard_rendering_back.png)
+<p float="left">
+  <img src="mainboard_rendering.png" width="315"/>
+  <img src="mainboard_rendering_back.png" width="300"/>
+</p>
 
 
 **Data Dumpling** is a modular, high-speed data logger for MEMS sensors, designed as a payload for our experimental sounding rocket **Stage Fright (2025)**. It enables real-time characterization and benchmarking of commercial sensors in demanding flight environments. The project aims to support sensor research and promote scalable, plug-and-play architectures for future space missions.
