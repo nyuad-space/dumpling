@@ -1,0 +1,30 @@
+// Interboard SPI pins
+#define INTERBOARD_SPI_SCK PB13
+#define INTERBOARD_SPI_MISO PB14
+#define INTERBOARD_SPI_MOSI PB15
+
+#define INTERBOARD_SPI_CO1_CS PC3
+#define INTERBOARD_SPI_CO2_CS PB12
+#define INTERBOARD_SPI_CO3_CS PC2
+#define INTERBOARD_SPI_CO4_CS PC6
+#define INTERBOARD_SPI_CO5_CS PC4
+#define INTERBOARD_SPI_CO6_CS PC5
+
+
+// Flash SPI pins
+#define FLASH_SPI_CS PA4
+#define FLASH_SPI_SCK PA5
+#define FLASH_SPI_MISO PA6
+#define FLASH_SPI_MOSI PA7
+
+// Log triger
+#define LOG_TRIGGER_GPIO PC13
+
+// MPU Pins
+#define MPU_SCL PA8
+#define MPU_SDA PC9
+#define MPU_INT PA8
+
+// Indicators
+#define BUZZER PB8
+#define RGB_LED PB9

@@ -2707,6 +2707,16 @@
 		)
 		(uuid "0c6f210f-2fce-4112-a1c9-463fdd864000")
 	)
+	(text "I2C Address: 0x1E"
+		(exclude_from_sim no)
+		(at 75.946 81.026 0)
+		(effects
+			(font
+				(size 0.762 0.762)
+			)
+		)
+		(uuid "0c9b7ef3-efac-43c3-952b-6dc3e335ac92")
+	)
 	(text "Address: 0011110b\n(read: b=1\nwrite: b=0)"
 		(exclude_from_sim no)
 		(at 75.946 76.454 0)
