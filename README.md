@@ -19,8 +19,7 @@
   <img src="mainboard_rendering_back.png" width="300"/>
 </p>
 
-
-**Data Dumpling** is a modular, high-speed data logger for MEMS sensors, designed as a payload for our experimental sounding rocket **Stage Fright (2025)**. It enables real-time characterization and benchmarking of commercial sensors in demanding flight environments. The project aims to support sensor research and promote scalable, plug-and-play architectures for future space missions.
+Data Dumpling is a modular, high-speed data logger for MEMS sensors, designed as a payload for our experimental sounding rocket Stage Fright (2025). It enables real-time characterization and benchmarking of commercial sensors in demanding flight environments. The project aims to support sensor research and promote scalable, plug-and-play architectures for future space missions.
 
 ---
 
@@ -33,7 +32,6 @@
 - **Flight-Triggered Logging**: Dual-buffered flash logging triggered by flight detection events  
 - **Core MCU**: STM32F405 manages flight readiness and triggers; STM32F411 handles individual sensor boards  
 - **Post-Flight Retrieval**: Optionally offloads sensor data to SD card after recovery  
-- **Scalable Platform**: Designed for use in custom avionics, research payloads, and mission-specific instrumentation  
 
 ---
 
@@ -50,6 +48,8 @@
 
 | Type        | Components                                    |
 |-------------|-----------------------------------------------|
+| Main MCU    | STM32F405RGT                                  |
+| Coprocessor | STM32F411CEU6                                 |
 | IMUs        | LSM6DSO32, BMI088                              |
 | Barometers  | DPS310XTSA1, BMP390L                           |
 | Magnetometer| LIS2MDLTR                                      |
@@ -62,6 +62,8 @@
 ---
 
 ## Firmware Overview
+
+Each STM32 microcontroller is programmed via built-in USB DFU bootloader.
 
 ### Main Processor (STM32F405)
 - Communicates with MPU6050 to determine upright position
@@ -82,16 +84,6 @@ Each sensor board follows this universal sequence:
 
 ---
 
-## Core Design Elements
-
-- **Rigid Assembly**: Sturdy stack-up for rocketry and aerospace testing without external wires 
-- **M.2 Connectivity**: High-speed modular interface for swappable sensor boards  
-- **Universal Coprocessor Firmware**: Enables sensor flexibility with minimal changes  
-- **Mission Reusability**: Designed for multi-mission compatibility and iterative development  
-- **Prototyping & Deployment**: Suits both early-stage sensor evaluation and final payload integration  
-
----
-
 ## Future Improvements
 
 - Integrate RTOS for multitasking, task prioritization, and modular firmware structure
@@ -100,18 +92,7 @@ Each sensor board follows this universal sequence:
 - Expand to include GNSS, radiation, and vibration sensors  
 - Enable real-time in-flight filtering and basic analytics
 - Use UART for master-slave communication in Arduino framework (SPI doesn't support it by default)
-
----
-
-## Programming
-
-Each STM32 microcontroller is programmed using an ST-Link via SWD.
-
-- **Main MCU**: STM32F405 (via STM32CubeIDE or custom Makefile)
-- **Sensor Boards**: STM32F411CEU6
-- **Boot Modes**: DFU boot supported for future update integration
-
-> **Note**: Ensure unique flash IDs and file headers per sensor for proper data parsing.
+- Ensure unique flash IDs and file headers per sensor for proper data parsing
 
 ---
 
