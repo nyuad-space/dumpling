@@ -63,7 +63,7 @@ Data Dumpling is a modular, high-speed data logger for MEMS sensors, designed as
 
 Each STM32 microcontroller is programmed via built-in USB DFU bootloader.
 
-### Main Processor (STM32F405)
+### Main processor
 - Communicates with MPU6050 to determine upright position
 - Triggers flight monitoring upon launch detection
 - Manages three flash files:
@@ -71,7 +71,7 @@ Each STM32 microcontroller is programmed via built-in USB DFU bootloader.
   - **Main Buffer**: Logs during flight, no wrap-around  
   - **Status File**: Logs sensor configuration, buffer states, memory info, etc.  
 
-### Sensor Coprocessors (STM32F411)
+### Coprocessor
 Each sensor board follows this universal sequence:
 
 1. Detect sensor using WHO_AM_I (or equivalent)  
