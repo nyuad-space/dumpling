@@ -1,18 +1,28 @@
 #include <Arduino.h>
+#include "sensors/lsm6dso.h"
 
-// put function declarations here:
-int myFunction(int, int);
+LSM6DSOnode IMUnode;
 
-void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+void setup()
+{
+  Serial.begin(115200);
+  delay(1500); // for USB serial
+  Serial.println();
+  Serial.println("dumpling F411 - LSM6DSO32 local pipeline");
+
+  if (!IMUnode.begin())
+  {
+    Serial.println("ERROR: failed to initialize LSM6DSO32 over SPI");
+    while (true)
+      delay(1000);
+  }
+  Serial.println("LSM6DSO32 initilaized");
+  IMUnode.printCsvHeader(Serial);
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+void loop()
+{
+  LSM6DSOsample sample;
+  if (IMUnode.readSample(sample))
+    IMUnode.printCsvSample(Serial, sample);
 }
