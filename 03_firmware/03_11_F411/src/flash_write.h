@@ -14,13 +14,14 @@ public:
     bool begin();
     bool append(const LSM6DSOsample &sample);
     void printStatus(Stream &out) const; // read-only
+    void dumpLogToSerial(Stream &out);
 
 private:
     SPIClass flashSpi_;                          // SPI bus object
     Adafruit_FlashTransport_SPI flashTransport_; // wrapper for generic SPI and flashSpi
     Adafruit_SPIFlash flash_;                    // Adafruit flash library object
-    FatVolume fatfs_;
-    File32 file_;
+    FatVolume fatfs_;                            // mounted filesystem manager
+    File32 file_;                                // one open file handle inside fs
 
     bool mounted_ = false;
     bool fileReady_ = false;

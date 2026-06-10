@@ -3,11 +3,17 @@
 #include "flash_write.h"
 #include "global.h"
 
+// Hardware modules
 LSM6DSOnode IMUnode;
 FlashLogger flashLogger;
 
+// Data sampling
 unsigned long lastSampleMs = 0;
 uint32_t sampleCount = 0;
+
+// Flash sanity check
+uint32_t flashWriteOkCount = 0;
+uint32_t flashWriteFailCount = 0;
 
 void setup()
 {
@@ -16,44 +22,82 @@ void setup()
   Serial.println();
   Serial.println("dumpling F411 - LSM6DSO32 local pipeline");
 
-  if (!IMUnode.begin())
+  // Initialize sensor comm
+  if (SENSOR_READ_MODE)
   {
-    Serial.println("ERROR: failed to initialize LSM6DSO32 over SPI");
-    while (true)
-      delay(1000);
+    if (!IMUnode.begin())
+    {
+      Serial.println("ERROR: failed to initialize LSM6DSO32 over SPI");
+      while (true)
+        delay(1000);
+    }
+    Serial.println("LSM6DSO32 initilaized");
   }
-  Serial.println("LSM6DSO32 initilaized");
 
-  if (FLASH_LOG_MODE)
+  // Initialize flash logger
+  if (FLASH_LOG_MODE || FLASH_DUMP_MODE)
   {
     if (!flashLogger.begin())
-      Serial.println("WARNING: flash logger init failed.");
-    else
     {
-      Serial.println("Flash logger initialized.");
-      flashLogger.printStatus(Serial);
+      Serial.println("WARNING: flash logger init failed.");
+      while (true)
+        delay(1000);
     }
+    Serial.println("Flash logger initialized.");
+    flashLogger.printStatus(Serial);
   }
 
-  if (SERIAL_MONITOR_MODE)
+  // Flash read-only
+  if (!SENSOR_READ_MODE && FLASH_DUMP_MODE)
   {
-    IMUnode.printCsvHeader(Serial);
+    flashLogger.dumpLogToSerial(Serial);
   }
 }
 
 void loop()
 {
+  // Flash read-only
+  if (!SENSOR_READ_MODE)
+  {
+    delay(1000);
+    return;
+  }
+
+  // Maintain sample interval
   const unsigned long now = millis();
   if (now - lastSampleMs < SAMPLE_INTERVAL_MS)
     return;
   lastSampleMs = now;
 
+  // Log sensor data
   LSM6DSOsample sample;
-  sampleCount++;
 
   if (IMUnode.readSample(sample))
   {
+    sampleCount++;
+
     if (SERIAL_MONITOR_MODE)
       IMUnode.printCsvSample(Serial, sample);
+
+    if (FLASH_LOG_MODE)
+    {
+      if (flashLogger.append(sample))
+        flashWriteOkCount++;
+      else
+        flashWriteFailCount++;
+    }
+  }
+
+  // Periodic heartbeat check
+  static unsigned long lastHeartbeatMs = 0;
+  if (millis() - lastHeartbeatMs >= 1000)
+  {
+    lastHeartbeatMs = millis();
+    Serial.print("# heartbeat sample_count=");
+    Serial.print(sampleCount);
+    Serial.print(" flash_ok=");
+    Serial.print(flashWriteOkCount);
+    Serial.print(" flash fail=");
+    Serial.println(flashWriteFailCount);
   }
 }
