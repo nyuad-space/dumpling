@@ -2,6 +2,12 @@
 #include "pinout.h"
 #include "global.h"
 
+namespace
+{
+    constexpr char LOG_FILENAME[] = "/lsm6dso.csv";
+    constexpr char LOG_HEADER[] = "timestamp_ms,ax_mps2,ay_mps2,az_mps2,gx_rads,gy_rads,gz_rads,temp_c";
+}
+
 FlashLogger::FlashLogger()
     : flashSpi_(FLASH_MOSI, FLASH_MISO, FLASH_SCK),
       flashTransport_(FLASH_CS, flashSpi_),
@@ -16,12 +22,21 @@ bool FlashLogger::begin()
         return false;
 
     mounted_ = true;
-    return writeHeaderIfNeeded();
+    file_ = fatfs_.open(LOG_FILENAME, FILE_WRITE);
+    if (!file_)
+        return false;
+    if (file_.size() == 0)
+    {
+        file_.println(LOG_HEADER);
+        file_.flush();
+    }
+    fileReady_ = true;
+    return true;
 }
 bool FlashLogger::append(const LSM6DSOsample &sample)
 {
     // ensure file ready
-    if (!mounted_ || !writeHeaderIfNeeded() || !openLogFileIfNeeded())
+    if (!mounted_ || !fileReady_)
         return false;
 
     file_.seek(file_.size());
@@ -50,30 +65,6 @@ void FlashLogger::printStatus(Stream &out) const
 {
     out.print("flash_mounted=");
     out.print(mounted_ ? "true" : "false");
-    out.print(", header_checked=");
-    out.println(headerChecked_ ? "true" : "false");
-}
-
-bool FlashLogger::openLogFileIfNeeded()
-{
-    if (file_)
-        return true;
-    file_ = fatfs_.open(LOG_FILENAME, FILE_WRITE);
-    if (!file_)
-        return false;
-    return true;
-}
-bool FlashLogger::writeHeaderIfNeeded()
-{
-    if (headerChecked_)
-        return true;
-    if (!openLogFileIfNeeded())
-        return false;
-    if (file_.size() == 0)
-    {
-        file_.println("timestamp_ms,ax_mps2,ay_mps2,az_mps2,gx_rads,gy_rads,gz_rads,temp_c");
-        file_.flush();
-    }
-    headerChecked_ = true;
-    return true;
+    out.print(", file_ready==");
+    out.println(fileReady_ ? "true" : "false");
 }

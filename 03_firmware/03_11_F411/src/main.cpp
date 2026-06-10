@@ -1,7 +1,13 @@
 #include <Arduino.h>
 #include "sensors/lsm6dso.h"
+#include "flash_write.h"
+#include "global.h"
 
 LSM6DSOnode IMUnode;
+FlashLogger flashLogger;
+
+unsigned long lastSampleMs = 0;
+uint32_t sampleCount = 0;
 
 void setup()
 {
@@ -17,12 +23,37 @@ void setup()
       delay(1000);
   }
   Serial.println("LSM6DSO32 initilaized");
-  IMUnode.printCsvHeader(Serial);
+
+  if (FLASH_LOG_MODE)
+  {
+    if (!flashLogger.begin())
+      Serial.println("WARNING: flash logger init failed.");
+    else
+    {
+      Serial.println("Flash logger initialized.");
+      flashLogger.printStatus(Serial);
+    }
+  }
+
+  if (SERIAL_MONITOR_MODE)
+  {
+    IMUnode.printCsvHeader(Serial);
+  }
 }
 
 void loop()
 {
+  const unsigned long now = millis();
+  if (now - lastSampleMs < SAMPLE_INTERVAL_MS)
+    return;
+  lastSampleMs = now;
+
   LSM6DSOsample sample;
+  sampleCount++;
+
   if (IMUnode.readSample(sample))
-    IMUnode.printCsvSample(Serial, sample);
+  {
+    if (SERIAL_MONITOR_MODE)
+      IMUnode.printCsvSample(Serial, sample);
+  }
 }
