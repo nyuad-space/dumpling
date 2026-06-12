@@ -14,7 +14,7 @@ public:
     bool begin();
     bool append(const LSM6DSOsample &sample);
     void printStatus(Stream &out) const; // read-only
-    void dumpLogToSerial(Stream &out);
+    void exportLogToSerial(Stream &out); // called in export mode (flash -> serial)
 
 private:
     SPIClass flashSpi_;                          // SPI bus object

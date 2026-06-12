@@ -1,0 +1,50 @@
+# dumpling Dashboard app
+
+This app supports two modes:
+1. **Live serial mode**
+   F411 sensor data -> (USB serial) -> CSV samples -> live plotting + save CSV on pc
+2. **Playback mode**
+   F411 sensor data -> save CSV to flash -> upon recovery loads a CSV file -> replay + plot
+
+## Serial format
+e.g.
+```text
+timestamp_ms,ax_mps2,ay_mps2,az_mps2,gx_rads,gy_rads,gz_rads,temp_c
+1840,2.843,-2.690,9.543,-0.001,0.001,-0.027,24.465
+1850,2.851,-2.694,9.549,-0.002,0.001,-0.028,24.465
+```
+
+No extra debug text in the stream in ``SerialOutMode::Csv``
+
+## User guide
+
+From this directory, install:
+
+```bash
+pip install -r requirements.txt
+```
+
+1. Live serial mode
+```bash
+python app.py live --port /dev/tty.usbmodem123 --baud 115200 --save live_capture.csv
+```
+On Windows, port names look like:
+```bash
+python app.py live --port COM5 --baud 115200 --save live_capture.csv
+```
+
+2. Playback mode
+```bash
+python app.py playback --file live_capture.csv
+```
+Or simply:
+```bash
+python app.py playback
+```
+and select a file in the file picker.
+
+## Notes
+
+- The live app saves every received sample to CSV.
+- Playback mode uses the same CSV format.
+- For best results, run the firmware with a clean machine-readable serial stream mode.

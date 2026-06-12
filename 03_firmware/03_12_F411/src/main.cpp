@@ -46,7 +46,7 @@ void setup()
   }
 
   // Initialize flash logger
-  if ((FLASH_LOG_MODE || FLASH_DUMP_MODE))
+  if ((FLASH_LOG_MODE || FLASH_EXPORT_MODE))
   {
     if (!flashLogger.begin())
     {
@@ -65,9 +65,9 @@ void setup()
   }
 
   // Flash read-only
-  if (!SENSOR_READ_MODE && FLASH_DUMP_MODE)
+  if (!SENSOR_READ_MODE && FLASH_EXPORT_MODE)
   {
-    flashLogger.dumpLogToSerial(Serial);
+    flashLogger.exportLogToSerial(Serial);
   }
 }
 

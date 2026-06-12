@@ -9,4 +9,6 @@
 - (Post-flight) Playback mode:                 -> saved CSV file -> Py app -> replay plot
 
 # Errata
-- Add telemetry (LoRa breakout) for real-time data visualization
+- Add telemetry (LoRa breakout) for real-time data visualization 
+  (current: save to onboard flash- export over usb serial- app saves .csv to pc- app loads for playback)
+- 

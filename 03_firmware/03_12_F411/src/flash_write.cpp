@@ -69,41 +69,30 @@ void FlashLogger::printStatus(Stream &out) const
     out.println(fileReady_ ? "true" : "false");
 }
 
-void FlashLogger::dumpLogToSerial(Stream &out)
+void FlashLogger::exportLogToSerial(Stream &out)
 {
     if (!mounted_ || !fileReady_)
     {
         out.println("ERROR: flash log not ready");
         return;
     }
-
-    // flush remaining RAM buffer data and close file
+    // flush any remaining RAM buffer data and close file
     file_.flush();
     file_.close();
 
     // locate specific file path inside fs + open in read-mode -> file handle is "readFile"
     File32 readFile = fatfs_.open("/lsm6dso.csv", FILE_READ);
-
     if (!readFile)
     {
         out.println("ERROR: failed to open file");
         return;
     }
 
-    out.println("----BEGIN DUMP----");
+    // read contents
+    out.println("EXPORT_BEGIN");
     while (readFile.available())
         out.write(readFile.read()); // read each byte (TODO: optimize with block reads)
     out.println();
-    out.println("----END DUMP----");
+    out.println("EXPORT_END");
     readFile.close();
-
-    // restore active logger file handle
-    file_ = fatfs_.open("/lsm6dso.csv", FILE_WRITE);
-    if (!file_)
-    {
-        out.println("WARNING: failed to reopen file after serial dump");
-        fileReady_ = false;
-        return;
-    }
-    fileReady_ = true;
 }
