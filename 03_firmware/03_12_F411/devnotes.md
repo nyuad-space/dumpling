@@ -12,3 +12,6 @@
 - Add telemetry (LoRa breakout) for real-time data visualization 
   (current: save to onboard flash- export over usb serial- app saves .csv to pc- app loads for playback)
 - 
+
+# TODO
+- one firmware for both logging and export (controlled by F405?)

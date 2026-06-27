@@ -11,7 +11,8 @@ class FlashLogger
 public:
     FlashLogger();
 
-    bool begin();
+    bool beginForLog();    // write-enabled
+    bool beginForExport(); // read-only
     bool append(const LSM6DSOsample &sample);
     void printStatus(Stream &out) const; // read-only
     void exportLogToSerial(Stream &out); // called in export mode (flash -> serial)
@@ -25,6 +26,8 @@ private:
 
     bool mounted_ = false;
     bool fileReady_ = false;
+
+    static constexpr const char *logPath = "/lsm6dso.csv";
 };
 
 // Using SdFat temporarily. Change to raw binary for high-speed logging.

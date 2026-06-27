@@ -45,22 +45,25 @@ void setup()
     }
   }
 
-  // Initialize flash logger
-  if ((FLASH_LOG_MODE || FLASH_EXPORT_MODE))
+  // Initialize flash logger (two modes)
+  if (FLASH_LOG_MODE)
   {
-    if (!flashLogger.begin())
+    if (!flashLogger.beginForLog())
     {
       if (SERIAL_OUT_MODE == SerialOutMode::Debug)
-      {
-        Serial.println("WARNING: flash logger init failed.");
-        while (true)
-          delay(1000);
-      }
+        Serial.println("ERROR: failed to init log-mode flash logger");
+      while (true)
+        delay(1000);
     }
-    if (SERIAL_OUT_MODE == SerialOutMode::Debug)
+  }
+  else if (FLASH_EXPORT_MODE)
+  {
+    if (!flashLogger.beginForExport())
     {
-      Serial.println("Flash logger initialized.");
-      flashLogger.printStatus(Serial);
+      if (SERIAL_OUT_MODE == SerialOutMode::Debug)
+        Serial.println("ERROR: failed to init export-mode flash logger");
+      while (true)
+        delay(1000);
     }
   }
 
