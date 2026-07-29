@@ -23,19 +23,33 @@ From this directory, install:
 ```bash
 pip install -r requirements.txt
 ```
+n.b. Can't open both PlatformIO serial monitor and Python app at the same time- close one. 
 
 1. Live serial mode
+   - Upload only (not Monitor) with ``MODE = OperatingMode::LiveCsv;`` (and ctrl+C)
+   - close serial monitor
+   - find port: `` ls /dev/tty.*`` or ``ls /dev/cu.*``. If multiple, plug/unplug and see what appears/disappears.
+      (e.g. ``/dev/tty.usbmodem2067379833311``)
+   - then run: 
 ```bash
-python app.py live --port /dev/tty.usbmodem123 --baud 115200 --save live_capture.csv
+python app.py live --port /dev/tty.(usbmodem-port) --baud 115200 --save (filename).csv
 ```
+``python app.py live --port /dev/tty.usbmodem2067379833311 --baud 115200 --save demo.csv``
+
+===FOR DEBUG: no GUI ver.===
+``python3 get_csv_wo_plot.py --port /dev/tty.usbmodem2067379833311 --baud 115200 --out noplot.csv``
+``python3 plot_csv_simple.py --file noplot.csv``
+
 On Windows, port names look like:
 ```bash
-python app.py live --port COM5 --baud 115200 --save live_capture.csv
+python app.py live --port COM5 --baud 115200 --save (filename).csv
 ```
 
 2. Playback mode
+Flash with ``MODE = OperatingMode::ExportLog;``, 
 ```bash
-python app.py playback --file live_capture.csv
+python export_log.py --port /dev/tty.usbmodem123 --baud 115200 --out (filename).csv
+
 ```
 Or simply:
 ```bash

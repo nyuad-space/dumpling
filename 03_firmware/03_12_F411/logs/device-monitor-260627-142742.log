@@ -1,0 +1,12 @@
+
+dumpling F411 - LSM6DSO32 local pipeline
+LSM6DSO32 initialized
+# heartbeat sample_count=1 flash_ok=0 flash_fail=0
+# heartbeat sample_count=100 flash_ok=0 flash_fail=0
+# heartbeat sample_count=199 flash_ok=0 flash_fail=0
+# heartbeat sample_count=298 flash_ok=0 flash_fail=0
+# heartbeat sample_count=397 flash_ok=0 flash_fail=0
+# heartbeat sample_count=497 flash_ok=0 flash_fail=0
+# heartbeat sample_count=596 flash_ok=0 flash_fail=0
+# heartbeat sample_count=695 flash_ok=0 flash_fail=0
+# heartbeat sample_count=794 flash_ok=0 flash_fail=0

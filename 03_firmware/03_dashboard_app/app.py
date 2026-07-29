@@ -3,6 +3,7 @@
 import argparse
 import tkinter as tk
 from tkinter import filedialog, messagebox
+import serial
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
@@ -20,6 +21,8 @@ class TelemetryApp:
         self.playback_interval_ms = playback_interval_ms
 
         self.max_points = 300
+        self.plot_every_n_samples = 3
+        self.samples_since_redraw = 0
 
         self.timestamps = []
         self.ax = []
@@ -52,6 +55,31 @@ class TelemetryApp:
         self.ax_gyro = self.figure.add_subplot(312)
         self.ax_temp = self.figure.add_subplot(313)
 
+        self.ax_line, = self.ax_accel.plot([], [], label="ax")
+        self.ay_line, = self.ax_accel.plot([], [], label="ay")
+        self.az_line, = self.ax_accel.plot([], [], label="az")
+
+        self.gx_line, = self.ax_gyro.plot([], [], label="gx")
+        self.gy_line, = self.ax_gyro.plot([], [], label="gy")
+        self.gz_line, = self.ax_gyro.plot([], [], label="gz")
+
+        self.temp_line, = self.ax_temp.plot([], [], label="temp_c", color="tab:red")
+
+        self.ax_accel.set_ylabel("Accel (m/s^2)")
+        self.ax_accel.legend(loc="upper left")
+        self.ax_accel.grid(True)
+
+        self.ax_gyro.set_ylabel("Gyro (rad/s)")
+        self.ax_gyro.legend(loc="upper left")
+        self.ax_gyro.grid(True)
+
+        self.ax_temp.set_ylabel("Temp (C)")
+        self.ax_temp.set_xlabel("Time (s)")
+        self.ax_temp.legend(loc="upper left")
+        self.ax_temp.grid(True)
+
+        self.figure.tight_layout()
+
         self.canvas = FigureCanvasTkAgg(self.figure, master=root)
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
@@ -71,6 +99,8 @@ class TelemetryApp:
             self.gy.clear()
             self.gz.clear()
             self.temp.clear()
+            self.samples_since_redraw = 0
+            self.redraw_plot()
 
     def append_sample(self, sample): # update with new sample
         self.timestamps.append(sample.timestamp_ms / 1000.0)
@@ -100,39 +130,34 @@ class TelemetryApp:
         )
 
     def redraw_plot(self):
-        self.ax_accel.clear()
-        self.ax_gyro.clear()
-        self.ax_temp.clear()
+        self.ax_line.set_data(self.timestamps, self.ax)
+        self.ay_line.set_data(self.timestamps, self.ay)
+        self.az_line.set_data(self.timestamps, self.az)
 
-        self.ax_accel.plot(self.timestamps, self.ax, label="ax")
-        self.ax_accel.plot(self.timestamps, self.ay, label="ay")
-        self.ax_accel.plot(self.timestamps, self.az, label="az")
-        self.ax_accel.set_ylabel("Accel (m/s^2)")
-        self.ax_accel.legend(loc="upper left")
-        self.ax_accel.grid(True)
+        self.gx_line.set_data(self.timestamps, self.gx)
+        self.gy_line.set_data(self.timestamps, self.gy)
+        self.gz_line.set_data(self.timestamps, self.gz)
 
-        self.ax_gyro.plot(self.timestamps, self.gx, label="gx")
-        self.ax_gyro.plot(self.timestamps, self.gy, label="gy")
-        self.ax_gyro.plot(self.timestamps, self.gz, label="gz")
-        self.ax_gyro.set_ylabel("Gyro (rad/s)")
-        self.ax_gyro.legend(loc="upper left")
-        self.ax_gyro.grid(True)
+        self.temp_line.set_data(self.timestamps, self.temp)
 
-        self.ax_temp.plot(self.timestamps, self.temp, label="temp_c", color="tab:red")
-        self.ax_temp.set_ylabel("Temp (C)")
-        self.ax_temp.set_xlabel("Time (s)")
-        self.ax_temp.legend(loc="upper left")
-        self.ax_temp.grid(True)
+        self.ax_accel.relim()
+        self.ax_accel.autoscale_view()
+        self.ax_gyro.relim()
+        self.ax_gyro.autoscale_view()
+        self.ax_temp.relim()
+        self.ax_temp.autoscale_view()
 
-        self.figure.tight_layout()
-        self.canvas.draw()
+        self.canvas.draw_idle()
 
     def poll(self): # heartbeat check for update
         if self.running:
             sample = self.source.read_next_sample()
             if sample is not None:
                 self.append_sample(sample)
-                self.redraw_plot()
+                self.samples_since_redraw += 1
+                if self.samples_since_redraw >= self.plot_every_n_samples:
+                    self.redraw_plot()
+                    self.samples_since_redraw = 0
 
                 if self.playback_mode:
                     self.status_var.set("Playback: running")
@@ -169,7 +194,17 @@ def main():
             baudrate=args.baud,
             csv_output_path=args.save,
         )
-        source.open()
+        try:
+            source.open()
+        except serial.SerialException as exc:
+            messagebox.showerror(
+                "Serial Port Error",
+                f"Failed to open serial port {args.port}.\n\n"
+                "Close any serial monitor first (for example PlatformIO Upload and Monitor), "
+                "then retry.\n\n"
+                f"Details: {exc}",
+            )
+            return
         app = TelemetryApp(root, source, playback_mode=False, playback_interval_ms=50)
 
     else:

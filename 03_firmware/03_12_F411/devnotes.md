@@ -15,3 +15,9 @@
 
 # TODO
 - one firmware for both logging and export (controlled by F405?)
+
+# TODO (immediate)
+- Finalize F411:
+  - batched/timed flush
+  - integrity check for export: size/checksum validation
+  - how to not seek EOF every sample when appending
